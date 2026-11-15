@@ -1,4 +1,4 @@
-# Krishi Mitra (कृषि मित्र) 🌾
+# Krishi Mitra  🌾
 
 Krishi Mitra is an intelligent platform and backend service designed to empower farmers and citizens with comprehensive information on central and state government agricultural schemes, subsidies, and welfare benefits across India.
 

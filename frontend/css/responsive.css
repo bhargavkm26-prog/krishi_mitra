@@ -1,0 +1,217 @@
+/* ==========================================================================
+   KRISHI MITRA - Responsive Adaptations
+   Handles desktop (matching reference screenshot), tablets, and budget phones
+   ========================================================================== */
+
+/* Large Tablets & Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .site-header {
+    display: block;
+  }
+
+  .header-nav {
+    display: flex;
+  }
+
+  .mobile-header-actions {
+    display: none;
+  }
+
+  .bottom-navbar {
+    display: none !important;
+  }
+
+  /* Two-column scheme grid on desktop with generous breathing room */
+  .schemes-vertical-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .docs-vertical-list, .tips-vertical-list, .help-cards-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile Devices (< 768px) */
+@media (max-width: 767px) {
+  .header-nav {
+    display: none;
+  }
+
+  .mobile-header-actions {
+    display: flex;
+  }
+
+  .login-top-bar {
+    padding: 16px 18px;
+  }
+
+  .login-hero-main-title {
+    font-size: 2.5rem;
+  }
+
+  .login-hero-spaced-sub {
+    font-size: 0.92rem;
+    letter-spacing: 0.3em;
+  }
+
+  .login-hero-tagline {
+    font-size: 1.08rem;
+  }
+
+  .login-card-box {
+    padding: 26px 20px 22px;
+    border-radius: 18px;
+  }
+
+  .login-card-heading {
+    font-size: 1.35rem;
+    margin-bottom: 16px;
+  }
+
+  .bottom-navbar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    border-top: 1px solid var(--border);
+    padding: 8px 4px;
+    z-index: 90;
+    justify-content: space-around;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .bottom-nav-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .bottom-nav-item svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .bottom-nav-item.active {
+    color: var(--primary);
+  }
+
+  .main-content-layout {
+    padding: 16px 16px 80px;
+  }
+
+  .hero-banner-card {
+    flex-direction: column;
+    padding: 24px 20px;
+    gap: 20px;
+  }
+
+  .hero-headline {
+    font-size: 1.65rem;
+  }
+
+  .hero-graphic-col {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .discover-search-card {
+    padding: 18px 16px;
+  }
+
+  .discover-search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input-wrapper,
+  .search-select-wrapper,
+  .btn-discover-action {
+    width: 100%;
+    flex: auto;
+  }
+
+  .schemes-vertical-list,
+  .docs-vertical-list,
+  .tips-vertical-list,
+  .help-cards-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Small Budget Phones (<= 380px) */
+@media (max-width: 380px) {
+  html {
+    font-size: 15px;
+  }
+
+  .login-top-bar {
+    padding: 12px 14px;
+  }
+
+  .login-brand-title {
+    font-size: 1.1rem;
+  }
+
+  .login-lang-btn {
+    padding: 5px 12px;
+    font-size: 0.85rem;
+  }
+
+  .login-hero-main-title {
+    font-size: 2.1rem;
+  }
+
+  .login-hero-spaced-sub {
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+  }
+
+  .login-hero-tagline {
+    font-size: 1rem;
+  }
+
+  .login-card-box {
+    padding: 22px 16px 18px;
+    border-radius: 16px;
+  }
+
+  .login-phone-prefix {
+    padding: 0 12px;
+    font-size: 0.98rem;
+  }
+
+  .login-phone-input {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+
+  .hero-headline {
+    font-size: 1.4rem;
+  }
+
+  .options-grid-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .scheme-title {
+    font-size: 1.15rem;
+  }
+
+  .benefit-amount-text {
+    font-size: 1.18rem;
+  }
+
+  .btn-confirm-tick {
+    font-size: 0.95rem;
+  }
+}

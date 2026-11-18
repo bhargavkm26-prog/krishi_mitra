@@ -51,7 +51,7 @@ def colbert_maxsim(query_vectors, document_vectors):
 # MAIN PIPELINE
 # --------------------------------
 
-def main():
+def main(query=None):
 
     # --------------------------------
     # 1. LOAD MODEL

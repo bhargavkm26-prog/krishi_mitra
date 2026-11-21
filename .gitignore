@@ -14,3 +14,9 @@ __pycache__/
 # Logs
 *.log
 *.tmp
+*.pdf
+
+
+# Generated test reports
+Krishi_Mitra_System_Test_Report.html
+Krishi_Mitra_System_Test_Report.md

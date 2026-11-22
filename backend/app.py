@@ -11,7 +11,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from backend.routers.database_router import router as database_router
 from backend.routers.bge_router import router as bge_router
@@ -46,6 +47,11 @@ app.include_router(database_router)
 app.include_router(bge_router)
 app.include_router(gemma_router)
 
+# Mount Frontend UI
+frontend_dir = Path(__file__).parent.parent / "frontend"
+if frontend_dir.exists():
+    app.mount("/ui", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")
+
 
 # 3. Gateway Root & Overview
 @app.get("/", tags=["Gateway Overview"])
@@ -75,6 +81,13 @@ def root_overview():
             "GET  /api/v1/gemma/consult-stream (Futuristic SSE live thought stream)"
         ]
     }
+
+
+@app.get("/document", include_in_schema=False)
+@app.get("/documentation", include_in_schema=False)
+@app.get("/swagger", include_in_schema=False)
+def redirect_to_docs():
+    return RedirectResponse(url="/docs")
 
 
 # 4. Master Consolidated Health Check

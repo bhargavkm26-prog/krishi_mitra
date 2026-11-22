@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishi Mitra AI — Chief Secretary Consultation</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #030704;
+      color: #ffffff;
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 0;
+    }
+
+    /* Emerald Horizon Atmosphere (Matches Landing Page Obsidian Palette) */
+    .horizon-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .horizon-top {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
+      filter: blur(80px);
+    }
+    .horizon-arc {
+      position: absolute;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1400px;
+      height: 520px;
+      border-radius: 100% 100% 0 0;
+      background: radial-gradient(ellipse at bottom, rgba(16, 185, 129, 0.35) 0%, rgba(6, 95, 70, 0.25) 40%, rgba(3, 7, 4, 0.95) 75%);
+      filter: blur(50px);
+      box-shadow: 0 -20px 80px rgba(16, 185, 129, 0.25);
+    }
+    .horizon-arc::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.7), transparent);
+      filter: blur(1px);
+    }
+
+    /* Top Bar */
+    header {
+      width: 100%;
+      max-width: 1000px;
+      padding: 24px 20px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #34d399;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .back-link:hover {
+      color: #a7f3d0;
+    }
+    .project-tag {
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .p-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Main Container */
+    main {
+      width: 100%;
+      max-width: 780px;
+      padding: 20px;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+      margin: auto 0;
+    }
+
+    /* Title Section */
+    .title-box {
+      text-align: center;
+      margin-bottom: 28px;
+      transition: all 0.3s ease;
+    }
+    .cs-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      background: rgba(6, 78, 59, 0.5);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+    }
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+    h1 span {
+      color: #10b981;
+    }
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 1rem;
+      max-width: 580px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Active Conversation Container */
+    #chatThread {
+      width: 100%;
+      max-height: 45vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(4, 16, 9, 0.65);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      margin-bottom: 20px;
+      display: none;
+    }
+    .chat-bubble {
+      max-width: 85%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .chat-bubble.user {
+      margin-left: auto;
+      background: rgba(6, 78, 59, 0.6);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      color: #ecfdf5;
+      border-top-right-radius: 4px;
+    }
+    .chat-bubble.bot {
+      margin-right: auto;
+      background: #08190f;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #f1f5f9;
+      border-top-left-radius: 4px;
+    }
+    .bubble-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    /* Floating Capsule Input Box */
+    .input-capsule {
+      width: 100%;
+      background: rgba(6, 17, 9, 0.88);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      border-radius: 18px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.15);
+      backdrop-filter: blur(16px);
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+    .input-capsule:focus-within {
+      border-color: #10b981;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), 0 0 35px rgba(16, 185, 129, 0.28);
+    }
+    textarea {
+      width: 100%;
+      min-height: 52px;
+      max-height: 150px;
+      padding: 16px 20px 12px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.98rem;
+      resize: none;
+      line-height: 1.5;
+    }
+    textarea::placeholder {
+      color: #64748b;
+    }
+
+    .input-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px 14px;
+      border-top: 1px solid rgba(16, 185, 129, 0.15);
+      background: rgba(0, 0, 0, 0.25);
+    }
+    .audit-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .send-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 10px;
+      border: none;
+      background: #1e293b;
+      color: #64748b;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: not-allowed;
+      transition: all 0.2s ease;
+    }
+    .send-btn.active {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+    .send-btn.active:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Quick Action Pills */
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      width: 100%;
+    }
+    .quick-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      background: rgba(6, 17, 9, 0.75);
+      color: #cbd5e1;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(8px);
+      text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .quick-btn:hover {
+      border-color: #10b981;
+      color: #ffffff;
+      background: rgba(16, 185, 129, 0.15);
+      transform: translateY(-1px);
+    }
+    .quick-btn i {
+      font-size: 0.8rem;
+    }
+
+    /* Footer */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: #64748b;
+      border-top: 1px solid rgba(16, 185, 129, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 2.1rem; }
+      .subtitle { font-size: 0.88rem; }
+      .quick-actions { gap: 6px; }
+      .quick-btn { font-size: 0.72rem; padding: 6px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Atmospheric Emerald Horizon Background -->
+  <div class="horizon-glow" aria-hidden="true">
+    <div class="horizon-top"></div>
+    <div class="horizon-arc"></div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <a href="index.html" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Krishi Mitra Home</span>
+    </a>
+    <div class="project-tag">
+      <div class="p-dot"></div>
+      <span>SOVEREIGN AGRI-OS // LOCAL CUDA:0 ENGINE</span>
+    </div>
+  </header>
+
+  <!-- Main AI Interaction Section -->
+  <main>
+    
+    <!-- Title / Empty State -->
+    <div class="title-box" id="titleBox">
+      <div class="cs-badge">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Sovereign Secretariat Consultation</span>
+      </div>
+      <h1>Krishi<span>Mitra</span> AI</h1>
+      <p class="subtitle">
+        Official AI Chief Secretary — Cross-Ministerial Statutory Guidance &amp; Scheme Resolution for Indian &amp; Karnataka Farmers.
+      </p>
+    </div>
+
+    <!-- Active Conversation View (Appears on send) -->
+    <div id="chatThread"></div>
+
+    <!-- Floating Capsule Input Box (No attachment icon) -->
+    <div class="input-capsule">
+      <textarea 
+        id="queryInput" 
+        rows="1" 
+        placeholder="Ask the Chief Secretary about schemes, PMFBY claim window, RTC linking, subsidies..."
+        autofocus
+      ></textarea>
+
+      <div class="input-bottom">
+        <div class="audit-label">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Grounded in Official Gazettes</span>
+        </div>
+        <button id="sendBtn" class="send-btn" disabled>
+          <span>Consult</span>
+          <i class="fa-solid fa-arrow-up"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Agricultural Quick Action Pills -->
+    <div class="quick-actions">
+      <button class="quick-btn" onclick="applyQuickAction('Am I eligible for PM-KISAN ₹6,000 annual installment if I hold 1.8 hectares of dryland?')">
+        <i class="fa-solid fa-wheat-awn" style="color:#10b981;"></i>
+        <span>PM-KISAN ₹6,000</span>
+      </button>
+
+      <button class="quick-btn" onclick="applyQuickAction('What are the mandatory steps to claim PMFBY crop loss within the 72-hour intimation window?')">
+        <i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24;"></i>
+        <span>PMFBY 72h Crop Loss</span>
+      </button>
+
+      <button class="quick-btn" onclick="applyQuickAction('How can I apply for a Kisan Credit Card (KCC) crop loan at 4% subvention interest rate?')">
+        <i class="fa-solid fa-credit-card" style="color:#38bdf8;"></i>
+        <span>KCC Crop Loan (4%)</span>
+      </button>
+
+      <button class="quick-btn" onclick="applyQuickAction('What is the subsidy percentage for Krishi Bhagya farm ponds and micro-drip irrigation in Karnataka?')">
+        <i class="fa-solid fa-droplet" style="color:#22d3ee;"></i>
+        <span>Krishi Bhagya Drip</span>
+      </button>
+
+      <button class="quick-btn" onclick="applyQuickAction('How do I link my Bhoomi RTC/Pahani land record with my Karnataka FRUITS Farmer ID (FID)?')">
+        <i class="fa-solid fa-id-card" style="color:#a7f3d0;"></i>
+        <span>FRUITS FID &amp; RTC</span>
+      </button>
+
+      <button class="quick-btn" onclick="applyQuickAction('What subsidies are available for farm mechanization, tractors, and Custom Hiring Centres in Karnataka?')">
+        <i class="fa-solid fa-tractor" style="color:#fb923c;"></i>
+        <span>Machinery &amp; Tractor Subsidy</span>
+      </button>
+
+      <button class="quick-btn" onclick="applyQuickAction('Give me the complete mandatory document checklist before visiting the Taluk or RSK office.')">
+        <i class="fa-solid fa-file-circle-check" style="color:#fde047;"></i>
+        <span>Document Checklist</span>
+      </button>
+
+      <button class="quick-btn" onclick="applyQuickAction('Where is my nearest Raitha Samparka Kendra (RSK) in Karnataka and what services do they provide?')">
+        <i class="fa-solid fa-building-flag" style="color:#2dd4bf;"></i>
+        <span>Raitha Samparka Kendra</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    © 2026 Krishi Mitra • Dept. of Information Science &amp; Engineering, DSCE Bengaluru (Community Project 1BCP308)
+  </footer>
+
+  <script>
+    const textarea = document.getElementById('queryInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatThread = document.getElementById('chatThread');
+    const titleBox = document.getElementById('titleBox');
+
+    // Auto-resize textarea
+    textarea.addEventListener('input', () => {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+      
+      const val = textarea.value.trim();
+      if (val.length > 0) {
+        sendBtn.classList.add('active');
+        sendBtn.removeAttribute('disabled');
+      } else {
+        sendBtn.classList.remove('active');
+        sendBtn.setAttribute('disabled', 'true');
+      }
+    });
+
+    textarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    function applyQuickAction(text) {
+      textarea.value = text;
+      textarea.dispatchEvent(new Event('input'));
+      textarea.focus();
+    }
+
+    function sendMessage() {
+      const q = textarea.value.trim();
+      if (!q) return;
+
+      chatThread.style.display = 'flex';
+
+      // Append User message
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble user';
+      userBubble.innerHTML = `
+        <div style="flex-shrink:0; margin-top:2px;"><i class="fa-solid fa-user" style="color:#a7f3d0;"></i></div>
+        <div>
+          <div class="bubble-role">Farmer Inquiry • ${timeStr}</div>
+          <div>${escapeHtml(q)}</div>
+        </div>
+      `;
+      chatThread.appendChild(userBubble);
+
+      textarea.value = '';
+      textarea.style.height = '52px';
+      sendBtn.classList.remove('active');
+      sendBtn.setAttribute('disabled', 'true');
+      chatThread.scrollTop = chatThread.scrollHeight;
+
+      // Simulated Chief Secretary Response (Ready for API integration later)
+      setTimeout(() => {
+        const botBubble = document.createElement('div');
+        botBubble.className = 'chat-bubble bot';
+        botBubble.innerHTML = `
+          <div style="flex-shrink:0; margin-top:2px;"><i class="fa-solid fa-shield-halved" style="color:#10b981;"></i></div>
+          <div>
+            <div class="bubble-role">Chief Secretary Secretariat • ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+            <div style="color:#e2e8f0;">
+              Consultation received regarding: <em>"${escapeHtml(q)}"</em>.<br><br>
+              The Chief Secretary secretariat is reviewing official Central &amp; Karnataka gazettes, Bhoomi RTC records, and the FRUITS FID database.
+              <div style="margin-top:8px; font-size:0.75rem; color:#34d399; font-family:'JetBrains Mono',monospace;">
+                <i class="fa-solid fa-circle-notch fa-spin me-1"></i> API Connection Ready — Interface Configured for Future Integration
+              </div>
+            </div>
+          </div>
+        `;
+        chatThread.appendChild(botBubble);
+        chatThread.scrollTop = chatThread.scrollHeight;
+      }, 600);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+  </script>
+
+</body>
+</html>

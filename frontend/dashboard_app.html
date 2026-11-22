@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishi Mitra — Autonomous AI Chief Secretary & Farmer Scheme Gateway</title>
+
+  <!-- SEO Optimization -->
+  <meta name="description"
+    content="Krishi Mitra: Autonomous National Government Scheme & Statutory Entitlement Gateway for Indian Farmers">
+  <meta name="author" content="Krishi Mitra National Governance Team">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/favicon.ico">
+
+  <!-- Local Third-Party Libraries (100% Offline Compatible) -->
+  <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="assets/libs/apexcharts/apexcharts.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+
+  <!-- Main Design System & Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    :root {
+      --km-primary: #072F1F;
+      --km-accent: #B4F105;
+      --km-dark: #051C12;
+      --km-light: #F4F8F5;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(7, 47, 31, 0.95) 0%, rgba(5, 28, 18, 0.98) 100%), url('assets/farm-hero.jpg');
+      background-size: cover;
+      background-position: center;
+      border-radius: 16px;
+      color: #fff;
+    }
+
+    .query-pill {
+      cursor: pointer;
+      font-size: 0.8rem;
+      border: 1px solid rgba(7, 47, 31, 0.2);
+      background: #f8faf8;
+      color: #072F1F;
+      transition: all 0.2s;
+    }
+
+    .query-pill:hover {
+      background: #072F1F;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .delib-hud {
+      background: #0d1612;
+      border: 1px solid #1a3d2e;
+      color: #79e2a4;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      border-radius: 8px;
+    }
+
+    .delib-hud pre {
+      color: #9feec1;
+      margin-bottom: 0;
+    }
+
+    .scheme-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .scheme-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .demo-login-chip {
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #d4e8da;
+      background: #fff;
+    }
+
+    .demo-login-chip:hover {
+      background: #072F1F;
+      color: #fff;
+      border-color: #072F1F;
+    }
+
+    .nav-badge-pill {
+      font-size: 0.76rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 20px;
+    }
+
+    /* Atmos System Glassmorphism Styling */
+    .atmos-cockpit-window {
+      background: radial-gradient(120% 120% at 50% 0%, #0c261b 0%, #05140d 100%);
+      border: 1px solid rgba(180, 241, 5, 0.25);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .atmos-titlebar {
+      background: rgba(4, 15, 10, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .atmos-dots .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-red {
+      background: #ff5f56;
+    }
+
+    .dot-yellow {
+      background: #ffbd2e;
+    }
+
+    .dot-green {
+      background: #27c93f;
+    }
+
+    .atmos-status-pill {
+      background: rgba(0, 0, 0, 0.4);
+      font-size: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 20px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(39, 201, 63, 0.7);
+      }
+
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(39, 201, 63, 0);
+      }
+
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(39, 201, 63, 0);
+      }
+    }
+
+    .atmos-pill-tag {
+      background: rgba(180, 241, 5, 0.12);
+      color: #b4f105;
+      border: 1px solid rgba(180, 241, 5, 0.3);
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      padding: 0.35rem 0.85rem;
+      border-radius: 30px;
+      font-weight: 600;
+    }
+
+    .atmos-input-box {
+      background: rgba(6, 21, 14, 0.85);
+      border: 1px solid rgba(180, 241, 5, 0.3);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(16px);
+    }
+
+    .atmos-input-box:focus-within {
+      border-color: #b4f105;
+      box-shadow: 0 0 25px rgba(180, 241, 5, 0.25), 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .atmos-textarea {
+      background: transparent !important;
+      color: #fff !important;
+      font-size: 1rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .atmos-textarea::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .atmos-submit-btn {
+      background: linear-gradient(135deg, #b4f105 0%, #7ec200 100%);
+      color: #051c12;
+      border: none;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .atmos-submit-btn:hover {
+      background: linear-gradient(135deg, #c4ff19 0%, #90dc02 100%);
+      color: #000;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(180, 241, 5, 0.4);
+    }
+
+    .atmos-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #d1d5db;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .atmos-chip:hover {
+      background: rgba(180, 241, 5, 0.15);
+      border-color: #b4f105;
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .atmos-hud-console {
+      background: #040d08;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .atmos-hud-header {
+      background: rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid rgba(34, 197, 94, 0.15);
+    }
+
+    .atmos-hud-body {
+      color: #86efac;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .atmos-telemetry-card {
+      background: rgba(8, 26, 17, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.25rem;
+      backdrop-filter: blur(12px);
+      transition: all 0.2s;
+    }
+
+    .atmos-telemetry-card:hover {
+      border-color: rgba(180, 241, 5, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .atmos-step-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(180, 241, 5, 0.15);
+      border: 1px solid #b4f105;
+      color: #b4f105;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==========================================
+       START: Sidebar Component
+       ========================================== -->
+  <div class="sidebar-wrapper" id="sidebar">
+    <!-- Brand Identity -->
+    <a href="javascript:void(0)" onclick="switchView('governance')" class="sidebar-brand text-decoration-none">
+      <i class="bi bi-flower1 text-success fs-4"></i>
+      <div class="d-flex flex-column text-start ms-2">
+        <span class="fw-bold fs-5 leading-none" style="color: #fff;">Krishi Mitra</span>
+        <span class="text-white-50" style="font-size: 0.7rem; letter-spacing: 0.5px;">ಕೃಷಿ ಮಿತ್ರ • AI SECRETARY</span>
+      </div>
+    </a>
+
+    <!-- Navigation Menu -->
+    <div class="flex-grow-1 overflow-y-auto">
+
+      <!-- Group: Main Platform -->
+      <div class="sidebar-menu-section">
+        <div class="sidebar-menu-title">Executive Portals</div>
+        <ul class="sidebar-menu-list">
+
+          <li class="sidebar-menu-item">
+            <a href="javascript:void(0)" class="sidebar-menu-link active" data-view="governance"
+              title="Governance Dashboard">
+              <i class="bi bi-grid-fill"></i>
+              <span>Governance Dashboard</span>
+            </a>
+          </li>
+
+          <li class="sidebar-menu-item">
+            <a href="javascript:void(0)" class="sidebar-menu-link" data-view="farmer"
+              title="Personalized Farmer Portal">
+              <i class="bi bi-person-badge-fill text-warning"></i>
+              <span>Farmer Portal & Schemes</span>
+            </a>
+          </li>
+
+          <li class="sidebar-menu-item">
+            <a href="javascript:void(0)" class="sidebar-menu-link" data-view="ai-secretary"
+              title="AI Chief Secretary Consultation">
+              <i class="bi bi-robot text-info"></i>
+              <span>AI Chief Secretary</span>
+            </a>
+          </li>
+
+          <li class="sidebar-menu-item">
+            <a href="javascript:void(0)" class="sidebar-menu-link" data-view="schemes"
+              title="All 2,066 Schemes Catalog">
+              <i class="bi bi-collection-fill text-success"></i>
+              <span>Schemes Directory</span>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- Group: System Status -->
+      <div class="sidebar-menu-section">
+        <div class="sidebar-menu-title">Governance Diagnostics</div>
+        <ul class="sidebar-menu-list">
+          <li class="sidebar-menu-item">
+            <a href="javascript:void(0)" class="sidebar-menu-link" data-view="system" title="System Diagnostics">
+              <i class="bi bi-heart-pulse-fill text-danger"></i>
+              <span>System Diagnostics</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="page-login.html" class="sidebar-menu-link" title="Direct Login Page">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>Login Screen (No Password)</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Sidebar Profile Card (Dynamic Footer) -->
+    <div class="sidebar-profile" id="sidebar-profile-card">
+      <img src="assets/images/avatar.png" alt="Citizen" class="sidebar-profile-img">
+      <div class="sidebar-profile-info">
+        <div class="sidebar-profile-name">Citizen / Guest</div>
+        <div class="sidebar-profile-email">Public Access Mode</div>
+      </div>
+    </div>
+  </div>
+  <!-- ==========================================
+       END: Sidebar Component
+       ========================================== -->
+
+
+  <!-- ==========================================
+       START: Main Content Area
+       ========================================== -->
+  <div class="main-wrapper">
+
+    <!-- START: Top Navbar Component -->
+    <header class="navbar-custom">
+      <div class="navbar-left">
+        <!-- Desktop sidebar toggle -->
+        <button class="btn-desktop-toggle d-none d-xl-flex align-items-center justify-content-center me-3"
+          id="desktop-sidebar-toggle" aria-label="Minimize Sidebar">
+          <i class="bi bi-chevron-bar-left"></i>
+        </button>
+
+        <!-- Mobile sidebar toggle -->
+        <button class="sidebar-toggle-btn me-2" id="sidebar-toggle" aria-label="Toggle Navigation">
+          <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Live Subsystem Health Badges in Navbar -->
+        <div class="d-none d-lg-flex align-items-center gap-2 ms-2">
+          <span class="badge bg-light text-dark border nav-badge-pill" id="badge-db-status">
+            <i class="bi bi-database me-1 text-success"></i> PostgreSQL: <strong>2,066</strong> Schemes
+          </span>
+          <span class="badge bg-light text-dark border nav-badge-pill" id="badge-gemma-status">
+            <i class="bi bi-cpu me-1 text-primary"></i> Gemma 4: <strong>Online (8080)</strong>
+          </span>
+        </div>
+      </div>
+
+      <!-- Mid navbar: quick search -->
+      <div class="navbar-search-wrapper">
+        <input type="text" class="navbar-search-input" placeholder="Search across 2,066 Central & State schemes..."
+          id="global-search-input"
+          onkeyup="if(event.key==='Enter'){ switchView('schemes'); document.getElementById('schemes-search-input').value=this.value; loadSchemesCatalog(); }">
+        <button class="navbar-search-btn" aria-label="Search"
+          onclick="switchView('schemes'); document.getElementById('schemes-search-input').value=document.getElementById('global-search-input').value; loadSchemesCatalog();">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+
+      <!-- Right actions: Auth button or Profile dropdown -->
+      <div class="navbar-actions" id="navbar-auth-section">
+        <!-- Will be populated dynamically by krishi_dashboard.js -->
+        <button
+          class="btn btn-sm btn-success d-flex align-items-center gap-2 fw-semibold px-3 py-2 shadow-sm rounded-pill"
+          onclick="showLoginModal()">
+          <i class="bi bi-person-check-fill"></i>
+          <span>Farmer Login (No Password)</span>
+        </button>
+      </div>
+    </header>
+    <!-- END: Top Navbar Component -->
+
+
+    <!-- ========================================================== -->
+    <!-- VIEW 1: PRE-LOGIN / PUBLIC GOVERNANCE DASHBOARD            -->
+    <!-- ========================================================== -->
+    <div class="portal-view-section" id="view-governance">
+
+      <!-- START: Hero Banner -->
+      <div class="hero-banner p-4 p-md-5 mb-4 shadow-sm">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <div
+              class="d-inline-flex align-items-center gap-2 bg-success bg-opacity-25 border border-success border-opacity-50 text-white px-3 py-1 rounded-pill small mb-3">
+              <i class="bi bi-shield-check text-warning"></i>
+              <span>National Autonomous Statutory Gateway</span>
+            </div>
+            <h1 class="display-6 fw-bold mb-3">Krishi Mitra: AI Chief Secretary & Farmer Scheme Gateway</h1>
+            <p class="lead fs-6 text-white-50 mb-4" style="max-width: 680px;">
+              An autonomous intelligence engine integrating PostgreSQL + pgvector, dense neural RAG, and an on-premise
+              Gemma 4 cognitive secretary. Instantaneous statutory 4-state eligibility checks across 2,066 Central and
+              28 State Government schemes.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+              <button class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow" onclick="showLoginModal()">
+                <i class="bi bi-person-badge me-2"></i> Farmer Direct Login (No Password)
+              </button>
+              <button class="btn btn-outline-light px-4 py-2 rounded-pill" onclick="switchView('ai-secretary')">
+                <i class="bi bi-robot me-2"></i> Consult Chief Secretary
+              </button>
+              <button class="btn btn-outline-light px-4 py-2 rounded-pill" onclick="switchView('schemes')">
+                <i class="bi bi-search me-2"></i> Browse 2,066 Schemes
+              </button>
+            </div>
+          </div>
+          <div class="col-lg-4 text-center d-none d-lg-block">
+            <div
+              class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-25 shadow-lg backdrop-blur">
+              <i class="bi bi-flower1 display-1 text-warning mb-2"></i>
+              <h5 class="fw-bold mb-1 text-white">Zero Authentication Friction</h5>
+              <p class="small text-white-50 mb-0">Direct access via Farmer User ID. Password-free verification tied
+                directly to landholding records.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END: Hero Banner -->
+
+
+      <!-- START: 4 Live KPI Metric Cards -->
+      <div class="row g-3 mb-4">
+
+        <!-- Card 1: Total Schemes -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-muted small fw-semibold">Statutory Schemes</span>
+                <div class="bg-success bg-opacity-10 text-success p-2 rounded-3">
+                  <i class="bi bi-collection-fill fs-5"></i>
+                </div>
+              </div>
+              <h3 class="fw-bold text-dark mb-1" id="kpi-schemes-count">2,066</h3>
+              <div class="small text-muted d-flex align-items-center">
+                <span class="text-success fw-semibold me-1"><i class="bi bi-arrow-up"></i> Central & 28 States</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Legal FAQs & Rules -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-muted small fw-semibold">Legal Rules & FAQs</span>
+                <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3">
+                  <i class="bi bi-file-earmark-ruled-fill fs-5"></i>
+                </div>
+              </div>
+              <h3 class="fw-bold text-dark mb-1" id="kpi-faqs-count">20,110</h3>
+              <div class="small text-muted d-flex align-items-center">
+                <span class="text-primary fw-semibold me-1"><i class="bi bi-check2"></i> Precedent Chunks</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Neural GPU Engine -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-muted small fw-semibold">Local Neural RAG</span>
+                <div class="bg-warning bg-opacity-10 text-warning p-2 rounded-3">
+                  <i class="bi bi-cpu-fill fs-5 text-dark"></i>
+                </div>
+              </div>
+              <h3 class="fw-bold text-dark mb-1">1024-Dim</h3>
+              <div class="small text-muted d-flex align-items-center">
+                <span class="text-dark fw-semibold me-1" id="kpi-gpu-model">BGE-M3 Dense GPU</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Statutory Determinism -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-muted small fw-semibold">Decision Engine</span>
+                <div class="bg-info bg-opacity-10 text-info p-2 rounded-3">
+                  <i class="bi bi-award-fill fs-5"></i>
+                </div>
+              </div>
+              <h3 class="fw-bold text-dark mb-1">4-State Matrix</h3>
+              <div class="small text-muted d-flex align-items-center">
+                <span class="text-info fw-semibold me-1">PASS • FAIL • UNKNOWN</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- END: 4 KPI Cards -->
+
+
+      <!-- START: Governance Analytics & Charts -->
+      <div class="row g-4 mb-4">
+
+        <!-- Sector Breakdown Chart -->
+        <div class="col-lg-6">
+          <div class="card border-0 shadow-sm h-100">
+            <div
+              class="card-header bg-transparent border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title fw-bold mb-0 text-dark">Scheme Distribution by Agricultural Sector</h6>
+                <small class="text-muted">Categorization across 2,066 statutory government programs</small>
+              </div>
+              <span class="badge bg-light text-dark border">Categorical Split</span>
+            </div>
+            <div class="card-body px-4 pb-4">
+              <div id="sector-distribution-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Central vs State Breakdown Chart -->
+        <div class="col-lg-6">
+          <div class="card border-0 shadow-sm h-100">
+            <div
+              class="card-header bg-transparent border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title fw-bold mb-0 text-dark">Central vs State Government Allocations</h6>
+                <small class="text-muted">Sample state provisions alongside universal central programs</small>
+              </div>
+              <span class="badge bg-light text-dark border">Jurisdictional</span>
+            </div>
+            <div class="card-body px-4 pb-4">
+              <div id="central-state-chart"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- END: Governance Analytics -->
+
+
+      <!-- START: Quick Scheme Preview Card -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div
+          class="card-header bg-transparent border-0 pt-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <h5 class="fw-bold mb-0 text-dark">Public Statutory Schemes Directory</h5>
+            <small class="text-muted">Explore entitlements, financial subsidy norms, and legal eligibility
+              dossiers</small>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-outline-success" onclick="switchView('schemes')">
+              View Full 2,066 Catalog <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-4 pt-2">
+          <div class="row g-2 mb-3">
+            <div class="col-md-8">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control border-start-0" id="schemes-search-input"
+                  placeholder="Search by scheme name or keywords (e.g. Tractor, PM-KISAN, Drip, Solar, Seed)...">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="schemes-state-filter">
+                <option value="">All Jurisdictions (Central + All States)</option>
+                <option value="Central Government">Central Government Schemes Only</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Assam">Assam</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Meghalaya">Meghalaya</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small text-uppercase">
+                <tr>
+                  <th>Scheme Name</th>
+                  <th>Level</th>
+                  <th>Ministry / State</th>
+                  <th>Application Mode</th>
+                  <th class="text-end">Official Record</th>
+                </tr>
+              </thead>
+              <tbody id="schemes-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <span class="badge bg-light text-muted border" id="schemes-total-badge">Loading count...</span>
+            <div id="schemes-pagination"></div>
+          </div>
+        </div>
+      </div>
+      <!-- END: Quick Scheme Preview Card -->
+
+    </div>
+    <!-- END VIEW 1 -->
+
+
+    <!-- ========================================================== -->
+    <!-- VIEW 2: PERSONALIZED FARMER PORTAL (POST-LOGIN)             -->
+    <!-- ========================================================== -->
+    <div class="portal-view-section d-none" id="view-farmer">
+
+      <!-- Dynamic Farmer Profile Banner -->
+      <div id="farmer-profile-banner">
+        <!-- Will be filled by renderFarmerBanner() -->
+      </div>
+
+      <!-- Section Title -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 class="fw-bold mb-0 text-dark"><i class="bi bi-stars text-warning me-2"></i>Statutory Schemes & Targeted
+            Entitlements</h4>
+          <small class="text-muted">Targeted schemes for your state and holding profile. Click "Check AI" for instant
+            4-state statutory evaluation.</small>
+        </div>
+        <button class="btn btn-outline-success btn-sm" onclick="loadFarmerTargetedSchemes()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Refresh Schemes
+        </button>
+      </div>
+
+      <!-- Schemes Grid -->
+      <div class="row" id="farmer-schemes-grid">
+        <!-- Dynamically populated -->
+      </div>
+
+    </div>
+    <!-- END VIEW 2 -->
+
+
+    <!-- ========================================================== -->
+    <!-- VIEW 3: CHIEF SECRETARY AI DELIBERATION CHAMBER            -->
+    <!-- VIEW 3: CHIEF SECRETARY AI DELIBERATION CHAMBER (ATMOS OS) -->
+    <!-- ========================================================== -->
+    <div class="portal-view-section d-none" id="view-ai-secretary">
+
+      <!-- Page Header -->
+      <div class="page-header mb-3">
+        <div>
+          <h2 class="page-title fw-bold text-dark"><i class="bi bi-robot text-success me-2"></i>Chief Secretary AI
+            Deliberation Chamber</h2>
+          <p class="page-subtitle text-muted">
+            Autonomous Wing 2 Chief Secretary ReAct agent. Deliberates cross-ministerial schemes, unblocks
+            administrative barriers, and synthesizes binding citizen directives.
+          </p>
+        </div>
+      </div>
+      <!-- Atmos Cockpit Window Container -->
+      <div class="atmos-cockpit-window mb-4">
+
+        <!-- Atmos Top Titlebar -->
+        <div class="atmos-titlebar d-flex justify-content-between align-items-center px-3 py-2 flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <div class="atmos-dots d-flex gap-1 me-1">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <span class="text-white-50 small fw-bold font-monospace" style="font-size: 0.78rem;">
+              <i class="bi bi-cpu-fill text-success me-1"></i> KRISHI MITRA • AI ASSISTANCE ENGINE
+            </span>
+          </div>
+
+          <!-- Active Persona Context Indicator -->
+          <div id="ai-farmer-context-badge">
+            <!-- Filled by updateAiFarmerContext() -->
+          </div>
+          <div class="d-none d-md-flex align-items-center gap-2">
+            <span class="badge atmos-status-pill text-success border border-success border-opacity-25">
+              <span class="pulse-dot bg-success"></span> AI Guidance: Active
+            </span>
+            <span class="badge atmos-status-pill text-info border border-info border-opacity-25">
+              <span class="pulse-dot bg-info"></span> Bilingual RAG: Active
+            </span>
+            <span class="badge atmos-status-pill text-warning border border-warning border-opacity-25">
+              <span class="pulse-dot bg-warning"></span> Verified Schemes: 15+
+            </span>
+          </div>
+
+          <!-- Sample Inquiries Pills -->
+          <div class="mb-3">
+            <label class="form-label small text-muted fw-semibold mb-2">Quick One-Click Inquiries:</label>
+            <div class="d-flex flex-wrap gap-2">
+              <div class="query-pill p-2 rounded"
+                onclick="setAiQuery('I need financial assistance and subsidies for a 45HP tractor and drip irrigation, but my Aadhaar name mismatch blocked my registration. How can I resolve this?')">
+                🚜 Tractor + Drip Subsidy & Aadhaar Block
+                <div id="ai-farmer-context-badge">
+                  <!-- Filled dynamically with farmer persona badge -->
+                </div>
+                <div class="query-pill p-2 rounded"
+                  onclick="setAiQuery('Can I get assistance under PM-KUSUM Component-B for a 5HP solar pump on my 2-hectare land?')">
+                  ☀️ PM-KUSUM Solar Pump Scheme
+                </div>
+                <div class="query-pill p-2 rounded"
+                  onclick="setAiQuery('My PM-KISAN 16th installment was stopped due to land record e-KYC mismatch. What is the statutory unblocking procedure?')">
+                  💰 PM-KISAN Installment Redressal
+                </div>
+                <div class="query-pill p-2 rounded"
+                  onclick="setAiQuery('What special subsidies and input kits are available for small/marginal farmers for organic fertilizer and seed kits?')">
+                  🌾 Organic Inputs & Small Farmer Quotas
+                </div>
+              </div>
+            </div>
+
+            <!-- Consultation Input Box -->
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-body p-4">
+                <form id="aiConsultForm">
+                  <div class="mb-3">
+                    <label for="ai-query-input" class="form-label fw-bold">Farmer Inquiry / Grievance Statement:</label>
+                    <textarea class="form-control" id="ai-query-input" rows="3"
+                      placeholder="State your agricultural need, subsidy question, or administrative grievance in plain language..."
+                      required></textarea>
+                  </div>
+                  <!-- Atmos Main Interaction Body -->
+                  <div class="atmos-body p-4 p-md-5">
+
+                    <!-- Hero Header -->
+                    <div class="text-center mb-4">
+                      <span class="badge atmos-pill-tag mb-2">Autonomous Wing 2 Chief Secretary</span>
+                      <h2 class="display-6 fw-bold text-white mb-2">Interact with Krishi Intelligence & Get Directives
+                        Instantly</h2>
+                      <p class="text-white-50 mx-auto" style="max-width: 660px; font-size: 0.95rem;">
+                        State your agricultural need, subsidy question, or administrative grievance. The engine
+                        autonomously executes multi-turn cross-ministerial RAG deliberation.
+                      </p>
+                    </div>
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="ai-stream-toggle" checked>
+                        <label class="form-check-label small text-muted" for="ai-stream-toggle">
+                          Live Stream Executive Deliberation (SSE)
+                        </label>
+                        <!-- Atmos Floating Prompt Search Box -->
+                        <div class="atmos-prompt-wrapper mx-auto mb-4" style="max-width: 820px;">
+                          <form id="aiConsultForm">
+                            <div class="atmos-input-box p-3 rounded-4 shadow-lg">
+                              <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-stars text-warning fs-5"></i>
+                                <span class="small fw-semibold text-white-50">Inquire across 2,066 Central & State
+                                  Ministries</span>
+                              </div>
+                              <textarea class="form-control atmos-textarea border-0 shadow-none text-white"
+                                id="ai-query-input" rows="3"
+                                placeholder="e.g. I need financial assistance for a 45HP tractor and drip irrigation, but my Aadhaar name mismatch blocked my registration. How can I resolve this and apply?"
+                                required></textarea>
+
+                              <div
+                                class="d-flex flex-wrap justify-content-between align-items-center pt-2 border-top border-white border-opacity-10 mt-2">
+                                <div class="form-check form-switch mb-0">
+                                  <input class="form-check-input" type="checkbox" role="switch" id="ai-stream-toggle"
+                                    checked>
+                                  <label class="form-check-label small text-white-50" for="ai-stream-toggle">
+                                    <i class="bi bi-broadcast me-1 text-success"></i> Live Deliberation Stream (SSE)
+                                  </label>
+                                </div>
+
+                                <button type="submit" class="btn atmos-submit-btn px-4 py-2 rounded-pill fw-bold"
+                                  id="btn-ai-submit">
+                                  <span>Consult Chief Secretary</span>
+                                  <i class="bi bi-arrow-right ms-2"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+
+                        <button type="submit" class="btn btn-success px-4 py-2 fw-semibold shadow-sm"
+                          id="btn-ai-submit">
+                          <i class="bi bi-send-fill me-1"></i> Consult Chief Secretary
+                          <!-- Quick Pill Tags -->
+                          <div class="atmos-quick-pills mx-auto text-center mb-4" style="max-width: 860px;">
+                            <div class="small text-white-50 mb-2">Explore Frequent Statutory Directives:</div>
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                              <button type="button" class="atmos-chip"
+                                onclick="setAiQuery('I need financial assistance and subsidies for a 45HP tractor and drip irrigation, but my Aadhaar name mismatch blocked my registration. How can I resolve this?')">
+                                🚜 Tractor + Drip Subsidy & Aadhaar Block
+                              </button>
+                              <button type="button" class="atmos-chip"
+                                onclick="setAiQuery('Can I get assistance under PM-KUSUM Component-B for a 5HP solar pump on my 2-hectare land?')">
+                                ☀️ PM-KUSUM Solar Pump Scheme
+                              </button>
+                              <button type="button" class="atmos-chip"
+                                onclick="setAiQuery('My PM-KISAN 16th installment was stopped due to land record e-KYC mismatch. What is the statutory unblocking procedure?')">
+                                💰 PM-KISAN Installment Redressal
+                              </button>
+                              <button type="button" class="atmos-chip"
+                                onclick="setAiQuery('What special subsidies and input kits are available for small/marginal farmers for organic fertilizer and seed kits?')">
+                                🌾 Organic Inputs & Small Farmer Quotas
+                              </button>
+                            </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deliberation Thought HUD (<executive_deliberation>) -->
+          <div class="card border-0 shadow-sm mb-4 delib-hud d-none" id="ai-deliberation-hud">
+            <div
+              class="card-header bg-transparent border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center gap-2">
+                <span class="spinner-grow spinner-grow-sm text-success" role="status"></span>
+                <span class="fw-bold" style="color: #79e2a4;"><i
+                    class="bi bi-terminal me-2"></i>&lt;executive_deliberation&gt; — Autonomous Thought HUD</span>
+                <!-- Deliberation Thought HUD (<executive_deliberation>) -->
+                <div class="atmos-hud-console mb-4 d-none" id="ai-deliberation-hud">
+                  <div class="atmos-hud-header px-3 py-2 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="spinner-grow spinner-grow-sm text-success" role="status"></span>
+                      <span class="text-success font-monospace small fw-bold">&lt;executive_deliberation&gt; —
+                        Autonomous Thought HUD</span>
+                    </div>
+                    <span class="badge bg-black text-success border border-success border-opacity-50">Local Gemma 4
+                      Active</span>
+                  </div>
+                  <div class="atmos-hud-body p-3 font-monospace small" id="ai-deliberation-steps"></div>
+                </div>
+                <span class="badge bg-dark text-success border border-success">Gemma 4 Reasoning</span>
+              </div>
+              <div class="card-body p-4 pt-1" id="ai-deliberation-steps">
+                <!-- Live steps or complete deliberation text -->
+              </div>
+            </div>
+
+            <!-- Official Citizen Directive Card -->
+            <div class="card border-0 shadow-sm mb-4 d-none" id="ai-directive-card">
+              <div class="card-body p-4" id="ai-directive-body">
+                <!-- Filled by renderDirectiveOutput() -->
+                <!-- Official Citizen Directive Card (Atmos Telemetry Grid) -->
+                <div class="atmos-directive-card d-none" id="ai-directive-card">
+                  <div id="ai-directive-body"></div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+          <!-- END VIEW 3 -->
+
+
+          <!-- ========================================================== -->
+          <!-- VIEW 4: ALL SCHEMES DIRECTORY (2,066 CATALOG)              -->
+          <!-- ========================================================== -->
+          <div class="portal-view-section d-none" id="view-schemes">
+            <div class="page-header mb-3">
+              <div>
+                <h2 class="page-title fw-bold text-dark"><i class="bi bi-collection-fill text-success me-2"></i>All
+                  India Schemes Directory (2,066 Programs)</h2>
+                <p class="page-subtitle text-muted">Comprehensive official catalog of Central Government and 28 State/UT
+                  statutory programs.</p>
+              </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-body p-4">
+                <p class="text-muted small">
+                  Use the search box and jurisdictional filters above or on the governance dashboard to explore any
+                  program. Click <strong>17-Col Dossier</strong> to view statutory guidelines, eligibility criteria, and
+                  required documents.
+                </p>
+                <button class="btn btn-success btn-sm" onclick="switchView('governance')">
+                  <i class="bi bi-arrow-left me-1"></i> Back to Main Dashboard
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- END VIEW 4 -->
+
+
+          <!-- ========================================================== -->
+          <!-- VIEW 5: SYSTEM DIAGNOSTICS & STACK HEALTH                 -->
+          <!-- ========================================================== -->
+          <div class="portal-view-section d-none" id="view-system">
+            <div class="page-header mb-3">
+              <div>
+                <h2 class="page-title fw-bold text-dark"><i class="bi bi-heart-pulse-fill text-danger me-2"></i>Krishi
+                  Mitra System Architecture & Diagnostics</h2>
+                <p class="page-subtitle text-muted">Status of all 3 microservices running on 100% on-premise local
+                  infrastructure.</p>
+              </div>
+            </div>
+
+            <div class="row g-4">
+              <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                  <div class="card-body">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-database me-2"></i>API 1: PostgreSQL +
+                      pgvector</h5>
+                    <p class="small text-muted mb-3">Port 5432 • HNSW Index • Full 17-column scheme dossiers and farmer
+                      profiles.</p>
+                    <ul class="list-unstyled small">
+                      <li>• Indexed Schemes: <strong>2,066</strong></li>
+                      <li>• FAQ Chunks: <strong>20,110</strong></li>
+                      <li>• Registered Demo Farmers: <strong>1 to 100</strong></li>
+                      <li>• Vector Dimension: <strong>1024</strong> (Halfvec)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                  <div class="card-body">
+                    <h5 class="fw-bold text-primary mb-2"><i class="bi bi-gpu-card me-2"></i>API 2: BGE-M3 Dense Engine
+                    </h5>
+                    <p class="small text-muted mb-3">BAAI/bge-m3 • Hardware Accelerated • Dense semantic cosine
+                      matching.</p>
+                    <ul class="list-unstyled small">
+                      <li>• Precision: <strong>FP16</strong></li>
+                      <li>• HNSW ef_search: <strong>100</strong></li>
+                      <li>• Multi-Lingual: <strong>Kannada, Hindi, English</strong></li>
+                      <li>• Retrieval Latency: <strong>~22ms</strong></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                  <div class="card-body">
+                    <h5 class="fw-bold text-warning mb-2"><i class="bi bi-cpu me-2"></i>API 3: Gemma 4 E4B Reasoning
+                    </h5>
+                    <p class="small text-muted mb-3">llama-server • Port 8080 • Q4_0 GGUF • Autonomous Chief Secretary
+                      Agent.</p>
+                    <ul class="list-unstyled small">
+                      <li>• Context Window: <strong>8192 tokens</strong></li>
+                      <li>• GPU Layers: <strong>99 (Full Offload)</strong></li>
+                      <li>• Temperature: <strong>0.3</strong></li>
+                      <li>• Statutory Output: <strong>Strict 4-State JSON</strong></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END VIEW 5 -->
+
+
+          <!-- Footer -->
+          <footer class="mt-5 pt-4 pb-3 border-top text-center text-muted small">
+            <p class="mb-1">Krishi Mitra — Autonomous AI Chief Secretary & National Government Scheme Reasoning Engine
+            </p>
+            <p class="mb-0 text-secondary" style="font-size: 0.72rem;">Designed for Indian Farmers with Zero
+              Authentication Friction • 100% On-Premise Privacy</p>
+          </footer>
+
+        </div>
+        <!-- ==========================================
+       END: Main Content Area
+       ========================================== -->
+
+
+        <!-- ========================================================== -->
+        <!-- MODAL: FARMER QUICK LOGIN (USER ID ONLY - NO PASSWORD)    -->
+        <!-- ========================================================== -->
+        <div class="modal fade" id="farmerLoginModal" tabindex="-1" aria-labelledby="farmerLoginModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+              <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-flower1 text-success fs-3"></i>
+                  <div>
+                    <h5 class="modal-title fw-bold text-dark mb-0" id="farmerLoginModalLabel">Farmer Direct Login</h5>
+                    <small class="text-success fw-semibold"><i class="bi bi-shield-check me-1"></i> No Password
+                      Required</small>
+                  </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+
+              <div class="modal-body p-4 pt-3">
+                <p class="text-muted small mb-3">
+                  Enter your registered Farmer ID (1–100) to view personalized statutory schemes, quota entitlements,
+                  and consult the AI Chief Secretary.
+                </p>
+
+                <form id="modalFarmerLoginForm">
+                  <div class="mb-3">
+                    <label for="modalFarmerId" class="form-label fw-bold small">Registered Farmer ID (1 - 100)</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
+                      <input type="number" class="form-control" id="modalFarmerId" placeholder="e.g. 1, 2, 3, 7, 10"
+                        min="1" max="100" required autofocus>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-success w-100 fw-bold py-2 shadow-sm rounded-3">
+                    🌾 View My Eligible Schemes
+                  </button>
+                </form>
+
+                <div class="text-center my-3 text-muted small">— Or select a sample farmer profile —</div>
+
+                <div class="d-flex flex-column gap-2">
+                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
+                    onclick="loginFarmerById(1)">
+                    <div><strong>#1: Suresh Hegde</strong> <span class="badge bg-secondary ms-1">Assam</span></div>
+                    <span class="text-muted">SC • 6.37 ha • Rice/Mustard</span>
+                  </div>
+
+                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
+                    onclick="loginFarmerById(2)">
+                    <div><strong>#2: Vijay Gowda</strong> <span class="badge bg-success ms-1">Karnataka</span></div>
+                    <span class="text-muted">OBC • Small (Chitradurga)</span>
+                  </div>
+
+                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
+                    onclick="loginFarmerById(3)">
+                    <div><strong>#3: Ravi Borah</strong> <span class="badge bg-success ms-1">Karnataka</span></div>
+                    <span class="text-muted">SC • Marginal (Vijayapura)</span>
+                  </div>
+
+                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
+                    onclick="loginFarmerById(7)">
+                    <div><strong>#7: Manjunath Joshi</strong> <span
+                        class="badge bg-info text-dark ms-1">Meghalaya</span></div>
+                    <span class="text-muted">ST • Semi-medium</span>
+                  </div>
+
+                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
+                    onclick="loginFarmerById(10)">
+                    <div><strong>#10: Lakshmi Sharma</strong> <span class="badge bg-success ms-1">Karnataka</span></div>
+                    <span class="text-muted">ST • Medium (Chitradurga)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer border-0 pt-0 text-center justify-content-center">
+                <small class="text-muted">Don't have an ID? Any number from 1 to 100 loads an authentic synthetic
+                  profile.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ========================================================== -->
+        <!-- MODAL: 17-COLUMN OFFICIAL SCHEME DOSSIER                  -->
+        <!-- ========================================================== -->
+        <div class="modal fade" id="schemeDossierModal" tabindex="-1" aria-labelledby="schemeDossierModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+              <div class="modal-header bg-light border-0">
+                <div>
+                  <h5 class="modal-title fw-bold text-dark mb-0" id="scheme-dossier-title">Scheme Dossier</h5>
+                  <small class="text-success"><i class="bi bi-shield-check me-1"></i> Official 17-Column Statutory
+                    Record</small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body p-4" id="scheme-dossier-content">
+                <!-- Loaded dynamically -->
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Local Third-Party Scripts (100% Offline Compatible) -->
+        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+
+        <!-- Krishi Mitra Core Application Scripts -->
+        <script src="assets/js/api.js"></script>
+        <script src="assets/js/krishi_dashboard.js"></script>
+
+</body>
+
+</html>

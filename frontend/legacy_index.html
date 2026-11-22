@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a7336">
+  <meta name="description" content="ಕೃಷಿ ಮಿತ್ರ: ಕರ್ನಾಟಕದ ರೈತರಿಗೆ ಸರಕಾರಿ ಯೋಜನೆಗಳ ಸ್ಮಾರ್ಟ್ ಮಾರ್ಗದರ್ಶಿ - Smart Farmer Assistance System for Karnataka">
+  <title>ಕೃಷಿ ಮಿತ್ರ - Krishi Mitra</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Offline Notice Bar -->
+  <div id="offline-alert-bar" class="offline-bar" style="display: none;">
+    <span class="offline-icon">📡</span>
+    <span data-i18n="offlineTitle">ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದೀರಿ (ಆಫ್‌ಲೈನ್ ಮಾಹಿತಿ ಲಭ್ಯವಿದೆ)</span>
+  </div>
+
+  <div class="app-viewport">
+
+    <!-- ========================================================= -->
+    <!-- TOP NAVIGATION BAR (Exact match to reference screenshot)  -->
+    <!-- Top menu: Eligible, Almost Eligible, Saved, Language, Profile -->
+    <!-- ========================================================= -->
+    <header class="site-header">
+      <div class="header-inner">
+        
+        <!-- Brand Logo & Name -->
+        <div class="header-brand" id="brand-home-click">
+          <div class="brand-logo-icon">
+            <svg viewBox="0 0 36 36" fill="none" class="brand-icon-svg">
+              <path d="M12 28C12 28 14 20 18 16C22 12 28 10 28 10C28 10 26 18 22 22C18 26 12 28 12 28Z" fill="#1a7336"/>
+              <path d="M14 28C14 28 10 22 10 17C10 12 15 8 15 8C15 8 18 13 18 18C18 23 14 28 14 28Z" fill="#f59e0b"/>
+              <path d="M16 28C16 28 18 22 22 19C26 16 30 15 30 15C30 15 28 21 24 24C20 27 16 28 16 28Z" fill="#15803d"/>
+              <line x1="8" y1="32" x2="20" y2="16" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="brand-text-col">
+            <h1 class="brand-heading" data-i18n="appName">ಕೃಷಿ ಮಿತ್ರ</h1>
+            <span class="brand-subheading" data-i18n="appSubName">ಕರ್ನಾಟಕ ರೈತ ಯೋಜನೆಗಳ ಮಾರ್ಗದರ್ಶಿ</span>
+          </div>
+        </div>
+
+        <!-- Center & Right Navigation (Eligible, Almost Eligible, Saved, Language, Profile) -->
+        <nav class="header-nav">
+          <!-- Eligible Schemes Link -->
+          <button type="button" class="nav-menu-link active" id="top-nav-eligible" data-tab="eligible">
+            <span data-i18n="navEligible">ಅರ್ಹ ಯೋಜನೆಗಳು</span>
+            <span id="badge-top-eligible" class="nav-count-badge">0</span>
+          </button>
+
+          <!-- Almost Eligible Link -->
+          <button type="button" class="nav-menu-link" id="top-nav-almost" data-tab="almost">
+            <span data-i18n="navAlmost">ಸ್ವಲ್ಪವೇ ಬಾಕಿ ಇರುವುದು</span>
+            <span id="badge-top-almost" class="nav-count-badge badge-amber">0</span>
+          </button>
+
+          <!-- Saved Schemes Link -->
+          <button type="button" class="nav-menu-link" id="top-nav-saved" data-tab="saved">
+            <span data-i18n="navSaved">ಉಳಿಸಿದ ಯೋಜನೆಗಳು</span>
+            <span id="badge-top-saved" class="nav-count-badge badge-muted">0</span>
+          </button>
+
+          <!-- Language Toggle Pill (Exact style as reference image: ಕನ್ನಡ / English) -->
+          <div class="nav-lang-wrap">
+            <button type="button" class="lang-toggle-pill" aria-label="Toggle Kannada and English">
+              <span class="lang-text-display">English</span>
+            </button>
+          </div>
+
+          <!-- Profile Button (Styled like "Register" button in reference screenshot) -->
+          <div class="nav-profile-wrap">
+            <button type="button" id="btn-top-profile" class="btn-profile-pill" aria-label="Farmer Profile Options">
+              <span class="profile-avatar-emoji">👨‍🌾</span>
+              <span class="profile-pill-label" data-i18n="profile">ರೈತರ ವಿವರ</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Mobile Header Actions (visible on small screens) -->
+        <div class="mobile-header-actions">
+          <button type="button" class="lang-toggle-pill mobile-lang-btn">English</button>
+          <button type="button" id="btn-mobile-profile" class="mobile-profile-avatar" aria-label="Profile">
+            👨‍🌾
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- ========================================================= -->
+    <!-- PAGE 1: LOGIN / SIGN UP (Full Screen Farm Field)          -->
+    <!-- Matching the user reference screenshot exactly            -->
+    <!-- ========================================================= -->
+    <section id="view-login" class="view-container login-fullscreen-hero">
+      
+      <!-- Top Floating Navigation (Leaf brand on left, Language capsule on right) -->
+      <div class="login-top-bar">
+        <div class="login-brand-tag">
+          <svg class="login-leaf-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+          <span class="login-brand-title">Krishi Mitra</span>
+        </div>
+
+        <div class="login-lang-capsule">
+          <button type="button" class="login-lang-btn kn active" data-lang="kn">ಕನ್ನಡ</button>
+          <button type="button" class="login-lang-btn en" data-lang="en">English</button>
+        </div>
+      </div>
+
+      <!-- Center Hero Content & Floating White Card -->
+      <div class="login-center-content">
+
+        <!-- Hero Typography -->
+        <div class="login-hero-titles">
+          <h1 class="login-hero-main-title">ಕೃಷಿ ಮಿತ್ರ</h1>
+          <div class="login-hero-spaced-sub">K R I S H I &nbsp; M I T R A</div>
+          <p class="login-hero-tagline" data-i18n="loginTagline">ನಿಮಗಾಗಿ ಇರುವ ಯೋಜನೆಗಳನ್ನು ಹುಡುಕಿ</p>
+        </div>
+
+        <!-- Floating White Card -->
+        <div class="login-card-box">
+
+          <!-- Step 1: Phone input -->
+          <div id="phone-step-container" class="login-step-view">
+            <h2 class="login-card-heading" data-i18n="loginCardTitle">ಲಾಗಿನ್ ಮಾಡಿ</h2>
+            
+            <div class="login-field-group">
+              <label for="login-phone" class="login-field-label" data-i18n="phoneLabel">ಮೊಬೈಲ್ ಸಂಖ್ಯೆ</label>
+              <div class="login-phone-control">
+                <span class="login-phone-prefix">+91</span>
+                <input type="tel" id="login-phone" class="login-phone-input" maxlength="10" placeholder="10 ಅಂಕಿಗಳು" data-i18n-placeholder="phonePlaceholder" inputmode="numeric" pattern="[0-9]*" value="9845012345">
+              </div>
+              <div id="phone-error-msg" class="login-field-error"></div>
+            </div>
+
+            <button type="button" id="btn-send-otp" class="btn-login-submit" data-i18n="getOtpBtn">
+              OTP ಪಡೆಯಿರಿ
+            </button>
+
+            <div class="login-signup-link-wrap">
+              <button type="button" id="btn-login-signup" class="btn-signup-link" data-i18n-html="newHereSignUp">
+                ಹೊಸಬರೇ? <u>ಸೈನ್ ಅಪ್ ಮಾಡಿ</u>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: OTP verification -->
+          <div id="otp-step-container" class="login-step-view" style="display: none;">
+            <h2 class="login-card-heading" data-i18n="otpTitle">ಒಟಿಪಿ ನಮೂದಿಸಿ</h2>
+            
+            <p class="login-otp-notice">
+              <span data-i18n="otpSubtitle">ನಾವು ಈ ಸಂಖ್ಯೆಗೆ ಒಟಿಪಿ ಕಳುಹಿಸಿದ್ದೇವೆ:</span>
+              <strong id="otp-sent-phone">+91 9845012345</strong>
+            </p>
+
+            <div class="login-field-group">
+              <input type="tel" id="login-otp" class="login-otp-input" maxlength="4" placeholder="••••" inputmode="numeric">
+              <div id="otp-error-msg" class="login-field-error"></div>
+            </div>
+
+            <div class="login-demo-otp">
+              <button type="button" id="demo-otp-btn" class="login-quick-otp" data-i18n="demoOtpHint">
+                ⚡ ಪರೀಕ್ಷಾ ಒಟಿಪಿ: 1234 (ಇಲ್ಲಿ ಒತ್ತಿ)
+              </button>
+            </div>
+
+            <button type="button" id="btn-verify-otp" class="btn-login-submit" data-i18n="verifyOtpBtn">
+              ದೃಢೀಕರಿಸಿ & ಮುಂದುವರಿಯಿರಿ
+            </button>
+
+            <div class="login-change-num">
+              <button type="button" id="btn-change-number" class="login-text-btn" data-i18n="changeNumber">
+                ← ಸಂಖ್ಯೆ ಬದಲಾಯಿಸಿ
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Help Link Under Card -->
+        <div class="login-footer-help">
+          <button type="button" id="btn-login-help" class="login-help-anchor" data-i18n-html="helpLink">
+            <u>ಸಹಾಯ</u>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PAGE 2: FARMER PROFILE WIZARD (1 Question Per Screen)     -->
+    <!-- ========================================================= -->
+    <section id="view-wizard" class="view-container">
+      <div class="wizard-container-wrap">
+        <header class="wizard-header">
+          <h2 class="wizard-heading" data-i18n="wizardTitle">ನಿಮ್ಮ ಕೃಷಿ ವಿವರ</h2>
+          <button type="button" class="lang-toggle-pill">English</button>
+        </header>
+
+        <!-- Progress Section -->
+        <div class="wizard-progress-section">
+          <div class="progress-meta-row">
+            <span id="wizard-step-label" class="step-label">ಪ್ರಶ್ನೆ 1 / 10</span>
+            <span class="step-badge">100% ಸುಲಭ & ಸುರಕ್ಷಿತ</span>
+          </div>
+          <div class="progress-track">
+            <div id="wizard-progress-bar" class="progress-fill" style="width: 10%;"></div>
+          </div>
+        </div>
+
+        <!-- Single Question Card Container -->
+        <main class="wizard-main">
+          <div class="wizard-card">
+            <div class="question-header">
+              <h3 id="wizard-q-title" class="q-title">ಪ್ರಶ್ನೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</h3>
+              <p id="wizard-q-sub" class="q-subtitle">ವಿವರಣೆ</p>
+            </div>
+
+            <!-- Voice Mic & Confirmation Area -->
+            <div class="voice-interaction-box">
+              <button type="button" id="wizard-mic-btn" class="big-mic-button" aria-label="Speak your answer">
+                <span class="mic-wave-ring ring-1"></span>
+                <span class="mic-wave-ring ring-2"></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mic-icon-svg">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="23"></line>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+              </button>
+              <p id="voice-status-text" class="voice-status-label" data-i18n="voicePrompt">
+                ದೊಡ್ಡ ಮೈಕ್ ಒತ್ತಿ ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ
+              </p>
+
+              <!-- Mandatory Confirmation Card -->
+              <div id="voice-confirm-box" class="voice-confirm-card" style="display: none;">
+                <div id="voice-heard-text" class="heard-text">ನಾವು ಕೇಳಿಸಿಕೊಂಡಿದ್ದು: ...</div>
+                <p class="confirm-prompt-text" data-i18n="isThisCorrect">ಇದು ಸರಿಯೇ? ದಯವಿಟ್ಟು ದೃಢೀಕರಿಸಿ:</p>
+                <div class="confirm-actions-row">
+                  <button type="button" id="voice-btn-confirm" class="btn-confirm-tick" title="Confirm Answer">
+                    <span class="tick-icon">✔</span>
+                    <span class="btn-text" data-i18n="btnConfirmVoice">ಸರಿ, ದೃಢೀಕರಿಸಿ</span>
+                  </button>
+                  <button type="button" id="voice-btn-retry" class="btn-retry-mic" title="Retry Speaking">
+                    <span class="retry-icon">🔄</span>
+                    <span class="btn-text" data-i18n="btnRetryVoice">ಮತ್ತೊಮ್ಮೆ ಮಾತನಾಡಿ</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="options-divider">
+              <span>ಅಥವಾ ಕೆಳಗಿನ ಆಯ್ಕೆಗಳನ್ನು ಮುಟ್ಟಿ (OR Tap)</span>
+            </div>
+
+            <!-- Dynamic Options Rendering Container -->
+            <div id="wizard-options-container" class="wizard-options-area"></div>
+          </div>
+        </main>
+
+        <!-- Wizard Navigation Bar -->
+        <footer class="wizard-nav-footer">
+          <button type="button" id="wizard-back-btn" class="btn btn-outline btn-lg">← ಹಿಂದೆ</button>
+          <button type="button" id="wizard-next-btn" class="btn btn-primary btn-lg" disabled>ಮುಂದೆ ➔</button>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PAGE 3: MAIN PAGE (Relaxed, Airy, Matching Reference UI)  -->
+    <!-- ========================================================= -->
+    <section id="view-main" class="view-container">
+
+      <!-- Subpage 1: HOME (Hero Banner, Search Card, Schemes) -->
+      <div id="subpage-home" class="main-subpage active">
+        
+        <div class="main-content-layout">
+
+          <!-- ======================================================= -->
+          <!-- 1. HERO BANNER (Matches Reference Image Green Card)     -->
+          <!-- ======================================================= -->
+          <div class="hero-banner-container">
+            <div class="hero-banner-card">
+              <div class="hero-content-col">
+                <!-- Pill Tag at Top Left -->
+                <div class="hero-pill-badge">
+                  <span class="hero-pill-dot"></span>
+                  <span data-i18n="heroBadge">ಕರ್ನಾಟಕ ರೈತ ಕಲ್ಯಾಣ • Krishi Mitra</span>
+                </div>
+
+                <!-- Giant Bold Headline -->
+                <h2 class="hero-headline" data-i18n="heroTitle">
+                  ನಿಮ್ಮ ಜಮೀನಿಗೆ ಸಿಗುವ ಸರಕಾರಿ ಕೃಷಿ ಯೋಜನೆಗಳನ್ನು ಪಡೆಯಿರಿ
+                </h2>
+
+                <!-- Subtitle Paragraph -->
+                <p class="hero-description" data-i18n="heroDesc">
+                  ಕರ್ನಾಟಕದ ರೈತರಿಗೆ ಕೇಂದ್ರ ಮತ್ತು ರಾಜ್ಯ ಸರ್ಕಾರದ ಡಿಬಿಟಿ ನಗದು ನೆರವು, ಬೆಳೆ ವಿಮೆ, ಬಡ್ಡಿ ರಹಿತ ಸಾಲ ಮತ್ತು ಕೃಷಿ ಹೊಂಡ ಸಬ್ಸಿಡಿಗಳನ್ನು ಸುಲಭವಾಗಿ ಒದಗಿಸುವ ಏಕೈಕ ವೇದಿಕೆ.
+                </p>
+
+                <!-- Action Buttons Row -->
+                <div class="hero-actions-row">
+                  <button type="button" id="btn-hero-explore" class="hero-btn-white" data-i18n="heroBtnExplore">
+                    ಅರ್ಹ ಯೋಜನೆಗಳನ್ನು ನೋಡಿ
+                  </button>
+                  <button type="button" id="btn-hero-share" class="hero-btn-outline" data-i18n="heroBtnShare">
+                    <span>📲 ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಿ</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Graphic on Right Side: Tractor Silhouette -->
+              <div class="hero-graphic-col">
+                <svg viewBox="0 0 200 150" fill="none" class="hero-tractor-svg" preserveAspectRatio="xMidYMid meet">
+                  <circle cx="150" cy="110" r="30" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.4)" stroke-width="4"/>
+                  <circle cx="150" cy="110" r="14" fill="rgba(255,255,255,0.25)"/>
+                  <circle cx="65" cy="120" r="18" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.4)" stroke-width="3"/>
+                  <circle cx="65" cy="120" r="8" fill="rgba(255,255,255,0.25)"/>
+                  <path d="M50 115 L145 110 L145 80 L115 80 L115 48 L75 48 L75 80 L50 90 Z" fill="rgba(255,255,255,0.2)"/>
+                  <path d="M115 48 L155 48 L155 80 L115 80 Z" fill="rgba(255,255,255,0.14)"/>
+                  <rect x="120" y="54" width="28" height="22" rx="3" fill="rgba(255,255,255,0.3)"/>
+                  <line x1="68" y1="48" x2="68" y2="30" stroke="rgba(255,255,255,0.45)" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======================================================= -->
+          <!-- 2. DISCOVER / SEARCH CARD (Directly below Hero Banner)  -->
+          <!-- ======================================================= -->
+          <div class="discover-card-container">
+            <div class="discover-search-card">
+              <h3 class="discover-card-heading" data-i18n="discoverTitle">
+                ಲಭ್ಯವಿರುವ ಕೃಷಿ ಯೋಜನೆಗಳನ್ನು ಹುಡುಕಿ
+              </h3>
+
+              <div class="discover-search-form">
+                <!-- Search Input with Icon -->
+                <div class="search-input-wrapper">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon-inside">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="scheme-search-input" class="search-field" placeholder="ಯೋಜನೆಯ ಹೆಸರು ಅಥವಾ ಕೀವರ್ಡ್ (ಉದಾ: PM-KISAN, ವಿಮೆ, ಬೆಳೆ, ಸಾಲ)" data-i18n-placeholder="searchPlaceholder">
+                </div>
+
+                <!-- Category Dropdown -->
+                <div class="search-select-wrapper">
+                  <select id="scheme-category-select" class="search-dropdown">
+                    <option value="all" data-i18n="allCategories">ಎಲ್ಲಾ ಕೃಷಿ ವರ್ಗಗಳು</option>
+                    <option value="income" data-i18n="filterIncome">ನೇರ ಧನಸಹಾಯ (Direct Income)</option>
+                    <option value="insurance" data-i18n="filterInsurance">ಬೆಳೆ ವಿಮೆ (Crop Insurance)</option>
+                    <option value="credit" data-i18n="filterCredit">ಬಡ್ಡಿ ರಹಿತ ಸಾಲ (KCC Credit)</option>
+                    <option value="irrigation" data-i18n="filterIrrigation">ನೀರಾವರಿ & ಹೊಂಡ (Irrigation)</option>
+                    <option value="pension" data-i18n="filterPension">ರೈತ ಪಿಂಚಣಿ (Pension)</option>
+                  </select>
+                </div>
+
+                <!-- Sort / Filter Dropdown -->
+                <div class="search-select-wrapper">
+                  <select id="schemes-sort-select" class="search-dropdown">
+                    <option value="benefit_desc" data-i18n="sortBenefitHigh">ಹೆಚ್ಚು ಮೊತ್ತ ಮೊದಲು</option>
+                    <option value="benefit_asc" data-i18n="sortBenefitLow">ಕಡಿಮೆ ಮೊತ್ತ ಮೊದಲು</option>
+                    <option value="name" data-i18n="sortName">ಯೋಜನೆಯ ಹೆಸರು (ಅ-ಹ)</option>
+                  </select>
+                </div>
+
+                <!-- Search Button (Matching green 'Search Equipment' button) -->
+                <button type="button" id="btn-discover-search" class="btn-discover-action" data-i18n="searchBtn">
+                  ಯೋಜನೆ ಹುಡುಕಿ
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======================================================= -->
+          <!-- 3. CALM & SUBTLE ANNOUNCEMENT TICKER STRIP              -->
+          <!-- ======================================================= -->
+          <div class="tips-ticker-section" id="tips-ticker-strip">
+            <div class="ticker-content-box">
+              <span class="ticker-bell-icon">🔔</span>
+              <span id="ticker-tip-tag" class="ticker-tag urgency-high">ತುರ್ತು ಗಡುವು</span>
+              <span id="ticker-tip-title" class="ticker-title">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span>
+              <span id="ticker-pause-tag" class="ticker-paused-badge" style="display: none;" data-i18n="tipsTickerPaused">ವಿರಾಮಗೊಳಿಸಲಾಗಿದೆ</span>
+            </div>
+            <div id="ticker-dots-container" class="ticker-dots-row"></div>
+          </div>
+
+          <!-- ======================================================= -->
+          <!-- 4. SCHEME SECTION: TABS & FILTER PILLS                  -->
+          <!-- ======================================================= -->
+          <div class="schemes-section-header">
+            <nav class="scheme-tabs-nav">
+              <button type="button" class="scheme-tab-btn active" data-tab="eligible">
+                <span data-i18n="tabEligible">ಅರ್ಹ ಯೋಜನೆಗಳು</span>
+                <span id="badge-tab-eligible" class="tab-badge">0</span>
+              </button>
+              <button type="button" class="scheme-tab-btn" data-tab="almost">
+                <span data-i18n="tabAlmost">ಸ್ವಲ್ಪವೇ ಬಾಕಿ ಇರುವುದು</span>
+                <span id="badge-tab-almost" class="tab-badge badge-warning">0</span>
+              </button>
+              <button type="button" class="scheme-tab-btn" data-tab="saved">
+                <span data-i18n="tabSaved">ಉಳಿಸಿದ ಯೋಜನೆಗಳು</span>
+                <span id="badge-tab-saved" class="tab-badge badge-neutral">0</span>
+              </button>
+            </nav>
+
+            <div class="filter-chips-scroll">
+              <button type="button" class="filter-chip active" data-filter="all" data-i18n="filterAll">ಎಲ್ಲವೂ</button>
+              <button type="button" class="filter-chip" data-filter="income" data-i18n="filterIncome">ನೇರ ಧನಸಹಾಯ</button>
+              <button type="button" class="filter-chip" data-filter="insurance" data-i18n="filterInsurance">ಬೆಳೆ ವಿಮೆ</button>
+              <button type="button" class="filter-chip" data-filter="credit" data-i18n="filterCredit">ಬಡ್ಡಿ ರಹಿತ ಸಾಲ</button>
+              <button type="button" class="filter-chip" data-filter="irrigation" data-i18n="filterIrrigation">ನೀರಾವರಿ & ಹೊಂಡ</button>
+              <button type="button" class="filter-chip" data-filter="pension" data-i18n="filterPension">ರೈತ ಪಿಂಚಣಿ</button>
+            </div>
+          </div>
+
+          <!-- ======================================================= -->
+          <!-- 5. SCHEMES GRID (2 Columns Desktop, 1 Column Mobile)   -->
+          <!-- ======================================================= -->
+          <main class="schemes-main-list" id="schemes-main-anchor">
+            <div id="schemes-list-container" class="schemes-vertical-list"></div>
+
+            <!-- Empty state -->
+            <div id="schemes-empty-state" class="empty-state-box" style="display: none;">
+              <div class="empty-icon">🌾</div>
+              <h3 class="empty-title" data-i18n="emptyEligible">ಯಾವುದೇ ಯೋಜನೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ</h3>
+              <p class="empty-desc" data-i18n="emptyEligibleDesc">ದಯವಿಟ್ಟು ಬೇರೆ ಫಿಲ್ಟರ್ ಆಯ್ಕೆ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಪರೀಕ್ಷಿಸಿ.</p>
+            </div>
+          </main>
+
+        </div>
+      </div>
+
+      <!-- Subpage 2: DOCUMENTS -->
+      <div id="subpage-docs" class="main-subpage">
+        <div class="subpage-wrap">
+          <div class="subpage-header">
+            <h2 class="subpage-title" data-i18n="docsPageTitle">ರೈತರ ಪ್ರಮುಖ ದಾಖಲೆಗಳ ಕೈಪಿಡಿ</h2>
+            <p class="subpage-subtitle" data-i18n="docsPageSubtitle">ಯಾವ ದಾಖಲೆ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ ಮತ್ತು ಹೇಗೆ ಪಡೆಯಬೇಕು ಎಂಬುದರ ಮಾಹಿತಿ</p>
+          </div>
+          <div id="docs-list-container" class="docs-vertical-list"></div>
+        </div>
+      </div>
+
+      <!-- Subpage 3: TIPS & DATES -->
+      <div id="subpage-tips" class="main-subpage">
+        <div class="subpage-wrap">
+          <div class="subpage-header">
+            <h2 class="subpage-title" data-i18n="tipsPageTitle">ಕೃಷಿ ಸಲಹೆಗಳು ಮತ್ತು ಗಡುವುಗಳು</h2>
+            <p class="subpage-subtitle" data-i18n="tipsPageSubtitle">ಕರ್ನಾಟಕ ಕೃಷಿ ಇಲಾಖೆಯ ಪ್ರಮುಖ ಸೂಚನೆಗಳು</p>
+          </div>
+          <div id="tips-full-list" class="tips-vertical-list"></div>
+        </div>
+      </div>
+
+      <!-- Subpage 4: HELP -->
+      <div id="subpage-help" class="main-subpage">
+        <div class="subpage-wrap">
+          <div class="subpage-header">
+            <h2 class="subpage-title" data-i18n="helpPageTitle">ರೈತ ಸಹಾಯವಾಣಿ & ಸಂಪರ್ಕ</h2>
+            <p class="subpage-subtitle" data-i18n="helpPageSubtitle">ಯಾವುದೇ ಯೋಜನೆ ಅಥವಾ ತಾಂತ್ರಿಕ ಸಹಾಯಕ್ಕೆ ಸಂಪರ್ಕಿಸಿ</p>
+          </div>
+          
+          <div class="help-cards-list">
+            <div class="help-card primary">
+              <div class="help-card-icon">📞</div>
+              <div class="help-card-body">
+                <h3 class="help-title" data-i18n="karnatakaRaithaVani">ಕರ್ನಾಟಕ ರೈತವಾಣಿ</h3>
+                <div class="help-phone-number">1800-425-3553</div>
+                <p class="help-timing" data-i18n="helpDeskTiming">ಬೆಳಿಗ್ಗೆ ೬:೦೦ ರಿಂದ ರಾತ್ರಿ ೧೦:೦೦ ರವರೆಗೆ (ಉಚಿತ ಕರೆ)</p>
+                <a href="tel:18004253553" class="btn btn-call">ಈಗಲೇ ಕರೆ ಮಾಡಿ 📞</a>
+              </div>
+            </div>
+
+            <div class="help-card">
+              <div class="help-card-icon">🇮🇳</div>
+              <div class="help-card-body">
+                <h3 class="help-title" data-i18n="kisanCallCenter">ಕಿಸಾನ್ ಕಾಲ್ ಸೆಂಟರ್ (ಟೋಲ್ ಫ್ರೀ)</h3>
+                <div class="help-phone-number">1800-180-1551</div>
+                <p class="help-timing">ಎಲ್ಲಾ ದಿನಗಳಲ್ಲಿ ಲಭ್ಯ (ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಬಹುದು)</p>
+                <a href="tel:18001801551" class="btn btn-outline btn-call">ಕರೆ ಮಾಡಿ 📞</a>
+              </div>
+            </div>
+
+            <div class="help-card">
+              <div class="help-card-icon">🏢</div>
+              <div class="help-card-body">
+                <h3 class="help-title" data-i18n="nearestOffice">ನಿಮ್ಮ ಹತ್ತಿರದ ಕೃಷಿ ಕಚೇರಿ:</h3>
+                <p class="help-office-desc" data-i18n="nearestOfficeDesc">
+                  ನಿಮ್ಮ ಹೋಬಳಿಯ ರೈತ ಸಂಪರ್ಕ ಕೇಂದ್ರ (RSK) ಅಥವಾ ತಾಲೂಕು ಸಹಾಯಕ ಕೃಷಿ ನಿರ್ದೇಶಕರ ಕಚೇರಿಗೆ ಭೇಟಿ ನೀಡಿ.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Bottom Navigation Bar -->
+      <nav class="bottom-navbar">
+        <button type="button" class="bottom-nav-item active" data-tab="home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span data-i18n="navHome">ಮುಖಪುಟ</span>
+        </button>
+
+        <button type="button" class="bottom-nav-item" data-tab="docs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          <span data-i18n="navDocs">ದಾಖಲೆಗಳು</span>
+        </button>
+
+        <button type="button" class="bottom-nav-item" data-tab="tips">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span data-i18n="navTips">ಸಲಹೆಗಳು</span>
+        </button>
+
+        <button type="button" class="bottom-nav-item" data-tab="help">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span data-i18n="navHelp">ಸಹಾಯ</span>
+        </button>
+      </nav>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: "What You Need" Scheme Detail Sheet                -->
+    <!-- ========================================================= -->
+    <div id="scheme-detail-modal" class="modal-backdrop">
+      <div id="modal-overlay-bg" class="modal-overlay"></div>
+      <div class="modal-sheet">
+        <div class="modal-header">
+          <div class="modal-title-col">
+            <span id="modal-scheme-status-tag" class="badge badge-eligible">ಅರ್ಹರು</span>
+            <h3 id="modal-scheme-title" class="modal-scheme-title">ಯೋಜನೆಯ ಹೆಸರು</h3>
+            <p id="modal-scheme-dept" class="modal-scheme-dept">ಇಲಾಖೆ</p>
+          </div>
+          <button type="button" id="modal-btn-close" class="btn-close-modal" aria-label="Close modal">✕</button>
+        </div>
+
+        <div class="modal-body-scroll">
+          <div class="modal-benefit-box">
+            <span class="benefit-sub" data-i18n="schemeBenefitLabel">ಲಭ್ಯವಿರುವ ಆರ್ಥಿಕ ಸೌಲಭ್ಯ:</span>
+            <div id="modal-scheme-benefit" class="benefit-val">₹೬,೦೦೦ / ವರ್ಷಕ್ಕೆ</div>
+          </div>
+
+          <div class="modal-section">
+            <h4 class="section-heading" data-i18n="docChecklistTitle">ಅಗತ್ಯ ದಾಖಲೆಗಳ ಪರಿಶೀಲನಾ ಪಟ್ಟಿ</h4>
+            <p class="section-sub" data-i18n="docChecklistSub">ನಿಮ್ಮ ಬಳಿ ಇರುವ ದಾಖಲೆಗಳ ಮೇಲೆ ಟಿಕ್ (✔) ಮಾಡಿ:</p>
+            <div id="modal-doc-checklist" class="doc-checklist-group"></div>
+          </div>
+
+          <div class="modal-section">
+            <h4 class="section-heading" data-i18n="officialSiteStepsTitle">ಅಧಿಕೃತ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಏನು ಮಾಡಬೇಕು?</h4>
+            <ol id="modal-steps-list" class="steps-numbered-list"></ol>
+            <p class="notice-callout" data-i18n="externalSiteNotice">
+              ಗಮನಿಸಿ: ಅಧಿಕೃತ ಸರಕಾರಿ ವೆಬ್‌ಸೈಟ್ ಹೊಸ ವಿಂಡೋದಲ್ಲಿ ತೆರೆಯುತ್ತದೆ. ಅರ್ಜಿ ಸಲ್ಲಿಸಿದ ನಂತರ ವಾಪಸ್ ಬಂದು 'ಅರ್ಜಿ ಸಲ್ಲಿಸಲಾಗಿದೆ' ಒತ್ತಿ.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" id="modal-btn-go-site" class="btn btn-primary btn-block" data-i18n="btnGoToSite">
+            ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ಗೆ ಹೋಗಿ ➔
+          </button>
+          <button type="button" id="modal-btn-mark-applied" class="btn btn-outline btn-block" data-i18n="btnMarkApplied">
+            ಅರ್ಜಿ ಸಲ್ಲಿಸಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- DRAWER: Profile Menu & Options                            -->
+    <!-- ========================================================= -->
+    <div id="profile-drawer" class="drawer-container">
+      <div id="drawer-overlay" class="drawer-overlay"></div>
+      <div class="drawer-content">
+        <div class="drawer-header">
+          <div class="user-avatar-circle">👨‍🌾</div>
+          <div class="user-meta">
+            <h3 class="user-name" data-i18n="profile">ರೈತರ ವಿವರ</h3>
+            <p id="profile-drawer-phone" class="user-phone">+91 9845012345</p>
+          </div>
+          <button type="button" id="btn-close-drawer" class="btn-close-drawer">✕</button>
+        </div>
+
+        <div class="drawer-body">
+          <div id="profile-drawer-summary" class="profile-chips-grid"></div>
+
+          <div class="drawer-menu-list">
+            <button type="button" id="btn-edit-profile-menu" class="drawer-menu-btn">
+              <span class="menu-icon">✏️</span>
+              <span data-i18n="editProfileTitle">ನಿಮ್ಮ ಕೃಷಿ ಮಾಹಿತಿ ತಿದ್ದುಪಡಿ</span>
+            </button>
+
+            <button type="button" id="btn-logout-menu" class="drawer-menu-btn">
+              <span class="menu-icon">🚪</span>
+              <span data-i18n="logout">ನಿರ್ಗಮಿಸಿ (Logout)</span>
+            </button>
+
+            <button type="button" id="btn-delete-data-menu" class="drawer-menu-btn danger">
+              <span class="menu-icon">🗑️</span>
+              <span data-i18n="deleteData">ನನ್ನ ಮಾಹಿತಿ ಅಳಿಸಿ</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: Edit Profile Modal (Updates schemes immediately)   -->
+    <!-- ========================================================= -->
+    <div id="edit-profile-modal" class="modal-backdrop">
+      <div class="modal-overlay" onclick="window.app.closeEditProfileModal()"></div>
+      <div class="modal-sheet">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-scheme-title" data-i18n="editProfileTitle">ನಿಮ್ಮ ಕೃಷಿ ಮಾಹಿತಿ ತಿದ್ದುಪಡಿ</h3>
+            <p class="modal-scheme-dept" data-i18n="editProfileSub">ಯಾವುದೇ ಮಾಹಿತಿ ಬದಲಿಸಿದರೆ ಯೋಜನೆಗಳು ನವೀಕರಣಗೊಳ್ಳುತ್ತವೆ</p>
+          </div>
+          <button type="button" id="btn-close-edit-modal" class="btn-close-modal">✕</button>
+        </div>
+
+        <div class="modal-body-scroll">
+          <div id="edit-profile-fields" class="edit-fields-list"></div>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" id="btn-save-edit-profile" class="btn btn-primary btn-block" data-i18n="btnSaveProfile">
+            ಮಾಹಿತಿ ಉಳಿಸಿ ✔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: Login Help Modal                                   -->
+    <!-- ========================================================= -->
+    <div id="login-help-modal" class="modal-backdrop">
+      <div class="modal-overlay" id="login-help-modal-overlay"></div>
+      <div class="modal-sheet modal-help-sheet">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-scheme-title" data-i18n="helpModalTitle">ರೈತ ಸಹಾಯವಾಣಿ (Farmer Helpline)</h3>
+            <p class="modal-scheme-dept">ಕೃಷಿ ಮಿತ್ರ - 24x7 ರೈತ ನೆರವು</p>
+          </div>
+          <button type="button" id="btn-close-login-help" class="btn-close-modal">✕</button>
+        </div>
+        <div class="modal-body-content" style="padding: 20px; line-height: 1.7; font-size: 1.05rem;">
+          <div class="helpline-badge" style="background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <p style="margin: 0 0 8px; font-weight: 700; color: #1b5e20;">📞 ಕಿಸಾನ್ ಕಾಲ್ ಸೆಂಟರ್ (Kisan Call Center):</p>
+            <p style="margin: 0 0 4px; font-size: 1.25rem; font-weight: 800; color: #15803d;"><a href="tel:18001801551" style="color: inherit; text-decoration: none;">1800-180-1551</a> (ಉಚಿತ ಕರೆ)</p>
+            <p style="margin: 0; font-size: 0.88rem; color: #4b5563;">ಬೆಳಿಗ್ಗೆ 6:00 ರಿಂದ ರಾತ್ರಿ 10:00 ವರೆಗೆ ಕನ್ನಡದಲ್ಲಿ ಮಾಹಿತಿ</p>
+          </div>
+          <div class="helpline-badge" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <p style="margin: 0 0 8px; font-weight: 700; color: #1b5e20;">🏛️ ಕರ್ನಾಟಕ ರೈತ ಸಹಾಯವಾಣಿ:</p>
+            <p style="margin: 0 0 4px; font-size: 1.25rem; font-weight: 800; color: #15803d;"><a href="tel:08022212861" style="color: inherit; text-decoration: none;">080-22212861</a></p>
+            <p style="margin: 0; font-size: 0.88rem; color: #4b5563;">ಕೃಷಿ ಇಲಾಖೆ, ಬೆಂಗಳೂರು</p>
+          </div>
+          <p style="font-size: 0.95rem; color: #4b5563;">ವೆಬ್‌ಸೈಟ್: <a href="https://raithamitra.karnataka.gov.in" target="_blank" style="color: #15803d; font-weight: 600;">raithamitra.karnataka.gov.in</a></p>
+        </div>
+        <div class="modal-footer-actions">
+          <button type="button" id="btn-close-login-help-action" class="btn btn-primary btn-block" data-i18n="helpCloseBtn">
+            ಮುಚ್ಚಿ (Close)
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End .app-viewport -->
+
+  <!-- Scripts -->
+  <script src="js/translations.js"></script>
+  <script src="js/mockData.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

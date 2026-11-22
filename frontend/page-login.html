@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Direct Login — Krishi Mitra AI Portal</title>
+    
+    <!-- SEO Optimization -->
+    <meta name="description" content="Direct Farmer Access for Krishi Mitra - No Password Required">
+    <meta name="author" content="Krishi Mitra National Governance Team">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.ico">
+    
+    <!-- Local Third-Party Libraries (100% Offline Compatible) -->
+    <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css">
+    
+    <!-- Main Design System & Custom Stylesheet -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        .farmer-demo-chip {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.82rem;
+            border: 1px solid rgba(7, 47, 31, 0.2);
+            background: #f8faf8;
+            color: #072F1F;
+        }
+        .farmer-demo-chip:hover {
+            background: #072F1F;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(7, 47, 31, 0.15);
+        }
+        .badge-no-pass {
+            background: rgba(180, 241, 5, 0.2);
+            color: #1a4d00;
+            border: 1px solid #99d604;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         START: Authentication Container & Login Card
+         ========================================== -->
+    <div class="login-wrapper">
+        <div class="login-bg-shape login-bg-shape-1"></div>
+        <div class="login-bg-shape login-bg-shape-2"></div>
+        
+        <div class="login-card" style="max-width: 520px;">
+            
+            <!-- Brand Identity -->
+            <a href="index.html" class="login-brand text-decoration-none">
+                <i class="bi bi-flower1 text-success"></i>
+                <span>Krishi Mitra</span>
+            </a>
+            
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                <span class="badge badge-no-pass px-2 py-1 rounded-pill">
+                    <i class="bi bi-shield-check me-1"></i> Farmer Direct Access — No Password Required
+                </span>
+            </div>
+
+            <p class="login-subtitle mb-4">
+                Enter your registered Farmer ID (1–100) to view personalized statutory schemes, affirmative quotas, and consult the AI Chief Secretary.
+            </p>
+            
+            <!-- Alert message placeholder -->
+            <div id="login-alert" class="alert alert-danger d-none py-2 px-3 small" role="alert"></div>
+
+            <!-- Login Form (FARMER USER ID ONLY - NO PASSWORD) -->
+            <form id="farmerLoginForm" class="needs-validation" novalidate>
+                
+                <!-- Farmer ID Input Group -->
+                <div class="login-form-group mb-3">
+                    <label for="farmerId" class="login-form-label fw-bold">
+                        <i class="bi bi-person-badge me-1"></i> Registered Farmer ID
+                    </label>
+                    <div class="login-input-group">
+                        <i class="bi bi-hash input-icon"></i>
+                        <input 
+                            type="number" 
+                            id="farmerId" 
+                            class="login-input" 
+                            placeholder="Enter Farmer ID (e.g. 1, 2, 3, 7...)" 
+                            min="1" 
+                            max="100" 
+                            required 
+                            autofocus
+                        >
+                    </div>
+                    <div class="form-text text-muted small mt-1">
+                        Zero authentication barriers: verification is anchored directly to your verified land record profile.
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn-login w-100" id="btn-submit">
+                    <span id="btn-text">🌾 Sign In to Farmer Portal</span>
+                    <span id="btn-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    <i class="bi bi-arrow-right ms-2" id="btn-icon"></i>
+                </button>
+                
+            </form>
+            
+            <!-- Divider -->
+            <div class="login-divider my-4">Quick Demo Profiles (Click to Load)</div>
+            
+            <!-- Quick Demo Selectors -->
+            <div class="d-flex flex-column gap-2 mb-3">
+                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(1)">
+                    <div>
+                        <strong>#1: Suresh Hegde</strong> 
+                        <span class="badge bg-secondary ms-1">Assam</span>
+                    </div>
+                    <small class="text-muted">SC • 6.37 ha • Rice/Mustard</small>
+                </div>
+
+                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(2)">
+                    <div>
+                        <strong>#2: Vijay Gowda</strong> 
+                        <span class="badge bg-success ms-1">Karnataka</span>
+                    </div>
+                    <small class="text-muted">OBC • Small (Chitradurga)</small>
+                </div>
+
+                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(3)">
+                    <div>
+                        <strong>#3: Ravi Borah</strong> 
+                        <span class="badge bg-success ms-1">Karnataka</span>
+                    </div>
+                    <small class="text-muted">SC • Marginal (Vijayapura)</small>
+                </div>
+
+                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(7)">
+                    <div>
+                        <strong>#7: Manjunath Joshi</strong> 
+                        <span class="badge bg-info text-dark ms-1">Meghalaya</span>
+                    </div>
+                    <small class="text-muted">ST • Semi-medium</small>
+                </div>
+
+                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(10)">
+                    <div>
+                        <strong>#10: Lakshmi Sharma</strong> 
+                        <span class="badge bg-success ms-1">Karnataka</span>
+                    </div>
+                    <small class="text-muted">ST • Medium (Chitradurga)</small>
+                </div>
+            </div>
+            
+            <!-- Back to Public Dashboard -->
+            <p class="login-footer-text mt-3 text-center">
+                Want to view national statistics first? 
+                <a href="index.html" class="fw-semibold text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i> Public Governance Dashboard
+                </a>
+            </p>
+            
+        </div>
+    </div>
+    <!-- END: Authentication Container -->
+
+    <!-- Local Third-Party Libraries -->
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+</body>
+</html>

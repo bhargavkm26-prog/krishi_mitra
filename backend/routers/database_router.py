@@ -50,17 +50,23 @@ def database_health():
 
 @router.get("/schemes", response_model=SchemeListResponse)
 def list_schemes(
+    search: Optional[str] = Query(None, description="Search query for scheme name or keyword"),
     state: Optional[str] = Query(None, description="Filter by state/UT"),
     ministry: Optional[str] = Query(None, description="Filter by ministry"),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0)
 ):
-    """Retrieve paginated government schemes with optional geographic/ministry filters."""
+    """Retrieve paginated government schemes with optional search and geographic/ministry filters."""
     conn = get_connection()
     try:
         with conn.cursor() as cur:
             base_query = "FROM public.schemes WHERE 1=1"
             params = []
+
+            if search:
+                base_query += " AND (scheme_name ILIKE %s OR scheme_slug ILIKE %s OR tags::text ILIKE %s)"
+                term = f"%{search}%"
+                params.extend([term, term, term])
 
             if state:
                 base_query += " AND (state_ut_ministry ILIKE %s OR level = 'Central Government')"

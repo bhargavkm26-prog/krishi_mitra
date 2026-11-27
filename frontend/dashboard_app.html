@@ -1,1138 +1,759 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" id="htmlRoot">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Krishi Mitra — Autonomous AI Chief Secretary & Farmer Scheme Gateway</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#030704">
+  <meta name="description" content="Krishi Mitra: Sovereign Agrarian Intelligence &amp; Governance OS — Smart Scheme Matching for Indian Farmers">
+  <title>Krishi Mitra — Sovereign Agrarian Intelligence &amp; Governance OS</title>
+  <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
 
-  <!-- SEO Optimization -->
-  <meta name="description"
-    content="Krishi Mitra: Autonomous National Government Scheme & Statutory Entitlement Gateway for Indian Farmers">
-  <meta name="author" content="Krishi Mitra National Governance Team">
+  <!-- Google Fonts matching index.html -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="assets/images/favicon.ico">
-
-  <!-- Local Third-Party Libraries (100% Offline Compatible) -->
-  <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css">
-  <link rel="stylesheet" href="assets/libs/apexcharts/apexcharts.css">
-  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
-
-  <!-- Main Design System & Custom Stylesheet -->
-  <link rel="stylesheet" href="assets/css/main.css">
-  <style>
-    :root {
-      --km-primary: #072F1F;
-      --km-accent: #B4F105;
-      --km-dark: #051C12;
-      --km-light: #F4F8F5;
-    }
-
-    .hero-banner {
-      background: linear-gradient(135deg, rgba(7, 47, 31, 0.95) 0%, rgba(5, 28, 18, 0.98) 100%), url('assets/farm-hero.jpg');
-      background-size: cover;
-      background-position: center;
-      border-radius: 16px;
-      color: #fff;
-    }
-
-    .query-pill {
-      cursor: pointer;
-      font-size: 0.8rem;
-      border: 1px solid rgba(7, 47, 31, 0.2);
-      background: #f8faf8;
-      color: #072F1F;
-      transition: all 0.2s;
-    }
-
-    .query-pill:hover {
-      background: #072F1F;
-      color: #fff;
-      transform: translateY(-2px);
-    }
-
-    .delib-hud {
-      background: #0d1612;
-      border: 1px solid #1a3d2e;
-      color: #79e2a4;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      border-radius: 8px;
-    }
-
-    .delib-hud pre {
-      color: #9feec1;
-      margin-bottom: 0;
-    }
-
-    .scheme-card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .scheme-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
-    }
-
-    .demo-login-chip {
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid #d4e8da;
-      background: #fff;
-    }
-
-    .demo-login-chip:hover {
-      background: #072F1F;
-      color: #fff;
-      border-color: #072F1F;
-    }
-
-    .nav-badge-pill {
-      font-size: 0.76rem;
-      padding: 0.35rem 0.65rem;
-      border-radius: 20px;
-    }
-
-    /* Atmos System Glassmorphism Styling */
-    .atmos-cockpit-window {
-      background: radial-gradient(120% 120% at 50% 0%, #0c261b 0%, #05140d 100%);
-      border: 1px solid rgba(180, 241, 5, 0.25);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-
-    .atmos-titlebar {
-      background: rgba(4, 15, 10, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .atmos-dots .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .dot-red {
-      background: #ff5f56;
-    }
-
-    .dot-yellow {
-      background: #ffbd2e;
-    }
-
-    .dot-green {
-      background: #27c93f;
-    }
-
-    .atmos-status-pill {
-      background: rgba(0, 0, 0, 0.4);
-      font-size: 0.75rem;
-      padding: 0.35rem 0.65rem;
-      border-radius: 20px;
-    }
-
-    .pulse-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 4px;
-      animation: pulse 1.8s infinite;
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(39, 201, 63, 0.7);
-      }
-
-      70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 6px rgba(39, 201, 63, 0);
-      }
-
-      100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(39, 201, 63, 0);
-      }
-    }
-
-    .atmos-pill-tag {
-      background: rgba(180, 241, 5, 0.12);
-      color: #b4f105;
-      border: 1px solid rgba(180, 241, 5, 0.3);
-      font-size: 0.75rem;
-      letter-spacing: 0.5px;
-      padding: 0.35rem 0.85rem;
-      border-radius: 30px;
-      font-weight: 600;
-    }
-
-    .atmos-input-box {
-      background: rgba(6, 21, 14, 0.85);
-      border: 1px solid rgba(180, 241, 5, 0.3);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      backdrop-filter: blur(16px);
-    }
-
-    .atmos-input-box:focus-within {
-      border-color: #b4f105;
-      box-shadow: 0 0 25px rgba(180, 241, 5, 0.25), 0 10px 40px rgba(0, 0, 0, 0.5) !important;
-    }
-
-    .atmos-textarea {
-      background: transparent !important;
-      color: #fff !important;
-      font-size: 1rem;
-      line-height: 1.5;
-      resize: vertical;
-    }
-
-    .atmos-textarea::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    .atmos-submit-btn {
-      background: linear-gradient(135deg, #b4f105 0%, #7ec200 100%);
-      color: #051c12;
-      border: none;
-      font-weight: 700;
-      transition: all 0.2s ease;
-    }
-
-    .atmos-submit-btn:hover {
-      background: linear-gradient(135deg, #c4ff19 0%, #90dc02 100%);
-      color: #000;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(180, 241, 5, 0.4);
-    }
-
-    .atmos-chip {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #d1d5db;
-      font-size: 0.8rem;
-      padding: 0.4rem 0.85rem;
-      border-radius: 20px;
-      transition: all 0.2s ease;
-    }
-
-    .atmos-chip:hover {
-      background: rgba(180, 241, 5, 0.15);
-      border-color: #b4f105;
-      color: #ffffff;
-      transform: translateY(-2px);
-    }
-
-    .atmos-hud-console {
-      background: #040d08;
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .atmos-hud-header {
-      background: rgba(0, 0, 0, 0.5);
-      border-bottom: 1px solid rgba(34, 197, 94, 0.15);
-    }
-
-    .atmos-hud-body {
-      color: #86efac;
-      max-height: 280px;
-      overflow-y: auto;
-    }
-
-    .atmos-telemetry-card {
-      background: rgba(8, 26, 17, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      padding: 1.25rem;
-      backdrop-filter: blur(12px);
-      transition: all 0.2s;
-    }
-
-    .atmos-telemetry-card:hover {
-      border-color: rgba(180, 241, 5, 0.4);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .atmos-step-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(180, 241, 5, 0.15);
-      border: 1px solid #b4f105;
-      color: #b4f105;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  </style>
+  <!-- Exact legacy layout CSS + Font Awesome + Obsidian Dark Theme matching index.html -->
+  <link rel="stylesheet" href="css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/krishi-nexus.css?v=4.6">
+  <link rel="stylesheet" href="css/obsidian-dashboard.css?v=1.0">
 </head>
-
 <body>
 
-  <!-- ==========================================
-       START: Sidebar Component
-       ========================================== -->
-  <div class="sidebar-wrapper" id="sidebar">
-    <!-- Brand Identity -->
-    <a href="javascript:void(0)" onclick="switchView('governance')" class="sidebar-brand text-decoration-none">
-      <i class="bi bi-flower1 text-success fs-4"></i>
-      <div class="d-flex flex-column text-start ms-2">
-        <span class="fw-bold fs-5 leading-none" style="color: #fff;">Krishi Mitra</span>
-        <span class="text-white-50" style="font-size: 0.7rem; letter-spacing: 0.5px;">ಕೃಷಿ ಮಿತ್ರ • AI SECRETARY</span>
-      </div>
-    </a>
-
-    <!-- Navigation Menu -->
-    <div class="flex-grow-1 overflow-y-auto">
-
-      <!-- Group: Main Platform -->
-      <div class="sidebar-menu-section">
-        <div class="sidebar-menu-title">Executive Portals</div>
-        <ul class="sidebar-menu-list">
-
-          <li class="sidebar-menu-item">
-            <a href="javascript:void(0)" class="sidebar-menu-link active" data-view="governance"
-              title="Governance Dashboard">
-              <i class="bi bi-grid-fill"></i>
-              <span>Governance Dashboard</span>
-            </a>
-          </li>
-
-          <li class="sidebar-menu-item">
-            <a href="javascript:void(0)" class="sidebar-menu-link" data-view="farmer"
-              title="Personalized Farmer Portal">
-              <i class="bi bi-person-badge-fill text-warning"></i>
-              <span>Farmer Portal & Schemes</span>
-            </a>
-          </li>
-
-          <li class="sidebar-menu-item">
-            <a href="javascript:void(0)" class="sidebar-menu-link" data-view="ai-secretary"
-              title="AI Chief Secretary Consultation">
-              <i class="bi bi-robot text-info"></i>
-              <span>AI Chief Secretary</span>
-            </a>
-          </li>
-
-          <li class="sidebar-menu-item">
-            <a href="javascript:void(0)" class="sidebar-menu-link" data-view="schemes"
-              title="All 2,066 Schemes Catalog">
-              <i class="bi bi-collection-fill text-success"></i>
-              <span>Schemes Directory</span>
-            </a>
-          </li>
-
-        </ul>
-      </div>
-
-      <!-- Group: System Status -->
-      <div class="sidebar-menu-section">
-        <div class="sidebar-menu-title">Governance Diagnostics</div>
-        <ul class="sidebar-menu-list">
-          <li class="sidebar-menu-item">
-            <a href="javascript:void(0)" class="sidebar-menu-link" data-view="system" title="System Diagnostics">
-              <i class="bi bi-heart-pulse-fill text-danger"></i>
-              <span>System Diagnostics</span>
-            </a>
-          </li>
-          <li class="sidebar-menu-item">
-            <a href="page-login.html" class="sidebar-menu-link" title="Direct Login Page">
-              <i class="bi bi-box-arrow-in-right"></i>
-              <span>Login Screen (No Password)</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-
-    </div>
-
-    <!-- Sidebar Profile Card (Dynamic Footer) -->
-    <div class="sidebar-profile" id="sidebar-profile-card">
-      <img src="assets/images/avatar.png" alt="Citizen" class="sidebar-profile-img">
-      <div class="sidebar-profile-info">
-        <div class="sidebar-profile-name">Citizen / Guest</div>
-        <div class="sidebar-profile-email">Public Access Mode</div>
-      </div>
-    </div>
+  <!-- Ambient Aurora Glows (matching index.html) -->
+  <div class="km-aurora-bg" aria-hidden="true">
+    <div class="aur aur-a" style="top:-80px; left:-120px;"></div>
+    <div class="aur aur-b" style="top:180px; right:-140px;"></div>
+    <div class="aur aur-gold" style="bottom:-60px; left:48%; transform:translateX(-50%); opacity:0.28;"></div>
   </div>
-  <!-- ==========================================
-       END: Sidebar Component
-       ========================================== -->
 
+  <!-- Offline Notice Bar -->
+  <div id="offline-alert-bar" class="offline-bar" style="display: none;">
+    <span class="offline-icon">📡</span>
+    <span data-i18n="offlineTitle">You are currently offline</span>
+  </div>
 
-  <!-- ==========================================
-       START: Main Content Area
-       ========================================== -->
-  <div class="main-wrapper">
+  <div class="app-viewport">
 
-    <!-- START: Top Navbar Component -->
-    <header class="navbar-custom">
-      <div class="navbar-left">
-        <!-- Desktop sidebar toggle -->
-        <button class="btn-desktop-toggle d-none d-xl-flex align-items-center justify-content-center me-3"
-          id="desktop-sidebar-toggle" aria-label="Minimize Sidebar">
-          <i class="bi bi-chevron-bar-left"></i>
-        </button>
+    <!-- ========================================================= -->
+    <!-- TOP NAVIGATION BAR (Exact match to legacy_index.html)     -->
+    <!-- ========================================================= -->
+    <header class="site-header">
+      <div class="header-inner">
 
-        <!-- Mobile sidebar toggle -->
-        <button class="sidebar-toggle-btn me-2" id="sidebar-toggle" aria-label="Toggle Navigation">
-          <i class="bi bi-list"></i>
-        </button>
-
-        <!-- Live Subsystem Health Badges in Navbar -->
-        <div class="d-none d-lg-flex align-items-center gap-2 ms-2">
-          <span class="badge bg-light text-dark border nav-badge-pill" id="badge-db-status">
-            <i class="bi bi-database me-1 text-success"></i> PostgreSQL: <strong>2,066</strong> Schemes
-          </span>
-          <span class="badge bg-light text-dark border nav-badge-pill" id="badge-gemma-status">
-            <i class="bi bi-cpu me-1 text-primary"></i> Gemma 4: <strong>Online (8080)</strong>
-          </span>
-        </div>
-      </div>
-
-      <!-- Mid navbar: quick search -->
-      <div class="navbar-search-wrapper">
-        <input type="text" class="navbar-search-input" placeholder="Search across 2,066 Central & State schemes..."
-          id="global-search-input"
-          onkeyup="if(event.key==='Enter'){ switchView('schemes'); document.getElementById('schemes-search-input').value=this.value; loadSchemesCatalog(); }">
-        <button class="navbar-search-btn" aria-label="Search"
-          onclick="switchView('schemes'); document.getElementById('schemes-search-input').value=document.getElementById('global-search-input').value; loadSchemesCatalog();">
-          <i class="bi bi-search"></i>
-        </button>
-      </div>
-
-      <!-- Right actions: Auth button or Profile dropdown -->
-      <div class="navbar-actions" id="navbar-auth-section">
-        <!-- Will be populated dynamically by krishi_dashboard.js -->
-        <button
-          class="btn btn-sm btn-success d-flex align-items-center gap-2 fw-semibold px-3 py-2 shadow-sm rounded-pill"
-          onclick="showLoginModal()">
-          <i class="bi bi-person-check-fill"></i>
-          <span>Farmer Login (No Password)</span>
-        </button>
-      </div>
-    </header>
-    <!-- END: Top Navbar Component -->
-
-
-    <!-- ========================================================== -->
-    <!-- VIEW 1: PRE-LOGIN / PUBLIC GOVERNANCE DASHBOARD            -->
-    <!-- ========================================================== -->
-    <div class="portal-view-section" id="view-governance">
-
-      <!-- START: Hero Banner -->
-      <div class="hero-banner p-4 p-md-5 mb-4 shadow-sm">
-        <div class="row align-items-center">
-          <div class="col-lg-8">
-            <div
-              class="d-inline-flex align-items-center gap-2 bg-success bg-opacity-25 border border-success border-opacity-50 text-white px-3 py-1 rounded-pill small mb-3">
-              <i class="bi bi-shield-check text-warning"></i>
-              <span>National Autonomous Statutory Gateway</span>
-            </div>
-            <h1 class="display-6 fw-bold mb-3">Krishi Mitra: AI Chief Secretary & Farmer Scheme Gateway</h1>
-            <p class="lead fs-6 text-white-50 mb-4" style="max-width: 680px;">
-              An autonomous intelligence engine integrating PostgreSQL + pgvector, dense neural RAG, and an on-premise
-              Gemma 4 cognitive secretary. Instantaneous statutory 4-state eligibility checks across 2,066 Central and
-              28 State Government schemes.
-            </p>
-            <div class="d-flex flex-wrap gap-3">
-              <button class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow" onclick="showLoginModal()">
-                <i class="bi bi-person-badge me-2"></i> Farmer Direct Login (No Password)
-              </button>
-              <button class="btn btn-outline-light px-4 py-2 rounded-pill" onclick="switchView('ai-secretary')">
-                <i class="bi bi-robot me-2"></i> Consult Chief Secretary
-              </button>
-              <button class="btn btn-outline-light px-4 py-2 rounded-pill" onclick="switchView('schemes')">
-                <i class="bi bi-search me-2"></i> Browse 2,066 Schemes
-              </button>
-            </div>
+        <!-- Brand Logo & Name -->
+        <div class="header-brand" id="brand-home-click">
+          <div class="brand-logo-icon">
+            <svg viewBox="0 0 36 36" fill="none" class="brand-icon-svg">
+              <path d="M12 28C12 28 14 20 18 16C22 12 28 10 28 10C28 10 26 18 22 22C18 26 12 28 12 28Z" fill="#021a0f"/>
+              <path d="M14 28C14 28 10 22 10 17C10 12 15 8 15 8C15 8 18 13 18 18C18 23 14 28 14 28Z" fill="#f59e0b"/>
+              <path d="M16 28C16 28 18 22 22 19C26 16 30 15 30 15C30 15 28 21 24 24C20 27 16 28 16 28Z" fill="#04391f"/>
+              <line x1="8" y1="32" x2="20" y2="16" stroke="#021a0f" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
           </div>
-          <div class="col-lg-4 text-center d-none d-lg-block">
-            <div
-              class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-25 shadow-lg backdrop-blur">
-              <i class="bi bi-flower1 display-1 text-warning mb-2"></i>
-              <h5 class="fw-bold mb-1 text-white">Zero Authentication Friction</h5>
-              <p class="small text-white-50 mb-0">Direct access via Farmer User ID. Password-free verification tied
-                directly to landholding records.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- END: Hero Banner -->
-
-
-      <!-- START: 4 Live KPI Metric Cards -->
-      <div class="row g-3 mb-4">
-
-        <!-- Card 1: Total Schemes -->
-        <div class="col-sm-6 col-xl-3">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-muted small fw-semibold">Statutory Schemes</span>
-                <div class="bg-success bg-opacity-10 text-success p-2 rounded-3">
-                  <i class="bi bi-collection-fill fs-5"></i>
-                </div>
-              </div>
-              <h3 class="fw-bold text-dark mb-1" id="kpi-schemes-count">2,066</h3>
-              <div class="small text-muted d-flex align-items-center">
-                <span class="text-success fw-semibold me-1"><i class="bi bi-arrow-up"></i> Central & 28 States</span>
-              </div>
-            </div>
+          <div class="brand-text-col">
+            <h1 class="brand-heading" data-i18n="appName">Krishi Mitra</h1>
+            <span class="brand-subheading" data-i18n="appSubName">SOVEREIGN AGRI-OS</span>
           </div>
         </div>
 
-        <!-- Card 2: Legal FAQs & Rules -->
-        <div class="col-sm-6 col-xl-3">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-muted small fw-semibold">Legal Rules & FAQs</span>
-                <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3">
-                  <i class="bi bi-file-earmark-ruled-fill fs-5"></i>
-                </div>
-              </div>
-              <h3 class="fw-bold text-dark mb-1" id="kpi-faqs-count">20,110</h3>
-              <div class="small text-muted d-flex align-items-center">
-                <span class="text-primary fw-semibold me-1"><i class="bi bi-check2"></i> Precedent Chunks</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- Center & Right Navigation -->
+        <nav class="header-nav">
+          <button type="button" class="nav-menu-link active" id="top-nav-eligible" data-tab="eligible">
+            <span data-i18n="navEligible">Eligible Schemes</span>
+            <span id="badge-top-eligible" class="nav-count-badge">0</span>
+          </button>
 
-        <!-- Card 3: Neural GPU Engine -->
-        <div class="col-sm-6 col-xl-3">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-muted small fw-semibold">Local Neural RAG</span>
-                <div class="bg-warning bg-opacity-10 text-warning p-2 rounded-3">
-                  <i class="bi bi-cpu-fill fs-5 text-dark"></i>
-                </div>
-              </div>
-              <h3 class="fw-bold text-dark mb-1">1024-Dim</h3>
-              <div class="small text-muted d-flex align-items-center">
-                <span class="text-dark fw-semibold me-1" id="kpi-gpu-model">BGE-M3 Dense GPU</span>
-              </div>
-            </div>
-          </div>
-        </div>
+          <button type="button" class="nav-menu-link" id="top-nav-almost" data-tab="almost">
+            <span data-i18n="navAlmost">Almost Eligible</span>
+            <span id="badge-top-almost" class="nav-count-badge badge-amber">0</span>
+          </button>
 
-        <!-- Card 4: Statutory Determinism -->
-        <div class="col-sm-6 col-xl-3">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-muted small fw-semibold">Decision Engine</span>
-                <div class="bg-info bg-opacity-10 text-info p-2 rounded-3">
-                  <i class="bi bi-award-fill fs-5"></i>
-                </div>
-              </div>
-              <h3 class="fw-bold text-dark mb-1">4-State Matrix</h3>
-              <div class="small text-muted d-flex align-items-center">
-                <span class="text-info fw-semibold me-1">PASS • FAIL • UNKNOWN</span>
-              </div>
-            </div>
-          </div>
-        </div>
+          <button type="button" class="nav-menu-link" id="top-nav-saved" data-tab="saved">
+            <span data-i18n="navSaved">Saved Schemes</span>
+            <span id="badge-top-saved" class="nav-count-badge badge-muted">0</span>
+          </button>
 
-      </div>
-      <!-- END: 4 KPI Cards -->
-
-
-      <!-- START: Governance Analytics & Charts -->
-      <div class="row g-4 mb-4">
-
-        <!-- Sector Breakdown Chart -->
-        <div class="col-lg-6">
-          <div class="card border-0 shadow-sm h-100">
-            <div
-              class="card-header bg-transparent border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="card-title fw-bold mb-0 text-dark">Scheme Distribution by Agricultural Sector</h6>
-                <small class="text-muted">Categorization across 2,066 statutory government programs</small>
-              </div>
-              <span class="badge bg-light text-dark border">Categorical Split</span>
-            </div>
-            <div class="card-body px-4 pb-4">
-              <div id="sector-distribution-chart"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Central vs State Breakdown Chart -->
-        <div class="col-lg-6">
-          <div class="card border-0 shadow-sm h-100">
-            <div
-              class="card-header bg-transparent border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="card-title fw-bold mb-0 text-dark">Central vs State Government Allocations</h6>
-                <small class="text-muted">Sample state provisions alongside universal central programs</small>
-              </div>
-              <span class="badge bg-light text-dark border">Jurisdictional</span>
-            </div>
-            <div class="card-body px-4 pb-4">
-              <div id="central-state-chart"></div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <!-- END: Governance Analytics -->
-
-
-      <!-- START: Quick Scheme Preview Card -->
-      <div class="card border-0 shadow-sm mb-4">
-        <div
-          class="card-header bg-transparent border-0 pt-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
-          <div>
-            <h5 class="fw-bold mb-0 text-dark">Public Statutory Schemes Directory</h5>
-            <small class="text-muted">Explore entitlements, financial subsidy norms, and legal eligibility
-              dossiers</small>
-          </div>
-          <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-outline-success" onclick="switchView('schemes')">
-              View Full 2,066 Catalog <i class="bi bi-arrow-right ms-1"></i>
+          <div class="nav-lang-wrap">
+            <button type="button" class="lang-toggle-pill" aria-label="Toggle Kannada and English">
+              <span class="lang-text-display">ಕನ್ನಡ</span>
             </button>
           </div>
+
+          <div class="nav-profile-wrap">
+            <button type="button" id="btn-top-profile" class="btn-profile-pill" aria-label="Farmer Profile Options">
+              <span class="profile-avatar-emoji">👨‍🌾</span>
+              <span class="profile-pill-label" data-i18n="profile">Farmer Profile</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Mobile Header Actions -->
+        <div class="mobile-header-actions">
+          <button type="button" class="lang-toggle-pill mobile-lang-btn">ಕನ್ನಡ</button>
+          <button type="button" id="btn-mobile-profile" class="mobile-profile-avatar" aria-label="Profile">
+            👨‍🌾
+          </button>
         </div>
-        <div class="card-body p-4 pt-2">
-          <div class="row g-2 mb-3">
-            <div class="col-md-8">
-              <div class="input-group">
-                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
-                <input type="text" class="form-control border-start-0" id="schemes-search-input"
-                  placeholder="Search by scheme name or keywords (e.g. Tractor, PM-KISAN, Drip, Solar, Seed)...">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <select class="form-select" id="schemes-state-filter">
-                <option value="">All Jurisdictions (Central + All States)</option>
-                <option value="Central Government">Central Government Schemes Only</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Assam">Assam</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                <option value="Gujarat">Gujarat</option>
-                <option value="Tamil Nadu">Tamil Nadu</option>
-                <option value="Meghalaya">Meghalaya</option>
-              </select>
-            </div>
-          </div>
 
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light small text-uppercase">
-                <tr>
-                  <th>Scheme Name</th>
-                  <th>Level</th>
-                  <th>Ministry / State</th>
-                  <th>Application Mode</th>
-                  <th class="text-end">Official Record</th>
-                </tr>
-              </thead>
-              <tbody id="schemes-table-body">
-                <!-- Dynamically populated -->
-              </tbody>
-            </table>
-          </div>
+      </div>
+    </header>
 
-          <div class="d-flex justify-content-between align-items-center mt-3">
-            <span class="badge bg-light text-muted border" id="schemes-total-badge">Loading count...</span>
-            <div id="schemes-pagination"></div>
-          </div>
+    <!-- ========================================================= -->
+    <!-- PAGE 1: LOGIN / SIGN UP (Exact legacy_index.html layout)  -->
+    <!-- ========================================================= -->
+    <section id="view-login" class="view-container login-fullscreen-hero">
+
+      <div class="login-top-bar">
+        <div class="login-brand-tag">
+          <svg class="login-leaf-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+          <span class="login-brand-title">Krishi Mitra</span>
+        </div>
+
+        <div class="login-lang-capsule">
+          <button type="button" class="login-lang-btn kn" data-lang="kn">ಕನ್ನಡ</button>
+          <button type="button" class="login-lang-btn en active" data-lang="en">English</button>
         </div>
       </div>
-      <!-- END: Quick Scheme Preview Card -->
 
-    </div>
-    <!-- END VIEW 1 -->
+      <div class="login-center-content">
 
-
-    <!-- ========================================================== -->
-    <!-- VIEW 2: PERSONALIZED FARMER PORTAL (POST-LOGIN)             -->
-    <!-- ========================================================== -->
-    <div class="portal-view-section d-none" id="view-farmer">
-
-      <!-- Dynamic Farmer Profile Banner -->
-      <div id="farmer-profile-banner">
-        <!-- Will be filled by renderFarmerBanner() -->
-      </div>
-
-      <!-- Section Title -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h4 class="fw-bold mb-0 text-dark"><i class="bi bi-stars text-warning me-2"></i>Statutory Schemes & Targeted
-            Entitlements</h4>
-          <small class="text-muted">Targeted schemes for your state and holding profile. Click "Check AI" for instant
-            4-state statutory evaluation.</small>
+        <div class="login-hero-titles">
+          <div style="margin-bottom: 12px;">
+            <span class="hbadge" style="font-size: 0.72rem; padding: 5px 14px;">
+              <span class="bdot"></span>
+              SOVEREIGN AGRI-OS // 2,066 STATUTORY SCHEMES
+            </span>
+          </div>
+          <h1 class="login-hero-main-title" data-i18n-html="loginHeroKn">Krishi <span class="gt">Mitra</span></h1>
+          <div class="login-hero-spaced-sub" data-i18n="loginHeroEn">S O V E R E I G N &nbsp; A G R I - O S</div>
+          <p class="login-hero-tagline" data-i18n="loginTagline">Autonomous Agrarian Intelligence — Access 2,066 Statutory Schemes</p>
         </div>
-        <button class="btn btn-outline-success btn-sm" onclick="loadFarmerTargetedSchemes()">
-          <i class="bi bi-arrow-clockwise me-1"></i> Refresh Schemes
-        </button>
-      </div>
 
-      <!-- Schemes Grid -->
-      <div class="row" id="farmer-schemes-grid">
-        <!-- Dynamically populated -->
-      </div>
+        <div class="login-card-box gc">
 
-    </div>
-    <!-- END VIEW 2 -->
+          <div id="phone-step-container" class="login-step-view">
+            <h2 class="login-card-heading" data-i18n="loginCardTitle">Farmer Portal Sign In</h2>
 
+            <div class="login-field-group">
+              <label for="login-phone" class="login-field-label" data-i18n="phoneLabel">Farmer User ID</label>
+              <div class="login-phone-control">
+                <span class="login-phone-prefix">ID</span>
+                <input type="text" id="login-phone" class="login-phone-input" maxlength="20" placeholder="e.g. KM26@0001" data-i18n-placeholder="phonePlaceholder" autocomplete="username" spellcheck="false">
+              </div>
+              <div id="phone-error-msg" class="login-field-error"></div>
+            </div>
 
-    <!-- ========================================================== -->
-    <!-- VIEW 3: CHIEF SECRETARY AI DELIBERATION CHAMBER            -->
-    <!-- VIEW 3: CHIEF SECRETARY AI DELIBERATION CHAMBER (ATMOS OS) -->
-    <!-- ========================================================== -->
-    <div class="portal-view-section d-none" id="view-ai-secretary">
+            <div class="login-field-group">
+              <label for="login-password" class="login-field-label">Password</label>
+              <div class="login-pass-control">
+                <input type="password" id="login-password" class="login-pass-input" placeholder="Enter your password" autocomplete="current-password">
+                <button type="button" class="login-eye-toggle" id="btn-toggle-password" aria-label="Show or hide password">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+            </div>
 
-      <!-- Page Header -->
-      <div class="page-header mb-3">
-        <div>
-          <h2 class="page-title fw-bold text-dark"><i class="bi bi-robot text-success me-2"></i>Chief Secretary AI
-            Deliberation Chamber</h2>
-          <p class="page-subtitle text-muted">
-            Autonomous Wing 2 Chief Secretary ReAct agent. Deliberates cross-ministerial schemes, unblocks
-            administrative barriers, and synthesizes binding citizen directives.
-          </p>
+            <div>
+              <div class="demo-vault-label">
+                <span>⚡ Quick Fill Demo Citizens:</span>
+                <span>Password = User ID</span>
+              </div>
+              <div class="login-demo-chips">
+                <button type="button" class="demo-id-chip" data-id="KM26@0001">KM26@0001 • Suresh</button>
+                <button type="button" class="demo-id-chip" data-id="KM26@0002">KM26@0002 • Vijay</button>
+                <button type="button" class="demo-id-chip" data-id="KM26@0003">KM26@0003 • Ravi</button>
+              </div>
+            </div>
+
+            <button type="button" id="btn-send-otp" class="btn-login-submit" data-i18n="getOtpBtn">
+              Verify &amp; Sign In to Farmer Portal
+            </button>
+
+            <div class="login-signup-link-wrap">
+              <button type="button" id="btn-login-signup" class="btn-signup-link" data-i18n-html="newHereSignUp">
+                New Farmer? <u>Register New Account</u>
+              </button>
+            </div>
+          </div>
+
+          <div id="otp-step-container" class="login-step-view" style="display: none;">
+            <h2 class="login-card-heading" data-i18n="otpTitle">Enter OTP</h2>
+
+            <p class="login-otp-notice">
+              <span data-i18n="otpSubtitle">We have sent an OTP to this number:</span>
+              <strong id="otp-sent-phone">+91 9845012345</strong>
+            </p>
+
+            <div class="login-field-group">
+              <input type="tel" id="login-otp" class="login-otp-input" maxlength="4" placeholder="••••" inputmode="numeric">
+              <div id="otp-error-msg" class="login-field-error"></div>
+            </div>
+
+            <div class="login-demo-otp">
+              <button type="button" id="demo-otp-btn" class="login-quick-otp" data-i18n="demoOtpHint">
+                Test OTP: 1234 (Click here)
+              </button>
+            </div>
+
+            <button type="button" id="btn-verify-otp" class="btn-login-submit" data-i18n="verifyOtpBtn">
+              Verify &amp; Continue
+            </button>
+
+            <div class="login-change-num">
+              <button type="button" id="btn-change-number" class="login-text-btn" data-i18n="changeNumber">
+                ← Change ID / Number
+              </button>
+            </div>
+          </div>
+
         </div>
+
+        <div class="login-footer-help">
+          <button type="button" id="btn-login-help" class="login-help-anchor" data-i18n-html="helpLink">
+            <u>Farmer Helpline &amp; Support</u>
+          </button>
+        </div>
+
       </div>
-      <!-- Atmos Cockpit Window Container -->
-      <div class="atmos-cockpit-window mb-4">
 
-        <!-- Atmos Top Titlebar -->
-        <div class="atmos-titlebar d-flex justify-content-between align-items-center px-3 py-2 flex-wrap gap-2">
-          <div class="d-flex align-items-center gap-2">
-            <div class="atmos-dots d-flex gap-1 me-1">
-              <span class="dot dot-red"></span>
-              <span class="dot dot-yellow"></span>
-              <span class="dot dot-green"></span>
-            </div>
-            <span class="text-white-50 small fw-bold font-monospace" style="font-size: 0.78rem;">
-              <i class="bi bi-cpu-fill text-success me-1"></i> KRISHI MITRA • AI ASSISTANCE ENGINE
-            </span>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PAGE 2: FARMER PROFILE WIZARD (1 Question Per Screen)     -->
+    <!-- ========================================================= -->
+    <section id="view-wizard" class="view-container">
+      <div class="wizard-container-wrap">
+        <header class="wizard-header">
+          <h2 class="wizard-heading" data-i18n="wizardTitle">Your Farming Details</h2>
+          <button type="button" class="lang-toggle-pill">ಕನ್ನಡ</button>
+        </header>
+
+        <div class="wizard-progress-section">
+          <div class="progress-meta-row">
+            <span id="wizard-step-label" class="step-label">Question 1 of 10</span>
+            <span class="step-badge">100% Sovereign &amp; Local</span>
           </div>
-
-          <!-- Active Persona Context Indicator -->
-          <div id="ai-farmer-context-badge">
-            <!-- Filled by updateAiFarmerContext() -->
+          <div class="progress-track">
+            <div id="wizard-progress-bar" class="progress-fill" style="width: 10%;"></div>
           </div>
-          <div class="d-none d-md-flex align-items-center gap-2">
-            <span class="badge atmos-status-pill text-success border border-success border-opacity-25">
-              <span class="pulse-dot bg-success"></span> AI Guidance: Active
-            </span>
-            <span class="badge atmos-status-pill text-info border border-info border-opacity-25">
-              <span class="pulse-dot bg-info"></span> Bilingual RAG: Active
-            </span>
-            <span class="badge atmos-status-pill text-warning border border-warning border-opacity-25">
-              <span class="pulse-dot bg-warning"></span> Verified Schemes: 15+
-            </span>
+        </div>
+
+        <main class="wizard-main">
+          <div class="wizard-card">
+            <div class="question-header">
+              <h3 id="wizard-q-title" class="q-title">Loading question...</h3>
+              <p id="wizard-q-sub" class="q-subtitle">Description</p>
+            </div>
+
+            <div class="voice-interaction-box">
+              <button type="button" id="wizard-mic-btn" class="big-mic-button" aria-label="Speak your answer">
+                <span class="mic-wave-ring ring-1"></span>
+                <span class="mic-wave-ring ring-2"></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mic-icon-svg">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="23"></line>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+              </button>
+              <p id="voice-status-text" class="voice-status-label" data-i18n="voicePrompt">
+                Tap the big mic and speak your answer clearly
+              </p>
+
+              <div id="voice-confirm-box" class="voice-confirm-card" style="display: none;">
+                <div id="voice-heard-text" class="heard-text">We heard: ...</div>
+                <p class="confirm-prompt-text" data-i18n="isThisCorrect">Is this correct? Please confirm:</p>
+                <div class="confirm-actions-row">
+                  <button type="button" id="voice-btn-confirm" class="btn-confirm-tick" title="Confirm Answer">
+                    <span class="tick-icon">✔</span>
+                    <span class="btn-text" data-i18n="btnConfirmVoice">Confirm (Yes, Correct)</span>
+                  </button>
+                  <button type="button" id="voice-btn-retry" class="btn-retry-mic" title="Retry Speaking">
+                    <span class="retry-icon">🔄</span>
+                    <span class="btn-text" data-i18n="btnRetryVoice">Speak Again (Retry)</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="options-divider">
+              <span>OR select an option below</span>
+            </div>
+
+            <div id="wizard-options-container" class="wizard-options-area"></div>
           </div>
+        </main>
 
-          <!-- Sample Inquiries Pills -->
-          <div class="mb-3">
-            <label class="form-label small text-muted fw-semibold mb-2">Quick One-Click Inquiries:</label>
-            <div class="d-flex flex-wrap gap-2">
-              <div class="query-pill p-2 rounded"
-                onclick="setAiQuery('I need financial assistance and subsidies for a 45HP tractor and drip irrigation, but my Aadhaar name mismatch blocked my registration. How can I resolve this?')">
-                🚜 Tractor + Drip Subsidy & Aadhaar Block
-                <div id="ai-farmer-context-badge">
-                  <!-- Filled dynamically with farmer persona badge -->
-                </div>
-                <div class="query-pill p-2 rounded"
-                  onclick="setAiQuery('Can I get assistance under PM-KUSUM Component-B for a 5HP solar pump on my 2-hectare land?')">
-                  ☀️ PM-KUSUM Solar Pump Scheme
-                </div>
-                <div class="query-pill p-2 rounded"
-                  onclick="setAiQuery('My PM-KISAN 16th installment was stopped due to land record e-KYC mismatch. What is the statutory unblocking procedure?')">
-                  💰 PM-KISAN Installment Redressal
-                </div>
-                <div class="query-pill p-2 rounded"
-                  onclick="setAiQuery('What special subsidies and input kits are available for small/marginal farmers for organic fertilizer and seed kits?')">
-                  🌾 Organic Inputs & Small Farmer Quotas
-                </div>
-              </div>
-            </div>
+        <footer class="wizard-nav-footer">
+          <button type="button" id="wizard-back-btn" class="btn btn-outline btn-lg">← Back</button>
+          <button type="button" id="wizard-next-btn" class="btn btn-primary btn-lg" disabled>Next ➔</button>
+        </footer>
+      </div>
+    </section>
 
-            <!-- Consultation Input Box -->
-            <div class="card border-0 shadow-sm mb-4">
-              <div class="card-body p-4">
-                <form id="aiConsultForm">
-                  <div class="mb-3">
-                    <label for="ai-query-input" class="form-label fw-bold">Farmer Inquiry / Grievance Statement:</label>
-                    <textarea class="form-control" id="ai-query-input" rows="3"
-                      placeholder="State your agricultural need, subsidy question, or administrative grievance in plain language..."
-                      required></textarea>
-                  </div>
-                  <!-- Atmos Main Interaction Body -->
-                  <div class="atmos-body p-4 p-md-5">
+    <!-- ========================================================= -->
+    <!-- PAGE 3: MAIN PAGE (Exact legacy_index.html layout)        -->
+    <!-- ========================================================= -->
+    <section id="view-main" class="view-container">
 
-                    <!-- Hero Header -->
-                    <div class="text-center mb-4">
-                      <span class="badge atmos-pill-tag mb-2">Autonomous Wing 2 Chief Secretary</span>
-                      <h2 class="display-6 fw-bold text-white mb-2">Interact with Krishi Intelligence & Get Directives
-                        Instantly</h2>
-                      <p class="text-white-50 mx-auto" style="max-width: 660px; font-size: 0.95rem;">
-                        State your agricultural need, subsidy question, or administrative grievance. The engine
-                        autonomously executes multi-turn cross-ministerial RAG deliberation.
-                      </p>
-                    </div>
+      <!-- Subpage 1: HOME (Hero Banner, Search Card, Schemes) -->
+      <div id="subpage-home" class="main-subpage active">
 
-                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                      <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="ai-stream-toggle" checked>
-                        <label class="form-check-label small text-muted" for="ai-stream-toggle">
-                          Live Stream Executive Deliberation (SSE)
-                        </label>
-                        <!-- Atmos Floating Prompt Search Box -->
-                        <div class="atmos-prompt-wrapper mx-auto mb-4" style="max-width: 820px;">
-                          <form id="aiConsultForm">
-                            <div class="atmos-input-box p-3 rounded-4 shadow-lg">
-                              <div class="d-flex align-items-center gap-2 mb-2">
-                                <i class="bi bi-stars text-warning fs-5"></i>
-                                <span class="small fw-semibold text-white-50">Inquire across 2,066 Central & State
-                                  Ministries</span>
-                              </div>
-                              <textarea class="form-control atmos-textarea border-0 shadow-none text-white"
-                                id="ai-query-input" rows="3"
-                                placeholder="e.g. I need financial assistance for a 45HP tractor and drip irrigation, but my Aadhaar name mismatch blocked my registration. How can I resolve this and apply?"
-                                required></textarea>
+        <div class="main-content-layout">
 
-                              <div
-                                class="d-flex flex-wrap justify-content-between align-items-center pt-2 border-top border-white border-opacity-10 mt-2">
-                                <div class="form-check form-switch mb-0">
-                                  <input class="form-check-input" type="checkbox" role="switch" id="ai-stream-toggle"
-                                    checked>
-                                  <label class="form-check-label small text-white-50" for="ai-stream-toggle">
-                                    <i class="bi bi-broadcast me-1 text-success"></i> Live Deliberation Stream (SSE)
-                                  </label>
-                                </div>
-
-                                <button type="submit" class="btn atmos-submit-btn px-4 py-2 rounded-pill fw-bold"
-                                  id="btn-ai-submit">
-                                  <span>Consult Chief Secretary</span>
-                                  <i class="bi bi-arrow-right ms-2"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-
-                        <button type="submit" class="btn btn-success px-4 py-2 fw-semibold shadow-sm"
-                          id="btn-ai-submit">
-                          <i class="bi bi-send-fill me-1"></i> Consult Chief Secretary
-                          <!-- Quick Pill Tags -->
-                          <div class="atmos-quick-pills mx-auto text-center mb-4" style="max-width: 860px;">
-                            <div class="small text-white-50 mb-2">Explore Frequent Statutory Directives:</div>
-                            <div class="d-flex flex-wrap justify-content-center gap-2">
-                              <button type="button" class="atmos-chip"
-                                onclick="setAiQuery('I need financial assistance and subsidies for a 45HP tractor and drip irrigation, but my Aadhaar name mismatch blocked my registration. How can I resolve this?')">
-                                🚜 Tractor + Drip Subsidy & Aadhaar Block
-                              </button>
-                              <button type="button" class="atmos-chip"
-                                onclick="setAiQuery('Can I get assistance under PM-KUSUM Component-B for a 5HP solar pump on my 2-hectare land?')">
-                                ☀️ PM-KUSUM Solar Pump Scheme
-                              </button>
-                              <button type="button" class="atmos-chip"
-                                onclick="setAiQuery('My PM-KISAN 16th installment was stopped due to land record e-KYC mismatch. What is the statutory unblocking procedure?')">
-                                💰 PM-KISAN Installment Redressal
-                              </button>
-                              <button type="button" class="atmos-chip"
-                                onclick="setAiQuery('What special subsidies and input kits are available for small/marginal farmers for organic fertilizer and seed kits?')">
-                                🌾 Organic Inputs & Small Farmer Quotas
-                              </button>
-                            </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <!-- Deliberation Thought HUD (<executive_deliberation>) -->
-          <div class="card border-0 shadow-sm mb-4 delib-hud d-none" id="ai-deliberation-hud">
-            <div
-              class="card-header bg-transparent border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center gap-2">
-                <span class="spinner-grow spinner-grow-sm text-success" role="status"></span>
-                <span class="fw-bold" style="color: #79e2a4;"><i
-                    class="bi bi-terminal me-2"></i>&lt;executive_deliberation&gt; — Autonomous Thought HUD</span>
-                <!-- Deliberation Thought HUD (<executive_deliberation>) -->
-                <div class="atmos-hud-console mb-4 d-none" id="ai-deliberation-hud">
-                  <div class="atmos-hud-header px-3 py-2 d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-2">
-                      <span class="spinner-grow spinner-grow-sm text-success" role="status"></span>
-                      <span class="text-success font-monospace small fw-bold">&lt;executive_deliberation&gt; —
-                        Autonomous Thought HUD</span>
-                    </div>
-                    <span class="badge bg-black text-success border border-success border-opacity-50">Local Gemma 4
-                      Active</span>
-                  </div>
-                  <div class="atmos-hud-body p-3 font-monospace small" id="ai-deliberation-steps"></div>
-                </div>
-                <span class="badge bg-dark text-success border border-success">Gemma 4 Reasoning</span>
-              </div>
-              <div class="card-body p-4 pt-1" id="ai-deliberation-steps">
-                <!-- Live steps or complete deliberation text -->
-              </div>
-            </div>
-
-            <!-- Official Citizen Directive Card -->
-            <div class="card border-0 shadow-sm mb-4 d-none" id="ai-directive-card">
-              <div class="card-body p-4" id="ai-directive-body">
-                <!-- Filled by renderDirectiveOutput() -->
-                <!-- Official Citizen Directive Card (Atmos Telemetry Grid) -->
-                <div class="atmos-directive-card d-none" id="ai-directive-card">
-                  <div id="ai-directive-body"></div>
+          <!-- 1. HERO BANNER (Exact legacy structure, index.html Obsidian Glow & Text) -->
+          <div class="hero-banner-container">
+            <div class="hero-banner-card gc">
+              <div class="hero-content-col">
+                <div class="hero-pill-badge">
+                  <span class="hero-pill-dot"></span>
+                  <span data-i18n="heroBadge">SOVEREIGN AGRI-OS // 2,066 STATUTORY SCHEMES INDEXED</span>
                 </div>
 
-              </div>
-            </div>
+                <h2 class="hero-headline" data-i18n-html="heroTitle">
+                  Direct Scheme Matching &amp; <span class="gt">Sovereign Agrarian Governance</span>
+                </h2>
 
-          </div>
-          <!-- END VIEW 3 -->
-
-
-          <!-- ========================================================== -->
-          <!-- VIEW 4: ALL SCHEMES DIRECTORY (2,066 CATALOG)              -->
-          <!-- ========================================================== -->
-          <div class="portal-view-section d-none" id="view-schemes">
-            <div class="page-header mb-3">
-              <div>
-                <h2 class="page-title fw-bold text-dark"><i class="bi bi-collection-fill text-success me-2"></i>All
-                  India Schemes Directory (2,066 Programs)</h2>
-                <p class="page-subtitle text-muted">Comprehensive official catalog of Central Government and 28 State/UT
-                  statutory programs.</p>
-              </div>
-            </div>
-
-            <div class="card border-0 shadow-sm mb-4">
-              <div class="card-body p-4">
-                <p class="text-muted small">
-                  Use the search box and jurisdictional filters above or on the governance dashboard to explore any
-                  program. Click <strong>17-Col Dossier</strong> to view statutory guidelines, eligibility criteria, and
-                  required documents.
+                <p class="hero-description" data-i18n="heroDesc">
+                  We connect statutory schemes, citizen land records, agro-climatic conditions, and procedural mandates into direct DBT income support, crop insurance, zero-interest KCC credit, and micro-irrigation subsidies.
                 </p>
-                <button class="btn btn-success btn-sm" onclick="switchView('governance')">
-                  <i class="bi bi-arrow-left me-1"></i> Back to Main Dashboard
+
+                <div class="hero-actions-row">
+                  <button type="button" id="btn-hero-explore" class="hero-btn-white" data-i18n="heroBtnExplore">
+                    Explore Eligible Schemes
+                  </button>
+                  <button type="button" id="btn-hero-share" class="hero-btn-outline" data-i18n="heroBtnShare">
+                    📲 Share Eligibility Summary
+                  </button>
+                </div>
+              </div>
+
+              <!-- Graphic on Right Side: Tractor Silhouette glowing emerald & cyan -->
+              <div class="hero-graphic-col">
+                <svg viewBox="0 0 200 150" fill="none" class="hero-tractor-svg" preserveAspectRatio="xMidYMid meet">
+                  <circle cx="150" cy="110" r="30" fill="rgba(34,197,94,0.16)" stroke="#22c55e" stroke-width="3.5"/>
+                  <circle cx="150" cy="110" r="14" fill="rgba(6,182,212,0.28)" stroke="#06b6d4" stroke-width="2"/>
+                  <circle cx="65" cy="120" r="18" fill="rgba(34,197,94,0.16)" stroke="#22c55e" stroke-width="3"/>
+                  <circle cx="65" cy="120" r="8" fill="rgba(6,182,212,0.28)"/>
+                  <path d="M50 115 L145 110 L145 80 L115 80 L115 48 L75 48 L75 80 L50 90 Z" fill="rgba(34,197,94,0.2)" stroke="rgba(134,239,172,0.45)" stroke-width="1.5"/>
+                  <path d="M115 48 L155 48 L155 80 L115 80 Z" fill="rgba(6,182,212,0.16)" stroke="rgba(6,182,212,0.45)" stroke-width="1.5"/>
+                  <rect x="120" y="54" width="28" height="22" rx="3" fill="rgba(34,197,94,0.28)"/>
+                  <line x1="68" y1="48" x2="68" y2="30" stroke="#22c55e" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. DISCOVER / SEARCH CARD -->
+          <div class="discover-card-container">
+            <div class="discover-search-card gc">
+              <h3 class="discover-card-heading" data-i18n="discoverTitle">
+                Discover Statutory Schemes
+              </h3>
+
+              <div class="discover-search-form">
+                <div class="search-input-wrapper">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon-inside">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="scheme-search-input" class="search-field" placeholder="Search by scheme name, ministry, or keyword (e.g. PM-KISAN, PMFBY, KCC, Drip)" data-i18n-placeholder="searchPlaceholder">
+                </div>
+
+                <div class="search-select-wrapper">
+                  <select id="scheme-category-select" class="search-dropdown">
+                    <option value="all" data-i18n="allCategories">All Statutory Categories</option>
+                    <option value="income" data-i18n="filterIncome">Direct Income</option>
+                    <option value="insurance" data-i18n="filterInsurance">Crop Insurance</option>
+                    <option value="credit" data-i18n="filterCredit">Subsidized Loans</option>
+                    <option value="irrigation" data-i18n="filterIrrigation">Irrigation &amp; Ponds</option>
+                    <option value="pension" data-i18n="filterPension">Farmer Pension</option>
+                  </select>
+                </div>
+
+                <div class="search-select-wrapper">
+                  <select id="schemes-sort-select" class="search-dropdown">
+                    <option value="benefit_desc" data-i18n="sortBenefitHigh">Highest Benefit First</option>
+                    <option value="benefit_asc" data-i18n="sortBenefitLow">Lowest Benefit First</option>
+                    <option value="name" data-i18n="sortName">Scheme Name (A-Z)</option>
+                  </select>
+                </div>
+
+                <button type="button" id="btn-discover-search" class="btn-discover-action" data-i18n="searchBtn">
+                  Search Schemes
                 </button>
               </div>
             </div>
           </div>
-          <!-- END VIEW 4 -->
 
-
-          <!-- ========================================================== -->
-          <!-- VIEW 5: SYSTEM DIAGNOSTICS & STACK HEALTH                 -->
-          <!-- ========================================================== -->
-          <div class="portal-view-section d-none" id="view-system">
-            <div class="page-header mb-3">
-              <div>
-                <h2 class="page-title fw-bold text-dark"><i class="bi bi-heart-pulse-fill text-danger me-2"></i>Krishi
-                  Mitra System Architecture & Diagnostics</h2>
-                <p class="page-subtitle text-muted">Status of all 3 microservices running on 100% on-premise local
-                  infrastructure.</p>
-              </div>
+          <!-- 3. ANNOUNCEMENT TICKER STRIP -->
+          <div class="tips-ticker-section" id="tips-ticker-strip">
+            <div class="ticker-content-box">
+              <span class="ticker-bell-icon">🔔</span>
+              <span id="ticker-tip-tag" class="ticker-tag urgency-high">LIVE ADVISORY</span>
+              <span id="ticker-tip-title" class="ticker-title">Loading statutory advisories...</span>
+              <span id="ticker-pause-tag" class="ticker-paused-badge" style="display: none;" data-i18n="tipsTickerPaused">Paused (touched)</span>
             </div>
+            <div id="ticker-dots-container" class="ticker-dots-row"></div>
+          </div>
 
-            <div class="row g-4">
-              <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                  <div class="card-body">
-                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-database me-2"></i>API 1: PostgreSQL +
-                      pgvector</h5>
-                    <p class="small text-muted mb-3">Port 5432 • HNSW Index • Full 17-column scheme dossiers and farmer
-                      profiles.</p>
-                    <ul class="list-unstyled small">
-                      <li>• Indexed Schemes: <strong>2,066</strong></li>
-                      <li>• FAQ Chunks: <strong>20,110</strong></li>
-                      <li>• Registered Demo Farmers: <strong>1 to 100</strong></li>
-                      <li>• Vector Dimension: <strong>1024</strong> (Halfvec)</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+          <!-- 4. SCHEME SECTION: TABS & FILTER PILLS -->
+          <div class="schemes-section-header">
+            <nav class="scheme-tabs-nav">
+              <button type="button" class="scheme-tab-btn active" data-tab="eligible">
+                <span data-i18n="tabEligible">Eligible Schemes</span>
+                <span id="badge-tab-eligible" class="tab-badge">0</span>
+              </button>
+              <button type="button" class="scheme-tab-btn" data-tab="almost">
+                <span data-i18n="tabAlmost">Almost Eligible</span>
+                <span id="badge-tab-almost" class="tab-badge badge-warning">0</span>
+              </button>
+              <button type="button" class="scheme-tab-btn" data-tab="saved">
+                <span data-i18n="tabSaved">Saved Schemes</span>
+                <span id="badge-tab-saved" class="tab-badge badge-neutral">0</span>
+              </button>
+            </nav>
 
-              <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                  <div class="card-body">
-                    <h5 class="fw-bold text-primary mb-2"><i class="bi bi-gpu-card me-2"></i>API 2: BGE-M3 Dense Engine
-                    </h5>
-                    <p class="small text-muted mb-3">BAAI/bge-m3 • Hardware Accelerated • Dense semantic cosine
-                      matching.</p>
-                    <ul class="list-unstyled small">
-                      <li>• Precision: <strong>FP16</strong></li>
-                      <li>• HNSW ef_search: <strong>100</strong></li>
-                      <li>• Multi-Lingual: <strong>Kannada, Hindi, English</strong></li>
-                      <li>• Retrieval Latency: <strong>~22ms</strong></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                  <div class="card-body">
-                    <h5 class="fw-bold text-warning mb-2"><i class="bi bi-cpu me-2"></i>API 3: Gemma 4 E4B Reasoning
-                    </h5>
-                    <p class="small text-muted mb-3">llama-server • Port 8080 • Q4_0 GGUF • Autonomous Chief Secretary
-                      Agent.</p>
-                    <ul class="list-unstyled small">
-                      <li>• Context Window: <strong>8192 tokens</strong></li>
-                      <li>• GPU Layers: <strong>99 (Full Offload)</strong></li>
-                      <li>• Temperature: <strong>0.3</strong></li>
-                      <li>• Statutory Output: <strong>Strict 4-State JSON</strong></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+            <div class="filter-chips-scroll">
+              <button type="button" class="filter-chip active" data-filter="all" data-i18n="filterAll">All Schemes</button>
+              <button type="button" class="filter-chip" data-filter="income" data-i18n="filterIncome">Direct Income</button>
+              <button type="button" class="filter-chip" data-filter="insurance" data-i18n="filterInsurance">Crop Insurance</button>
+              <button type="button" class="filter-chip" data-filter="credit" data-i18n="filterCredit">Subsidized Loans</button>
+              <button type="button" class="filter-chip" data-filter="irrigation" data-i18n="filterIrrigation">Irrigation &amp; Ponds</button>
+              <button type="button" class="filter-chip" data-filter="pension" data-i18n="filterPension">Farmer Pension</button>
             </div>
           </div>
-          <!-- END VIEW 5 -->
 
+          <!-- 5. SCHEMES GRID (2 Columns Desktop, 1 Column Mobile) -->
+          <main class="schemes-main-list" id="schemes-main-anchor">
+            <div id="schemes-list-container" class="schemes-vertical-list"></div>
 
-          <!-- Footer -->
-          <footer class="mt-5 pt-4 pb-3 border-top text-center text-muted small">
-            <p class="mb-1">Krishi Mitra — Autonomous AI Chief Secretary & National Government Scheme Reasoning Engine
-            </p>
-            <p class="mb-0 text-secondary" style="font-size: 0.72rem;">Designed for Indian Farmers with Zero
-              Authentication Friction • 100% On-Premise Privacy</p>
-          </footer>
+            <div id="schemes-empty-state" class="empty-state-box" style="display: none;">
+              <div class="empty-icon">🌾</div>
+              <h3 class="empty-title" data-i18n="emptyEligible">No schemes match your filter</h3>
+              <p class="empty-desc" data-i18n="emptyEligibleDesc">Try selecting 'All Schemes' or review your profile details.</p>
+            </div>
+          </main>
 
         </div>
-        <!-- ==========================================
-       END: Main Content Area
-       ========================================== -->
+      </div>
 
+      <!-- Subpage 2: DOCUMENTS -->
+      <div id="subpage-docs" class="main-subpage">
+        <div class="subpage-wrap">
+          <div class="subpage-header">
+            <h2 class="subpage-title" data-i18n="docsPageTitle">Karnataka Farmer Documents Guide</h2>
+            <p class="subpage-subtitle" data-i18n="docsPageSubtitle">Where to obtain each vital farm document and procedures</p>
+          </div>
+          <div id="docs-list-container" class="docs-vertical-list"></div>
+        </div>
+      </div>
 
-        <!-- ========================================================== -->
-        <!-- MODAL: FARMER QUICK LOGIN (USER ID ONLY - NO PASSWORD)    -->
-        <!-- ========================================================== -->
-        <div class="modal fade" id="farmerLoginModal" tabindex="-1" aria-labelledby="farmerLoginModalLabel"
-          aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-              <div class="modal-header border-0 pb-0">
-                <div class="d-flex align-items-center gap-2">
-                  <i class="bi bi-flower1 text-success fs-3"></i>
-                  <div>
-                    <h5 class="modal-title fw-bold text-dark mb-0" id="farmerLoginModalLabel">Farmer Direct Login</h5>
-                    <small class="text-success fw-semibold"><i class="bi bi-shield-check me-1"></i> No Password
-                      Required</small>
-                  </div>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <!-- Subpage 3: TIPS & DATES -->
+      <div id="subpage-tips" class="main-subpage">
+        <div class="subpage-wrap">
+          <div class="subpage-header">
+            <h2 class="subpage-title" data-i18n="tipsPageTitle">Agri Notices &amp; Deadlines</h2>
+            <p class="subpage-subtitle" data-i18n="tipsPageSubtitle">Important circulars from Karnataka Agriculture Department</p>
+          </div>
+          <div id="tips-full-list" class="tips-vertical-list"></div>
+        </div>
+      </div>
+
+      <!-- Subpage 4: HELP -->
+      <div id="subpage-help" class="main-subpage">
+        <div class="subpage-wrap">
+          <div class="subpage-header">
+            <h2 class="subpage-title" data-i18n="helpPageTitle">Farmer Helpline &amp; Support</h2>
+            <p class="subpage-subtitle" data-i18n="helpPageSubtitle">Contact for scheme inquiries and technical assistance</p>
+          </div>
+
+          <div class="help-cards-list">
+            <div class="help-card primary">
+              <div class="help-card-icon">📞</div>
+              <div class="help-card-body">
+                <h3 class="help-title" data-i18n="karnatakaRaithaVani">Karnataka Raitha Vani</h3>
+                <div class="help-phone-number">1800-425-3553</div>
+                <p class="help-timing" data-i18n="helpDeskTiming">6:00 AM to 10:00 PM All Days (Toll-Free)</p>
+                <a href="tel:18004253553" class="btn btn-call">Call Now 📞</a>
               </div>
+            </div>
 
-              <div class="modal-body p-4 pt-3">
-                <p class="text-muted small mb-3">
-                  Enter your registered Farmer ID (1–100) to view personalized statutory schemes, quota entitlements,
-                  and consult the AI Chief Secretary.
+            <div class="help-card">
+              <div class="help-card-icon">🇮🇳</div>
+              <div class="help-card-body">
+                <h3 class="help-title" data-i18n="kisanCallCenter">Kisan Call Centre (Toll-Free)</h3>
+                <div class="help-phone-number">1800-180-1551</div>
+                <p class="help-timing">Available all days (Multilingual &amp; Kannada support)</p>
+                <a href="tel:18001801551" class="btn btn-outline btn-call">Call 📞</a>
+              </div>
+            </div>
+
+            <div class="help-card">
+              <div class="help-card-icon">🏢</div>
+              <div class="help-card-body">
+                <h3 class="help-title" data-i18n="nearestOffice">Your Nearest Agri Office:</h3>
+                <p class="help-office-desc" data-i18n="nearestOfficeDesc">
+                  Visit your Hobli Raitha Samparka Kendra (RSK) or Taluk Assistant Director of Agriculture (ADA) office.
                 </p>
-
-                <form id="modalFarmerLoginForm">
-                  <div class="mb-3">
-                    <label for="modalFarmerId" class="form-label fw-bold small">Registered Farmer ID (1 - 100)</label>
-                    <div class="input-group">
-                      <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
-                      <input type="number" class="form-control" id="modalFarmerId" placeholder="e.g. 1, 2, 3, 7, 10"
-                        min="1" max="100" required autofocus>
-                    </div>
-                  </div>
-
-                  <button type="submit" class="btn btn-success w-100 fw-bold py-2 shadow-sm rounded-3">
-                    🌾 View My Eligible Schemes
-                  </button>
-                </form>
-
-                <div class="text-center my-3 text-muted small">— Or select a sample farmer profile —</div>
-
-                <div class="d-flex flex-column gap-2">
-                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
-                    onclick="loginFarmerById(1)">
-                    <div><strong>#1: Suresh Hegde</strong> <span class="badge bg-secondary ms-1">Assam</span></div>
-                    <span class="text-muted">SC • 6.37 ha • Rice/Mustard</span>
-                  </div>
-
-                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
-                    onclick="loginFarmerById(2)">
-                    <div><strong>#2: Vijay Gowda</strong> <span class="badge bg-success ms-1">Karnataka</span></div>
-                    <span class="text-muted">OBC • Small (Chitradurga)</span>
-                  </div>
-
-                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
-                    onclick="loginFarmerById(3)">
-                    <div><strong>#3: Ravi Borah</strong> <span class="badge bg-success ms-1">Karnataka</span></div>
-                    <span class="text-muted">SC • Marginal (Vijayapura)</span>
-                  </div>
-
-                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
-                    onclick="loginFarmerById(7)">
-                    <div><strong>#7: Manjunath Joshi</strong> <span
-                        class="badge bg-info text-dark ms-1">Meghalaya</span></div>
-                    <span class="text-muted">ST • Semi-medium</span>
-                  </div>
-
-                  <div class="demo-login-chip p-2 rounded small d-flex justify-content-between align-items-center"
-                    onclick="loginFarmerById(10)">
-                    <div><strong>#10: Lakshmi Sharma</strong> <span class="badge bg-success ms-1">Karnataka</span></div>
-                    <span class="text-muted">ST • Medium (Chitradurga)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="modal-footer border-0 pt-0 text-center justify-content-center">
-                <small class="text-muted">Don't have an ID? Any number from 1 to 100 loads an authentic synthetic
-                  profile.</small>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
+      <!-- Mobile Bottom Navigation Bar -->
+      <nav class="bottom-navbar">
+        <button type="button" class="bottom-nav-item active" data-tab="home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span data-i18n="navHome">Home</span>
+        </button>
 
-        <!-- ========================================================== -->
-        <!-- MODAL: 17-COLUMN OFFICIAL SCHEME DOSSIER                  -->
-        <!-- ========================================================== -->
-        <div class="modal fade" id="schemeDossierModal" tabindex="-1" aria-labelledby="schemeDossierModalLabel"
-          aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-              <div class="modal-header bg-light border-0">
-                <div>
-                  <h5 class="modal-title fw-bold text-dark mb-0" id="scheme-dossier-title">Scheme Dossier</h5>
-                  <small class="text-success"><i class="bi bi-shield-check me-1"></i> Official 17-Column Statutory
-                    Record</small>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body p-4" id="scheme-dossier-content">
-                <!-- Loaded dynamically -->
-              </div>
-              <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-              </div>
-            </div>
+        <button type="button" class="bottom-nav-item" data-tab="docs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          <span data-i18n="navDocs">Documents</span>
+        </button>
+
+        <button type="button" class="bottom-nav-item" data-tab="tips">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span data-i18n="navTips">Advisories</span>
+        </button>
+
+        <button type="button" class="bottom-nav-item" data-tab="help">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span data-i18n="navHelp">Help</span>
+        </button>
+      </nav>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: "What You Need" Scheme Detail Sheet                -->
+    <!-- ========================================================= -->
+    <div id="scheme-detail-modal" class="modal-backdrop">
+      <div id="modal-overlay-bg" class="modal-overlay"></div>
+      <div class="modal-sheet">
+        <div class="modal-header">
+          <div class="modal-title-col">
+            <span id="modal-scheme-status-tag" class="badge badge-eligible">Eligible</span>
+            <h3 id="modal-scheme-title" class="modal-scheme-title">Scheme Name</h3>
+            <p id="modal-scheme-dept" class="modal-scheme-dept">Department</p>
+          </div>
+          <button type="button" id="modal-btn-close" class="btn-close-modal" aria-label="Close modal">✕</button>
+        </div>
+
+        <div class="modal-body-scroll">
+          <div class="modal-benefit-box">
+            <span class="benefit-sub" data-i18n="schemeBenefitLabel">Financial Benefit:</span>
+            <div id="modal-scheme-benefit" class="benefit-val">₹6,000 / year</div>
+          </div>
+
+          <div class="modal-section">
+            <h4 class="section-heading" data-i18n="docChecklistTitle">Required Documents Checklist</h4>
+            <p class="section-sub" data-i18n="docChecklistSub">Tick the documents you currently have:</p>
+            <div id="modal-doc-checklist" class="doc-checklist-group"></div>
+          </div>
+
+          <div class="modal-section">
+            <h4 class="section-heading" data-i18n="officialSiteStepsTitle">What to do on official website?</h4>
+            <ol id="modal-steps-list" class="steps-numbered-list"></ol>
+            <p class="notice-callout" data-i18n="externalSiteNotice">
+              Note: The official government portal opens in a new tab. After applying, return here and tap 'Mark as Applied'.
+            </p>
           </div>
         </div>
 
+        <div class="modal-footer-actions">
+          <button type="button" id="modal-btn-go-site" class="btn btn-primary btn-block" data-i18n="btnGoToSite">
+            Go to Official Portal ➔
+          </button>
+          <button type="button" id="modal-btn-mark-applied" class="btn btn-outline btn-block" data-i18n="btnMarkApplied">
+            Mark as Applied
+          </button>
+        </div>
+      </div>
+    </div>
 
-        <!-- Local Third-Party Scripts (100% Offline Compatible) -->
-        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+    <!-- ========================================================= -->
+    <!-- DRAWER: Profile Menu & Full 6-Table Summary               -->
+    <!-- ========================================================= -->
+    <div id="profile-drawer" class="drawer-container">
+      <div id="drawer-overlay" class="drawer-overlay"></div>
+      <div class="drawer-content">
+        <div class="drawer-header">
+          <div class="user-avatar-circle">👨‍🌾</div>
+          <div class="user-meta">
+            <h3 class="user-name" data-i18n="profile">Farmer Profile</h3>
+            <p id="profile-drawer-phone" class="user-phone">KM26@0001</p>
+          </div>
+          <button type="button" id="btn-close-drawer" class="btn-close-drawer">✕</button>
+        </div>
 
-        <!-- Krishi Mitra Core Application Scripts -->
-        <script src="assets/js/api.js"></script>
-        <script src="assets/js/krishi_dashboard.js"></script>
+        <div class="drawer-body">
+          <div id="profile-drawer-summary" class="profile-chips-grid"></div>
 
+          <div class="drawer-menu-list">
+            <button type="button" id="btn-edit-profile-menu" class="drawer-menu-btn">
+              <span class="menu-icon">✏️</span>
+              <span data-i18n="editProfileTitle">Edit Profile &amp; DB Records</span>
+            </button>
+
+            <button type="button" id="btn-logout-menu" class="drawer-menu-btn">
+              <span class="menu-icon">🚪</span>
+              <span data-i18n="logout">Log Out</span>
+            </button>
+
+            <button type="button" id="btn-delete-data-menu" class="drawer-menu-btn danger">
+              <span class="menu-icon">🗑️</span>
+              <span data-i18n="deleteData">Delete My Data</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: Edit Profile Modal (All 6 PostgreSQL Tables)       -->
+    <!-- ========================================================= -->
+    <div id="edit-profile-modal" class="modal-backdrop">
+      <div class="modal-overlay" onclick="window.app.closeEditProfileModal()"></div>
+      <div class="modal-sheet">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-scheme-title" data-i18n="editProfileTitle">Edit Your Farm Details</h3>
+            <p class="modal-scheme-dept" data-i18n="editProfileSub">Update fields across all 6 database tables — saves to PostgreSQL immediately</p>
+          </div>
+          <button type="button" id="btn-close-edit-modal" class="btn-close-modal">✕</button>
+        </div>
+
+        <div class="modal-body-scroll">
+          <div id="edit-profile-fields" class="edit-fields-list"></div>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" id="btn-save-edit-profile" class="btn btn-primary btn-block" data-i18n="btnSaveProfile">
+            Save Changes to PostgreSQL ✔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: Login Help Modal                                   -->
+    <!-- ========================================================= -->
+    <div id="login-help-modal" class="modal-backdrop">
+      <div class="modal-overlay" id="login-help-modal-overlay"></div>
+      <div class="modal-sheet modal-help-sheet">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-scheme-title" data-i18n="helpModalTitle">Farmer Helpline &amp; Grievance Redressal</h3>
+            <p class="modal-scheme-dept">Krishi Mitra — Sovereign Citizen Assistance</p>
+          </div>
+          <button type="button" id="btn-close-login-help" class="btn-close-modal">✕</button>
+        </div>
+        <div class="modal-body-content" style="padding: 20px; line-height: 1.7; font-size: 1.02rem;">
+          <div class="helpline-badge">
+            <p style="margin: 0 0 8px; font-weight: 700; color: #86efac;">📞 Kisan Call Center:</p>
+            <p style="margin: 0 0 4px; font-size: 1.25rem; font-weight: 800; color: #22c55e;">
+              <a href="tel:18001801551" style="color: inherit; text-decoration: none;">1800-180-1551</a> (Toll-Free)
+            </p>
+            <p style="margin: 0; font-size: 0.88rem; color: #cbd5e1;">6:00 AM – 10:00 PM All Days</p>
+          </div>
+          <div class="helpline-badge">
+            <p style="margin: 0 0 8px; font-weight: 700; color: #86efac;">🏛️ Karnataka Farmer Helpline:</p>
+            <p style="margin: 0 0 4px; font-size: 1.25rem; font-weight: 800; color: #22c55e;">
+              <a href="tel:08022212861" style="color: inherit; text-decoration: none;">080-22212861</a>
+            </p>
+            <p style="margin: 0; font-size: 0.88rem; color: #cbd5e1;">Department of Agriculture, Bengaluru</p>
+          </div>
+          <p style="font-size: 0.95rem; color: #cbd5e1;">
+            Portal: <a href="https://raithamitra.karnataka.gov.in" target="_blank" style="color: #22c55e; font-weight: 700;">raithamitra.karnataka.gov.in</a>
+          </p>
+        </div>
+        <div class="modal-footer-actions">
+          <button type="button" id="btn-close-login-help-action" class="btn btn-primary btn-block" data-i18n="helpCloseBtn">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End .app-viewport -->
+
+  <!-- UI Enhancements: Demo chips, password toggle, theme sync, spotlight glow -->
+  <script>
+    (function () {
+      'use strict';
+
+      if (localStorage.getItem('krishi_theme') === 'light') {
+        document.getElementById('htmlRoot').classList.add('lm');
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.demo-id-chip').forEach(function (chip) {
+          chip.addEventListener('click', function () {
+            var id = chip.getAttribute('data-id');
+            var idInput = document.getElementById('login-phone');
+            var passInput = document.getElementById('login-password');
+            if (idInput) idInput.value = id;
+            if (passInput) passInput.value = id;
+            if (idInput) idInput.focus();
+          });
+        });
+
+        var eyeBtn = document.getElementById('btn-toggle-password');
+        var passInput = document.getElementById('login-password');
+        if (eyeBtn && passInput) {
+          eyeBtn.addEventListener('click', function () {
+            var icon = eyeBtn.querySelector('i');
+            if (passInput.type === 'password') {
+              passInput.type = 'text';
+              if (icon) icon.className = 'fa-solid fa-eye-slash';
+            } else {
+              passInput.type = 'password';
+              if (icon) icon.className = 'fa-solid fa-eye';
+            }
+          });
+        }
+
+        document.addEventListener('mousemove', function (e) {
+          var card = e.target.closest('.gc, .scheme-card, .doc-guide-card, .tip-full-card, .help-card');
+          if (!card) return;
+          var rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+          card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
+        });
+      });
+    })();
+  </script>
+
+  <!-- Core Scripts (exact order matching legacy_index.html + 6-table profileEditor) -->
+  <script src="js/translations.js"></script>
+  <script src="js/mockData.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/profileEditor.js"></script>
+  <script src="js/app.js"></script>
 </body>
-
 </html>

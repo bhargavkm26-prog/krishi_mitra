@@ -408,24 +408,83 @@
   }
 
   /* --------------------------------------------------------------------------
-   * 6. QUICK LOGIN (USER ID ONLY - NO PASSWORD)
+   * 6. LIVE POSTGRESQL FARMER LOGIN (USER ID + PASSWORD)
    * -------------------------------------------------------------------------- */
-  function quickLoginFarmer(farmerId) {
-    const farmer = SAMPLE_FARMERS[farmerId] || SAMPLE_FARMERS['KM26@0001'];
-    localStorage.setItem('krishi_farmer_profile', JSON.stringify({
-      found: true,
-      farmer: {
-        farmer_id: farmer.id,
-        farmer_unique_id: farmer.unique_id,
-        full_name: farmer.name,
-        state: farmer.state,
-        district: farmer.district,
-        social_category: farmer.category,
-        farmer_category: farmer.farmer_class
-      }
-    }));
+  const KRISHI_API_BASE = (window.location.origin && window.location.origin.includes(':8000'))
+    ? window.location.origin
+    : 'http://127.0.0.1:8000';
 
-    window.location.href = `dashboard_app.html?farmer=${farmer.unique_id}`;
+  async function authenticateFarmerOffcanvas(uniqueId, password) {
+    const errBox = document.getElementById('offcanvasLoginError');
+    const submitBtn = document.getElementById('offcanvasLoginBtn');
+    if (errBox) {
+      errBox.classList.add('d-none');
+      errBox.textContent = '';
+    }
+    if (!uniqueId || !password) {
+      if (errBox) {
+        errBox.textContent = 'Please enter both your Farmer User ID and Password.';
+        errBox.classList.remove('d-none');
+      }
+      return;
+    }
+
+    const origText = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Verifying credentials...';
+    }
+
+    try {
+      const resp = await fetch(`${KRISHI_API_BASE}/api/v1/database/farmers/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ farmer_unique_id: uniqueId.trim(), password: password })
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok || !data.found || !data.farmer) {
+        throw new Error(data.detail || 'Invalid Farmer User ID or Password.');
+      }
+
+      localStorage.setItem('krishi_farmer_profile', JSON.stringify({
+        ...data,
+        authenticated: true,
+        logged_in_at: new Date().toISOString()
+      }));
+
+      window.location.href = 'dashboard_app.html?view=farmer';
+    } catch (err) {
+      if (errBox) {
+        errBox.textContent = err.message || 'Unable to verify credentials with PostgreSQL API (port 8000).';
+        errBox.classList.remove('d-none');
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origText;
+      }
+    }
+  }
+
+  function quickLoginFarmer(farmerId) {
+    const idInput = document.getElementById('offcanvasFarmerId');
+    const pwInput = document.getElementById('offcanvasFarmerPassword');
+    const errBox = document.getElementById('offcanvasLoginError');
+    if (errBox) errBox.classList.add('d-none');
+
+    if (idInput) {
+      idInput.value = farmerId || 'KM26@0001';
+    }
+    if (pwInput) {
+      // Pre-fill synthetic demo password (equals User ID) if blank, or let user review & submit
+      pwInput.value = (farmerId && /^KM26@/i.test(farmerId)) ? farmerId : '';
+      pwInput.focus();
+    }
+
+    const offcanvasEl = document.getElementById('farmerLoginOffcanvas');
+    if (offcanvasEl && window.bootstrap) {
+      const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
+      bsOffcanvas.show();
+    }
   }
 
   /* --------------------------------------------------------------------------
@@ -549,19 +608,16 @@
     // Initialize first farmer profile if container exists
     selectFarmerProfile('KM26@0001');
 
-    // Offcanvas login form
+    // Offcanvas login form (User ID + Password verified via PostgreSQL API)
     const loginForm = document.getElementById('offcanvasLoginForm');
     if (loginForm) {
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const idInput = document.getElementById('offcanvasFarmerId');
-        const val = idInput ? idInput.value.trim().toUpperCase() : 'KM26@0001';
-        quickLoginFarmer(val);
-        const offcanvasEl = document.getElementById('farmerLoginOffcanvas');
-        if (offcanvasEl && window.bootstrap) {
-          const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
-          if (bsOffcanvas) bsOffcanvas.hide();
-        }
+        const pwInput = document.getElementById('offcanvasFarmerPassword');
+        const uid = idInput ? idInput.value.trim() : '';
+        const pw = pwInput ? pwInput.value : '';
+        authenticateFarmerOffcanvas(uid, pw);
       });
     }
   });

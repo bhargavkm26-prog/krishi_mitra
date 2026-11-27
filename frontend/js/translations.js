@@ -33,14 +33,14 @@ const TRANSLATIONS = {
     loginBrand: "Krishi Mitra",
     loginHeroKn: "ಕೃಷಿ ಮಿತ್ರ",
     loginHeroEn: "K R I S H I   M I T R A",
-    loginTagline: "ನಿಮಗಾಗಿ ಇರುವ ಯೋಜನೆಗಳನ್ನು ಹುಡುಕಿ",
-    loginCardTitle: "ಲಾಗಿನ್ ಮಾಡಿ",
-    loginSubtitle: "ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ ಲಾಗಿನ್ ಆಗಿ",
-    phoneLabel: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
-    phonePlaceholder: "10 ಅಂಕಿಗಳು",
-    phoneError: "ದಯವಿಟ್ಟು ಸರಿಯಾದ 10 ಅಂಕಿಗಳ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
-    getOtpBtn: "OTP ಪಡೆಯಿರಿ",
-    newHereSignUp: "ಹೊಸಬರೇ? <u>ಸೈನ್ ಅಪ್ ಮಾಡಿ</u>",
+    loginTagline: "ನಿಮಗಾಗಿ ಇರುವ 2,066 ಸರಕಾರಿ ಯೋಜನೆಗಳನ್ನು ಹುಡುಕಿ",
+    loginCardTitle: "ರೈತರ ಪೋರ್ಟಲ್ ಲಾಗಿನ್",
+    loginSubtitle: "ನಿಮ್ಮ ರೈತ ಗುರುತಿನ ಸಂಖ್ಯೆ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ",
+    phoneLabel: "ರೈತರ ಗುರುತಿನ ಸಂಖ್ಯೆ (User ID)",
+    phonePlaceholder: "ಉದಾ: KM26@0001",
+    phoneError: "ದಯವಿಟ್ಟು ಸರಿಯಾದ ರೈತ ಗುರುತಿನ ಸಂಖ್ಯೆ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ",
+    getOtpBtn: "ಪರಿಶೀಲಿಸಿ & ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ತೆರೆಯಿರಿ",
+    newHereSignUp: "ಹೊಸಬರೇ? <u>ಹೊಸ ರೈತ ನೋಂದಣಿ ಮಾಡಿ</u>",
     signUpNotice: "ಹೊಸಬರಾದರೂ ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ OTP ಮೂಲಕ ಸುಲಭವಾಗಿ ಸೈನ್ ಅಪ್ ಮಾಡಬಹುದು.",
     helpLink: "<u>ಸಹಾಯ</u>",
     helpModalTitle: "ರೈತ ಸಹಾಯವಾಣಿ (Farmer Helpline)",
@@ -202,12 +202,12 @@ const TRANSLATIONS = {
   },
 
   en: {
-    // App Branding
+    // App Branding (aligned with index.html Sovereign Agrarian OS)
     appName: "Krishi Mitra",
-    appSubName: "Karnataka Farmer Scheme Assistance",
-    appTagline: "Direct Guide & Assistance for Karnataka Government Agriculture Schemes",
+    appSubName: "SOVEREIGN AGRI-OS",
+    appTagline: "Unified System for Sovereign Agrarian Governance & Entitlement Matching",
 
-    // Header & Navigation (as requested in top menu)
+    // Header & Navigation
     navEligible: "Eligible Schemes",
     navAlmost: "Almost Eligible",
     navSaved: "Saved Schemes",
@@ -223,24 +223,24 @@ const TRANSLATIONS = {
     // Bottom Navigation (Mobile)
     navHome: "Home",
     navDocs: "Documents",
-    navTips: "Tips & Dates",
+    navTips: "Advisories",
     navHelp: "Help",
 
-    // Page 1: Login / Sign Up Screen (Exact match to reference screenshot)
+    // Page 1: Login / Sign Up Screen
     loginBrand: "Krishi Mitra",
-    loginHeroKn: "Krishi Mitra",
-    loginHeroEn: "K R I S H I   M I T R A",
-    loginTagline: "Find the government schemes tailored for you",
-    loginCardTitle: "Log In",
-    loginSubtitle: "Enter your mobile number to sign in",
-    phoneLabel: "Mobile Number",
-    phonePlaceholder: "10 digits",
-    phoneError: "Please enter a valid 10-digit mobile number",
-    getOtpBtn: "Get OTP",
-    newHereSignUp: "New here? <u>Sign up</u>",
-    signUpNotice: "New farmers can simply enter their mobile number to sign up instantly via OTP.",
-    helpLink: "<u>Help</u>",
-    helpModalTitle: "Farmer Helpline Assistance",
+    loginHeroKn: 'Krishi <span class="gt">Mitra</span>',
+    loginHeroEn: "S O V E R E I G N   A G R I - O S",
+    loginTagline: "Autonomous Agrarian Intelligence — Access 2,066 Statutory Schemes",
+    loginCardTitle: "Farmer Portal Sign In",
+    loginSubtitle: "Enter your registered User ID and Password to unlock personalized schemes",
+    phoneLabel: "Farmer User ID",
+    phonePlaceholder: "e.g. KM26@0001",
+    phoneError: "Please enter a valid Farmer User ID or 10-digit mobile number",
+    getOtpBtn: "Verify & Sign In to Farmer Portal",
+    newHereSignUp: "New Farmer? <u>Register New Account</u>",
+    signUpNotice: "Create your Citizen Farmer ID and PostgreSQL profile on the registration portal.",
+    helpLink: "<u>Farmer Helpline &amp; Support</u>",
+    helpModalTitle: "Farmer Helpline &amp; Grievance Redressal",
     helpModalContent: "Need help? Call toll-free:\n• Kisan Call Center: 1800-180-1551 (Toll Free)\n• Karnataka Raitha Helpline: 080-22212861\n• Official Agriculture Portal: raithamitra.karnataka.gov.in",
     helpCloseBtn: "Close",
     otpTitle: "Enter OTP",
@@ -249,20 +249,20 @@ const TRANSLATIONS = {
     otpError: "Please enter the correct OTP (Use 1234 for testing)",
     verifyOtpBtn: "Verify & Continue",
     demoOtpHint: "Test OTP: 1234 (Click here)",
-    changeNumber: "Change Number",
+    changeNumber: "Change ID / Number",
 
-    // Hero Banner (styled like the reference screenshot)
-    heroBadge: "Cross-Village Scheme Assistance • Krishi Mitra",
-    heroTitle: "Find & Avail Government Agriculture Schemes Tailored For You",
-    heroDesc: "Connecting Karnataka farmers with Central & State direct cash transfers, PM-KISAN, crop insurance, zero-interest credit, and drip irrigation subsidies based on your land and crops.",
+    // Hero Banner (matched to index.html terminology)
+    heroBadge: "SOVEREIGN AGRI-OS // 2,066 STATUTORY SCHEMES INDEXED",
+    heroTitle: 'Direct Scheme Matching &amp; <span class="gt">Sovereign Agrarian Governance</span>',
+    heroDesc: "We connect statutory schemes, citizen land records, agro-climatic conditions, and procedural mandates into direct DBT income support, crop insurance, zero-interest KCC credit, and micro-irrigation subsidies.",
     heroBtnExplore: "Explore Eligible Schemes",
-    heroBtnShare: "Share on WhatsApp",
+    heroBtnShare: "📲 Share Eligibility Summary",
     heroBenefitTag: "Up to ₹{amount}/year",
 
-    // Discover & Search Card (styled like reference screenshot)
-    discoverTitle: "Discover Available Farm Schemes",
-    searchPlaceholder: "Search by scheme name or keywords (e.g. PM-KISAN, Fasal Bima, Credit, Drip)",
-    allCategories: "All Scheme Categories",
+    // Discover & Search Card
+    discoverTitle: "Discover Statutory Schemes",
+    searchPlaceholder: "Search by scheme name, ministry, or keyword (e.g. PM-KISAN, PMFBY, KCC, Drip)",
+    allCategories: "All Statutory Categories",
     filterDistrictPlaceholder: "Filter by District",
     searchBtn: "Search Schemes",
 

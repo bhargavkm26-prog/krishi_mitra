@@ -88,8 +88,78 @@ const KrishiAPI = {
     },
 
     async getFarmerDetails(farmerId) {
-        const resp = await fetch(`${API_BASE}/api/v1/database/farmers/${farmerId}`);
-        if (!resp.ok) throw new Error(`Farmer ID ${farmerId} not found.`);
+        const resp = await fetch(`${API_BASE}/api/v1/database/farmers/${encodeURIComponent(farmerId)}`);
+        if (!resp.ok) {
+            let msg = `Farmer ID ${farmerId} not found.`;
+            try {
+                const err = await resp.json();
+                if (err.detail) msg = typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail);
+            } catch (_) {}
+            throw new Error(msg);
+        }
+        return await resp.json();
+    },
+
+    async checkUniqueId(uniqueId) {
+        const resp = await fetch(`${API_BASE}/api/v1/database/farmers/check-id/${encodeURIComponent(uniqueId)}`);
+        if (!resp.ok) throw new Error('Unable to verify User ID availability.');
+        return await resp.json();
+    },
+
+    async loginFarmer(farmerUniqueId, password) {
+        const resp = await fetch(`${API_BASE}/api/v1/database/farmers/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                farmer_unique_id: farmerUniqueId,
+                password: password
+            })
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Invalid Farmer User ID or password.');
+        }
+        return data;
+    },
+
+    async registerFarmer(payload) {
+        const resp = await fetch(`${API_BASE}/api/v1/database/farmers/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+            let msg = data.detail || 'Registration failed. Please check your inputs.';
+            if (Array.isArray(data.detail)) {
+                msg = data.detail.map(e => `${(e.loc || []).slice(1).join('.')}: ${e.msg}`).join('; ');
+            }
+            throw new Error(msg);
+        }
+        return data;
+    },
+
+    async getLocationStates() {
+        const resp = await fetch(`${API_BASE}/api/v1/database/locations/states`);
+        if (!resp.ok) throw new Error('Failed to load states from LGD directory.');
+        return await resp.json();
+    },
+
+    async getLocationDistricts(state) {
+        const resp = await fetch(`${API_BASE}/api/v1/database/locations/districts?state=${encodeURIComponent(state)}`);
+        if (!resp.ok) throw new Error('Failed to load districts from LGD directory.');
+        return await resp.json();
+    },
+
+    async getLocationSubDistricts(state, district) {
+        const resp = await fetch(`${API_BASE}/api/v1/database/locations/sub-districts?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}`);
+        if (!resp.ok) throw new Error('Failed to load sub-districts from LGD directory.');
+        return await resp.json();
+    },
+
+    async getLocationVillages(state, district, subDistrict) {
+        const resp = await fetch(`${API_BASE}/api/v1/database/locations/villages?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}&sub_district=${encodeURIComponent(subDistrict)}`);
+        if (!resp.ok) throw new Error('Failed to load villages from LGD directory.');
         return await resp.json();
     },
 

@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 <html lang="en" id="htmlRoot">
+  <!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,7 +61,7 @@
             <i class="fa-solid fa-moon" id="mooni" style="color:var(--pur);"></i>
           </button>
 
-          <!-- Direct Login Button (No Password) -->
+          <!-- Direct Login Button -->
           <button class="boc px-3 py-2 d-none d-sm-flex align-items-center gap-2" data-bs-toggle="offcanvas" data-bs-target="#farmerLoginOffcanvas">
             <i class="fa-solid fa-id-card-clip text-success"></i>
             <span>Farmer Login</span>
@@ -397,9 +397,9 @@
         <div class="col-md-4">
           <div class="gc p-4 h-100 text-center">
             <div class="hnum">1</div>
-            <h4 class="fs-5 fw-bold mb-2">Citizen Unique ID</h4>
+            <h4 class="fs-5 fw-bold mb-2">Citizen Unique ID &amp; Registration</h4>
             <p class="text-white-50 small mb-0">
-              No password required. The farmer or VLE enters their Citizen ID (e.g. <code>KM26@0001</code>) to pull authenticated landholding, crop cycle, and category records.
+              Existing or newly registered farmers sign in with their unique User ID (e.g. <code>KM26@0001</code>) and Password to pull PostgreSQL landholding, crop, and category records.
             </p>
           </div>
         </div>
@@ -664,7 +664,7 @@
 
 
   <!-- ========================================================================= -->
-  <!-- 10. OFFCANVAS: FARMER QUICK LOGIN (USER ID ONLY - NO PASSWORD)             -->
+  <!-- 10. OFFCANVAS: FARMER PORTAL LOGIN (USER ID + PASSWORD)                    -->
   <!-- ========================================================================= -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="farmerLoginOffcanvas" aria-labelledby="farmerLoginOffcanvasLabel">
     <div class="offcanvas-header border-bottom border-secondary border-opacity-25 pb-3">
@@ -673,8 +673,8 @@
           <i class="fa-solid fa-seedling"></i>
         </div>
         <div>
-          <h5 class="offcanvas-title fw-bold text-white mb-0" id="farmerLoginOffcanvasLabel">Farmer Direct Login</h5>
-          <small class="text-success font-monospace" style="font-size:0.75rem;"><i class="fa-solid fa-shield-check me-1"></i> NO PASSWORD REQUIRED</small>
+          <h5 class="offcanvas-title fw-bold text-white mb-0" id="farmerLoginOffcanvasLabel">Farmer Portal Login</h5>
+          <small class="text-success font-monospace" style="font-size:0.75rem;"><i class="fa-solid fa-shield-halved me-1"></i> USER ID &amp; PASSWORD VERIFIED</small>
         </div>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" style="filter:invert(1);"></button>
@@ -682,19 +682,32 @@
 
     <div class="offcanvas-body p-4">
       <p class="text-white-50 small mb-3">
-        Enter your registered <strong>Farmer Unique ID</strong> (e.g. <code>KM26@0001</code> to <code>KM26@0100</code>) to access personalized statutory schemes, quota entitlements, and the Chief Secretary deliberation chamber.
+        Enter your registered <strong>Farmer User ID</strong> (e.g. <code>KM26@0001</code> or your newly registered User ID) and <strong>Password</strong> to access personalized statutory schemes and the Farmer Dashboard.
       </p>
+
+      <div id="offcanvasLoginError" class="alert alert-danger py-2 px-3 small d-none mb-3" role="alert"></div>
 
       <form id="offcanvasLoginForm">
         <div class="mb-3">
-          <label class="olbl" for="offcanvasFarmerId"><i class="fa-solid fa-id-card-clip me-1 text-success"></i> Registered Farmer ID</label>
-          <input type="text" class="oinp text-uppercase font-monospace" id="offcanvasFarmerId" placeholder="e.g. KM26@0001, KM26@0002" required autofocus>
+          <label class="olbl" for="offcanvasFarmerId"><i class="fa-solid fa-id-card-clip me-1 text-success"></i> Farmer User ID</label>
+          <input type="text" class="oinp font-monospace" id="offcanvasFarmerId" placeholder="e.g. KM26@0001 or RAVI@2026" required autofocus>
         </div>
 
-        <button type="submit" class="bgrd btn w-100 py-3 fw-bold fs-6 mb-3">
-          🌾 Sign In to Farmer Portal
+        <div class="mb-3">
+          <label class="olbl" for="offcanvasFarmerPassword"><i class="fa-solid fa-key me-1 text-success"></i> Password</label>
+          <input type="password" class="oinp" id="offcanvasFarmerPassword" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit" id="offcanvasLoginBtn" class="bgrd btn w-100 py-3 fw-bold fs-6 mb-2">
+          🌾 Verify &amp; Sign In to Farmer Portal
         </button>
       </form>
+
+      <div class="d-grid mb-3">
+        <a href="page-login.html?tab=register" class="btn btn-outline-light btn-sm fw-semibold py-2">
+          <i class="fa-solid fa-user-plus me-1"></i> New Farmer? Register New Account
+        </a>
+      </div>
 
       <div class="text-center my-3 text-white-50 small">— Or quick fill a sample profile —</div>
 

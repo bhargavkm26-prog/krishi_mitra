@@ -1,172 +1,965 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="htmlRoot">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmer Direct Login — Krishi Mitra AI Portal</title>
-    
-    <!-- SEO Optimization -->
-    <meta name="description" content="Direct Farmer Access for Krishi Mitra - No Password Required">
-    <meta name="author" content="Krishi Mitra National Governance Team">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="assets/images/favicon.ico">
-    
-    <!-- Local Third-Party Libraries (100% Offline Compatible) -->
-    <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css">
-    
-    <!-- Main Design System & Custom Stylesheet -->
-    <link rel="stylesheet" href="assets/css/main.css">
-    <style>
-        .farmer-demo-chip {
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            font-size: 0.82rem;
-            border: 1px solid rgba(7, 47, 31, 0.2);
-            background: #f8faf8;
-            color: #072F1F;
-        }
-        .farmer-demo-chip:hover {
-            background: #072F1F;
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(7, 47, 31, 0.15);
-        }
-        .badge-no-pass {
-            background: rgba(180, 241, 5, 0.2);
-            color: #1a4d00;
-            border: 1px solid #99d604;
-            font-weight: 600;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farmer Portal Login &amp; Registration — Krishi Mitra</title>
+  <meta name="description" content="Sign in or register a new farmer profile on Krishi Mitra Sovereign Agrarian Intelligence OS." />
+  <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon" />
+
+  <!-- Fonts matching index.html -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Styles matching index.html -->
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/all.min.css" />
+  <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css" />
+  <link rel="stylesheet" href="css/krishi-nexus.css?v=4.6" />
+
+  <style>
+    .auth-main {
+      min-height: 100vh;
+      padding: calc(var(--nav) + 34px) 1rem 64px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .auth-shell {
+      max-width: 540px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      transition: max-width 0.25s ease;
+    }
+
+    .auth-shell.is-register-wide {
+      max-width: 960px;
+    }
+
+    .auth-glass-card {
+      padding: 2rem;
+    }
+
+    .auth-glass-card:hover {
+      transform: none !important;
+    }
+
+    @media (max-width: 767px) {
+      .auth-glass-card {
+        padding: 1.25rem;
+      }
+    }
+
+    .auth-mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      background: rgba(5, 18, 9, 0.88);
+      padding: 0.4rem;
+      border-radius: 14px;
+      border: 1px solid var(--bd);
+      margin-bottom: 1.5rem;
+    }
+
+    .lm .auth-mode-tabs {
+      background: #f1f5f9;
+      border-color: rgba(16, 185, 129, 0.28);
+    }
+
+    .auth-mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--tx3);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .auth-mode-btn:hover {
+      color: var(--tx);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .auth-mode-btn.active {
+      background: var(--grad);
+      color: #021a0f !important;
+      box-shadow: 0 4px 18px rgba(34, 197, 94, 0.35);
+    }
+
+    .wizard-stepper {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 767px) {
+      .wizard-stepper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .wizard-step-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 12px;
+      border: 1px solid var(--bd);
+      background: rgba(9, 29, 16, 0.72);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--tx3);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .lm .wizard-step-pill {
+      background: #f8fafc;
+      color: #475569;
+    }
+
+    .wizard-step-pill.active {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.16);
+      color: var(--tx);
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.18);
+    }
+
+    .lm .wizard-step-pill.active {
+      background: #e2fbe8;
+      color: #065f46;
+    }
+
+    .wizard-step-pill.completed {
+      border-color: rgba(34, 197, 94, 0.5);
+      background: rgba(16, 185, 129, 0.1);
+      color: #86efac;
+    }
+
+    .lm .wizard-step-pill.completed {
+      background: #f0fdf4;
+      color: #15803d;
+    }
+
+    .wizard-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--tx);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .lm .wizard-step-num {
+      background: #dce7df;
+      color: #022013;
+    }
+
+    .wizard-step-pill.active .wizard-step-num,
+    .wizard-step-pill.completed .wizard-step-num {
+      background: var(--grad);
+      color: #021a0f;
+    }
+
+    .db-table-section {
+      border: 1px solid rgba(34, 197, 94, 0.28);
+      background: rgba(6, 18, 11, 0.85);
+      border-radius: 16px;
+      padding: 1.15rem 1.25rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .lm .db-table-section {
+      background: #f8fafc;
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .db-table-badge {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #4ade80;
+    }
+
+    .lm .db-table-badge {
+      background: #dcfce7;
+      border-color: rgba(22, 163, 74, 0.35);
+      color: #15803d;
+    }
+
+    .repeatable-card {
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      background: rgba(9, 25, 15, 0.9);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 0.85rem;
+      position: relative;
+    }
+
+    .lm .repeatable-card {
+      background: #ffffff;
+      border-color: #cbd5e1;
+    }
+
+    .repeatable-title {
+      color: var(--tx);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .auth-main .form-label {
+      color: var(--tx2);
+    }
+
+    .auth-main .form-control,
+    .auth-main .form-select {
+      background-color: #091d10;
+      border: 1px solid rgba(34, 197, 94, 0.38);
+      color: #ffffff;
+      border-radius: 10px;
+    }
+
+    .auth-main .form-control:focus,
+    .auth-main .form-select:focus {
+      background-color: #0b2414;
+      border-color: #22c55e;
+      color: #ffffff;
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.32);
+    }
+
+    .auth-main .form-control::placeholder {
+      color: #64748b;
+    }
+
+    .auth-main .form-select:disabled {
+      background-color: rgba(6, 17, 9, 0.55);
+      color: #64748b;
+      border-color: rgba(148, 163, 184, 0.2);
+    }
+
+    .auth-main .form-select option {
+      background-color: #061109;
+      color: #f8fafc;
+    }
+
+    html:not(.lm) .auth-main .form-select {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2386efac' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    .auth-main .input-group-text {
+      background-color: #06150b;
+      border: 1px solid rgba(34, 197, 94, 0.38);
+      color: #22c55e;
+      border-radius: 10px 0 0 10px;
+    }
+
+    .auth-main .input-group .form-control:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .auth-main .password-toggle-btn {
+      border: 1px solid rgba(34, 197, 94, 0.38);
+      background: #06150b;
+      color: #cbd5e1;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .auth-main .password-toggle-btn:hover {
+      background: rgba(34, 197, 94, 0.16);
+      color: #ffffff;
+      border-color: #22c55e;
+    }
+
+    .lm .auth-main .form-control,
+    .lm .auth-main .form-select {
+      background-color: #ffffff;
+      border-color: #cbd5e1;
+      color: #022013;
+    }
+
+    .lm .auth-main .form-select option {
+      background-color: #ffffff;
+      color: #022013;
+    }
+
+    .lm .auth-main .form-select:disabled {
+      background-color: #f1f5f9;
+      color: #94a3b8;
+    }
+
+    .lm .auth-main .input-group-text,
+    .lm .auth-main .password-toggle-btn {
+      background-color: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #15803d;
+    }
+
+    .auth-muted {
+      color: var(--tx3) !important;
+    }
+
+    .rule-box {
+      background: rgba(3, 9, 5, 0.8);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      border-radius: 10px;
+    }
+
+    .lm .rule-box {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .rule-item {
+      font-size: 0.78rem;
+      color: var(--tx3);
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .rule-item.pass {
+      color: #4ade80;
+      font-weight: 700;
+    }
+
+    .lm .rule-item.pass {
+      color: #15803d;
+    }
+
+    .rule-item.fail {
+      color: #f87171;
+    }
+
+    .lm .rule-item.fail {
+      color: #dc2626;
+    }
+
+    .demo-vault-box {
+      background: rgba(5, 16, 9, 0.85);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+    }
+
+    .lm .demo-vault-box {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    .demo-chip {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #e2e8f0;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.76rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .demo-chip:hover {
+      background: rgba(34, 197, 94, 0.24);
+      border-color: #22c55e;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .lm .demo-chip {
+      background: #ffffff;
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #065f46;
+    }
+
+    .lm .demo-chip:hover {
+      background: #e2fbe8;
+      color: #022013;
+    }
+
+    .auth-info-banner {
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: #cffafe;
+      border-radius: 12px;
+    }
+
+    .lm .auth-info-banner {
+      background: #ecfeff;
+      border-color: #a5f3fc;
+      color: #155e75;
+    }
+
+    html:not(.lm) .auth-main .alert-danger {
+      background-color: rgba(239, 68, 68, 0.14);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #fecaca;
+    }
+
+    html:not(.lm) .auth-main .alert-success {
+      background-color: rgba(34, 197, 94, 0.14);
+      border-color: rgba(34, 197, 94, 0.45);
+      color: #bbf7d0;
+    }
+
+    html:not(.lm) .auth-main .alert-warning {
+      background-color: rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.45);
+      color: #fde68a;
+    }
+  </style>
 </head>
+
 <body>
-
-    <!-- ==========================================
-         START: Authentication Container & Login Card
-         ========================================== -->
-    <div class="login-wrapper">
-        <div class="login-bg-shape login-bg-shape-1"></div>
-        <div class="login-bg-shape login-bg-shape-2"></div>
-        
-        <div class="login-card" style="max-width: 520px;">
-            
-            <!-- Brand Identity -->
-            <a href="index.html" class="login-brand text-decoration-none">
-                <i class="bi bi-flower1 text-success"></i>
-                <span>Krishi Mitra</span>
-            </a>
-            
-            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                <span class="badge badge-no-pass px-2 py-1 rounded-pill">
-                    <i class="bi bi-shield-check me-1"></i> Farmer Direct Access — No Password Required
-                </span>
+  <!-- NAVIGATION BAR MATCHING index.html -->
+  <nav id="nbar">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between w-100">
+        <a href="index.html" class="d-flex align-items-center gap-2 text-decoration-none">
+          <div class="logo-leaf">
+            <i class="fa-solid fa-seedling"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-white" style="font-size:1.25rem; letter-spacing:-0.02em; line-height:1.1;">
+              Krishi<span class="text-success">Mitra</span>
             </div>
+            <div class="text-white-50 font-monospace" style="font-size:0.65rem; letter-spacing:0.12em;">SOVEREIGN AGRI-OS</div>
+          </div>
+        </a>
 
-            <p class="login-subtitle mb-4">
-                Enter your registered Farmer ID (1–100) to view personalized statutory schemes, affirmative quotas, and consult the AI Chief Secretary.
-            </p>
-            
-            <!-- Alert message placeholder -->
-            <div id="login-alert" class="alert alert-danger d-none py-2 px-3 small" role="alert"></div>
-
-            <!-- Login Form (FARMER USER ID ONLY - NO PASSWORD) -->
-            <form id="farmerLoginForm" class="needs-validation" novalidate>
-                
-                <!-- Farmer ID Input Group -->
-                <div class="login-form-group mb-3">
-                    <label for="farmerId" class="login-form-label fw-bold">
-                        <i class="bi bi-person-badge me-1"></i> Registered Farmer ID
-                    </label>
-                    <div class="login-input-group">
-                        <i class="bi bi-hash input-icon"></i>
-                        <input 
-                            type="number" 
-                            id="farmerId" 
-                            class="login-input" 
-                            placeholder="Enter Farmer ID (e.g. 1, 2, 3, 7...)" 
-                            min="1" 
-                            max="100" 
-                            required 
-                            autofocus
-                        >
-                    </div>
-                    <div class="form-text text-muted small mt-1">
-                        Zero authentication barriers: verification is anchored directly to your verified land record profile.
-                    </div>
-                </div>
-                
-                <!-- Submit Button -->
-                <button type="submit" class="btn-login w-100" id="btn-submit">
-                    <span id="btn-text">🌾 Sign In to Farmer Portal</span>
-                    <span id="btn-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                    <i class="bi bi-arrow-right ms-2" id="btn-icon"></i>
-                </button>
-                
-            </form>
-            
-            <!-- Divider -->
-            <div class="login-divider my-4">Quick Demo Profiles (Click to Load)</div>
-            
-            <!-- Quick Demo Selectors -->
-            <div class="d-flex flex-column gap-2 mb-3">
-                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(1)">
-                    <div>
-                        <strong>#1: Suresh Hegde</strong> 
-                        <span class="badge bg-secondary ms-1">Assam</span>
-                    </div>
-                    <small class="text-muted">SC • 6.37 ha • Rice/Mustard</small>
-                </div>
-
-                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(2)">
-                    <div>
-                        <strong>#2: Vijay Gowda</strong> 
-                        <span class="badge bg-success ms-1">Karnataka</span>
-                    </div>
-                    <small class="text-muted">OBC • Small (Chitradurga)</small>
-                </div>
-
-                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(3)">
-                    <div>
-                        <strong>#3: Ravi Borah</strong> 
-                        <span class="badge bg-success ms-1">Karnataka</span>
-                    </div>
-                    <small class="text-muted">SC • Marginal (Vijayapura)</small>
-                </div>
-
-                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(7)">
-                    <div>
-                        <strong>#7: Manjunath Joshi</strong> 
-                        <span class="badge bg-info text-dark ms-1">Meghalaya</span>
-                    </div>
-                    <small class="text-muted">ST • Semi-medium</small>
-                </div>
-
-                <div class="farmer-demo-chip p-2 rounded d-flex justify-content-between align-items-center" onclick="quickFill(10)">
-                    <div>
-                        <strong>#10: Lakshmi Sharma</strong> 
-                        <span class="badge bg-success ms-1">Karnataka</span>
-                    </div>
-                    <small class="text-muted">ST • Medium (Chitradurga)</small>
-                </div>
-            </div>
-            
-            <!-- Back to Public Dashboard -->
-            <p class="login-footer-text mt-3 text-center">
-                Want to view national statistics first? 
-                <a href="index.html" class="fw-semibold text-decoration-none">
-                    <i class="bi bi-house-door me-1"></i> Public Governance Dashboard
-                </a>
-            </p>
-            
+        <div class="d-none d-lg-flex align-items-center gap-4 mx-auto">
+          <a href="index.html" class="text-white-50 text-decoration-none small fw-semibold hover-success">
+            <i class="fa-solid fa-house me-1"></i>Home Overview
+          </a>
+          <a href="ai_chat.html" class="text-white text-decoration-none small fw-bold" style="color:#22c55e !important;">
+            <i class="fa-solid fa-comments me-1"></i>AI Chatbot
+          </a>
+          <a href="dashboard_app.html" class="text-white-50 text-decoration-none small fw-semibold hover-success">
+            <i class="fa-solid fa-chart-line me-1"></i>Governance Portal
+          </a>
         </div>
-    </div>
-    <!-- END: Authentication Container -->
 
-    <!-- Local Third-Party Libraries -->
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/api.js"></script>
-    <script src="assets/js/auth.js"></script>
+        <div class="d-flex align-items-center gap-2">
+          <button class="boc d-flex align-items-center justify-content-center" id="thbtn" style="width:38px; height:38px; padding:0; border-radius:12px;" aria-label="Toggle Theme">
+            <i class="fa-solid fa-sun" id="suni" style="display:none; color:var(--gold);"></i>
+            <i class="fa-solid fa-moon" id="mooni" style="color:var(--pur);"></i>
+          </button>
+
+          <a href="index.html" class="boc px-3 py-2 d-none d-sm-flex align-items-center gap-2 text-decoration-none">
+            <i class="fa-solid fa-arrow-left text-success"></i>
+            <span>Home</span>
+          </a>
+
+          <a href="dashboard_app.html" class="bgrd btn px-3 py-2 d-flex align-items-center gap-2 text-decoration-none">
+            <span>Public Portal</span>
+            <i class="fa-solid fa-arrow-right fa-xs"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN OBSIDIAN / EMERALD CONTAINER -->
+  <main class="auth-main">
+    <div class="aur aur-a" style="top:-80px; left:-120px;"></div>
+    <div class="aur aur-b" style="top:180px; right:-150px;"></div>
+    <div class="aur aur-gold" style="bottom:-60px; left:48%; transform:translateX(-50%); opacity:0.32;"></div>
+
+    <div class="container position-relative" style="z-index:2;">
+      <div class="text-center mb-4">
+        <div class="mb-3">
+          <span class="hbadge">
+            <span class="bdot"></span>
+            SOVEREIGN AGRI-OS // FARMER AUTHENTICATION
+          </span>
+        </div>
+        <h1 class="stitle fs-1 mb-2" id="authHeaderTitle">
+          Farmer <span class="gt">Portal Sign In</span>
+        </h1>
+        <p class="auth-muted mx-auto mb-0" style="max-width:680px; font-size:0.98rem;" id="authHeaderSubtitle">
+          Enter your registered User ID and Password to unlock personalized scheme eligibility and your Farmer Dashboard.
+        </p>
+      </div>
+
+      <div class="auth-shell" id="authShellCard">
+        <div class="gc auth-glass-card">
+          <div class="auth-mode-tabs" role="tablist">
+            <button type="button" class="auth-mode-btn active" id="tabBtnLogin" data-mode="login">
+              <i class="fa-solid fa-right-to-bracket me-1"></i> Existing Farmer Login
+            </button>
+            <button type="button" class="auth-mode-btn" id="tabBtnRegister" data-mode="register">
+              <i class="fa-solid fa-user-plus me-1"></i> New Farmer Registration
+            </button>
+          </div>
+
+          <!-- PANEL 1: LOGIN -->
+          <section id="loginPanel">
+            <div id="loginSuccess" class="alert alert-success py-2 px-3 small d-none mb-3" role="alert"></div>
+            <div id="loginError" class="alert alert-danger py-2 px-3 small d-none mb-3" role="alert"></div>
+
+            <form id="farmerLoginForm" autocomplete="on">
+              <div class="mb-3">
+                <label for="farmerUniqueId" class="form-label fw-bold small">
+                  Farmer User ID <span class="auth-muted fw-normal font-monospace">(farmer_unique_id)</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fa-solid fa-id-card-clip"></i></span>
+                  <input
+                    type="text"
+                    class="form-control form-control-lg font-monospace"
+                    id="farmerUniqueId"
+                    name="farmer_unique_id"
+                    placeholder="e.g. KM26@0001 or RAVI@2026"
+                    required
+                    autofocus
+                  />
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="farmerPassword" class="form-label fw-bold small">Password</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                  <input
+                    type="password"
+                    class="form-control form-control-lg"
+                    id="farmerPassword"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button class="btn password-toggle-btn" type="button" id="toggleLoginPassword" aria-label="Show or hide password">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" class="bgrd btn w-100 py-3 fs-6 mb-4" id="loginSubmitBtn">
+                <span id="loginBtnText">Verify &amp; Open Farmer Dashboard</span>
+                <i class="fa-solid fa-arrow-right ms-2"></i>
+              </button>
+            </form>
+
+            <div class="demo-vault-box mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
+                <span class="small fw-bold auth-muted">Quick Demo Logins (Existing Citizens)</span>
+                <span class="db-table-badge">Password = User ID</span>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <span class="demo-chip" data-demo-id="KM26@0001">
+                  <i class="fa-solid fa-bolt text-warning"></i> KM26@0001 (Karnataka)
+                </span>
+                <span class="demo-chip" data-demo-id="KM26@0010">
+                  <i class="fa-solid fa-bolt text-info"></i> KM26@0010 (#10)
+                </span>
+                <span class="demo-chip" data-demo-id="KM26@0025">
+                  <i class="fa-solid fa-bolt text-success"></i> KM26@0025 (#25)
+                </span>
+                <span class="demo-chip" data-demo-id="KM26@0050">
+                  <i class="fa-solid fa-bolt text-warning"></i> KM26@0050 (#50)
+                </span>
+              </div>
+            </div>
+
+            <div class="text-center pt-2 border-top border-secondary border-opacity-25">
+              <span class="small auth-muted">New to KrishiMitra Sovereign OS?</span>
+              <button type="button" class="btn btn-link btn-sm fw-bold text-success text-decoration-none p-0 ms-1" id="switchToRegisterLink">
+                Create New Farmer Account &rarr;
+              </button>
+            </div>
+          </section>
+
+          <!-- PANEL 2: NEW FARMER REGISTRATION WIZARD -->
+          <section id="registerPanel" class="d-none">
+            <div class="auth-info-banner py-2 px-3 small mb-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <span>
+                <i class="fa-solid fa-circle-info me-1"></i>
+                Only <strong>User ID</strong> and <strong>Password</strong> are required. All other fields are optional.
+              </span>
+              <span class="db-table-badge">Complete Profile Setup</span>
+            </div>
+
+            <div class="wizard-stepper" id="wizardStepper">
+              <div class="wizard-step-pill active" data-step="1">
+                <span class="wizard-step-num">1</span>
+                <span>User ID &amp; Password</span>
+              </div>
+              <div class="wizard-step-pill" data-step="2">
+                <span class="wizard-step-num">2</span>
+                <span>Profile &amp; Location</span>
+              </div>
+              <div class="wizard-step-pill" data-step="3">
+                <span class="wizard-step-num">3</span>
+                <span>Land, Crops, Trees &amp; Livestock</span>
+              </div>
+            </div>
+
+            <div id="regError" class="alert alert-danger py-2 px-3 small d-none mb-3" role="alert"></div>
+
+            <form id="newFarmerRegisterForm" novalidate>
+              <!-- STEP 1 -->
+              <div class="wizard-pane" id="regStep1">
+                <div class="db-table-section">
+                  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h5 class="fw-bold mb-0 fs-6">Account Credentials</h5>
+                    <span class="db-table-badge">farmer_profiles</span>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="regUniqueId" class="form-label fw-bold small">
+                      Create Your Unique User ID <span class="text-danger">*</span>
+                      <span class="auth-muted fw-normal font-monospace">(farmer_unique_id, max 20 chars)</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fa-solid fa-user-plus"></i></span>
+                      <input
+                        type="text"
+                        class="form-control font-monospace"
+                        id="regUniqueId"
+                        maxlength="20"
+                        placeholder="e.g. RAVI@2026 or KM_FARM01"
+                        required
+                      />
+                      <button type="button" class="boc btn px-3" id="checkUniqueIdBtn">
+                        <i class="fa-solid fa-magnifying-glass me-1 text-success"></i>Check Availability
+                      </button>
+                    </div>
+                    <div id="uniqueIdStatus" class="small mt-2 d-none"></div>
+
+                    <div class="row g-1 mt-2 p-2 rule-box">
+                      <div class="col-md-6 rule-item" id="ruleLen"><i class="bi bi-circle me-1"></i>8 to 20 characters</div>
+                      <div class="col-md-6 rule-item" id="ruleLetter"><i class="bi bi-circle me-1"></i>At least 1 letter (A-Z / a-z)</div>
+                      <div class="col-md-6 rule-item" id="ruleDigit"><i class="bi bi-circle me-1"></i>At least 1 digit (0-9)</div>
+                      <div class="col-md-6 rule-item" id="ruleSpecial"><i class="bi bi-circle me-1"></i>At least 1 symbol (@ # $ _ -)</div>
+                    </div>
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="regPassword" class="form-label fw-bold small">
+                        Create Password <span class="text-danger">*</span>
+                        <span class="auth-muted fw-normal font-monospace">(password)</span>
+                      </label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" class="form-control" id="regPassword" maxlength="255" placeholder="Create password" required />
+                        <button class="btn password-toggle-btn" type="button" id="toggleRegPassword">
+                          <i class="bi bi-eye"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="regPasswordConfirm" class="form-label fw-bold small">
+                        Confirm Password <span class="text-danger">*</span>
+                      </label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
+                        <input type="password" class="form-control" id="regPasswordConfirm" maxlength="255" placeholder="Re-enter password" required />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                  <button type="button" class="bgrd btn px-4 py-2" id="step1NextBtn">
+                    Next: Profile &amp; Location <i class="fa-solid fa-arrow-right ms-1"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 2 -->
+              <div class="wizard-pane d-none" id="regStep2">
+                <div class="db-table-section">
+                  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h5 class="fw-bold mb-0 fs-6">Personal &amp; Agrarian Profile</h5>
+                    <span class="db-table-badge">farmer_profiles</span>
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="regFullName" class="form-label small fw-bold">Full Name <span class="auth-muted fw-normal">(full_name)</span></label>
+                      <input type="text" class="form-control form-control-sm" id="regFullName" maxlength="150" placeholder="Enter full name (optional)" />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="regDob" class="form-label small fw-bold">Date of Birth <span class="auth-muted fw-normal">(date_of_birth)</span></label>
+                      <input type="date" class="form-control form-control-sm" id="regDob" />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="regAgeHelper" class="form-label small fw-bold">Age Helper <span class="auth-muted fw-normal">(fills DOB)</span></label>
+                      <input type="number" min="14" max="115" class="form-control form-control-sm" id="regAgeHelper" placeholder="e.g. 42" />
+                    </div>
+
+                    <div class="col-md-4">
+                      <label for="regGender" class="form-label small fw-bold">Gender <span class="auth-muted fw-normal">(gender)</span></label>
+                      <select class="form-select form-select-sm" id="regGender">
+                        <option value="">-- Select Gender (Optional) --</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="regMobile" class="form-label small fw-bold">Mobile Number <span class="auth-muted fw-normal">(mobile_number)</span></label>
+                      <input type="text" class="form-control form-control-sm" id="regMobile" maxlength="15" placeholder="10-digit mobile (optional)" />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="regSocialCategory" class="form-label small fw-bold">Social Category <span class="auth-muted fw-normal">(social_category)</span></label>
+                      <select class="form-select form-select-sm" id="regSocialCategory">
+                        <option value="">-- Select Category (Optional) --</option>
+                        <option value="General">General</option>
+                        <option value="OBC">OBC</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                      </select>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label for="regFarmerCategory" class="form-label small fw-bold">Farmer Category <span class="auth-muted fw-normal">(farmer_category)</span></label>
+                      <select class="form-select form-select-sm" id="regFarmerCategory">
+                        <option value="">-- Select Class (Optional) --</option>
+                        <option value="Marginal">Marginal (&lt; 1 ha)</option>
+                        <option value="Small">Small (1 - 2 ha)</option>
+                        <option value="Semi-medium">Semi-medium (2 - 4 ha)</option>
+                        <option value="Medium">Medium (4 - 10 ha)</option>
+                        <option value="Large">Large (&gt; 10 ha)</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="regAnnualIncome" class="form-label small fw-bold">Annual Family Income (INR) <span class="auth-muted fw-normal">(annual_family_income)</span></label>
+                      <input type="number" min="0" step="100" class="form-control form-control-sm" id="regAnnualIncome" placeholder="Enter annual income (optional)" />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="regKccHolder" class="form-label small fw-bold">KCC Holder <span class="auth-muted fw-normal">(kcc_holder)</span></label>
+                      <select class="form-select form-select-sm" id="regKccHolder">
+                        <option value="">-- Select Status (Optional) --</option>
+                        <option value="true">Yes (KCC Holder)</option>
+                        <option value="false">No</option>
+                      </select>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="regFruitsId" class="form-label small fw-bold">Farmer Registration / FRUITS ID <span class="auth-muted fw-normal">(farmer_registration_id)</span></label>
+                      <input type="text" class="form-control form-control-sm" id="regFruitsId" maxlength="100" placeholder="e.g. FID-KA-12345 (optional)" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="regVerificationStatus" class="form-label small fw-bold">Verification Status <span class="auth-muted fw-normal">(profile_verification_status)</span></label>
+                      <select class="form-select form-select-sm" id="regVerificationStatus">
+                        <option value="UNVERIFIED" selected>UNVERIFIED (Default)</option>
+                        <option value="PENDING">PENDING</option>
+                        <option value="VERIFIED">VERIFIED</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- india_locations -->
+                <div class="db-table-section">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <div>
+                      <h5 class="fw-bold mb-0 fs-6">Residence Location &amp; LGD Directory</h5>
+                      <span class="small auth-muted">Select State, District, Sub-District &amp; Village from official LGD directory</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" id="regManualLocToggle" />
+                        <label class="form-check-label small fw-semibold auth-muted" for="regManualLocToggle">Manual Entry</label>
+                      </div>
+                      <span class="db-table-badge">india_locations</span>
+                    </div>
+                  </div>
+
+                  <div id="lgdCascadeGroup" class="row g-3">
+                    <div class="col-md-6">
+                      <label for="regLgdState" class="form-label small fw-bold">State <span class="auth-muted fw-normal">(state / state_code)</span></label>
+                      <select class="form-select form-select-sm" id="regLgdState">
+                        <option value="">-- Select State (Optional) --</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="regLgdDistrict" class="form-label small fw-bold">District <span class="auth-muted fw-normal">(district / district_code)</span></label>
+                      <select class="form-select form-select-sm" id="regLgdDistrict" disabled>
+                        <option value="">-- Select District --</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="regLgdSubDistrict" class="form-label small fw-bold">Sub-District / Taluk <span class="auth-muted fw-normal">(sub_district / sub_district_code)</span></label>
+                      <select class="form-select form-select-sm" id="regLgdSubDistrict" disabled>
+                        <option value="">-- Select Sub-District --</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="regLgdVillage" class="form-label small fw-bold">Village <span class="auth-muted fw-normal">(village / location_id)</span></label>
+                      <select class="form-select form-select-sm" id="regLgdVillage" disabled>
+                        <option value="">-- Select Village --</option>
+                      </select>
+                    </div>
+                    <div class="col-12" id="regLgdMetaBox" style="display:none;">
+                      <div class="p-2 bg-success bg-opacity-10 border border-success border-opacity-50 rounded small text-success fw-semibold" id="regLgdMetaText"></div>
+                    </div>
+                  </div>
+
+                  <div id="manualLocGroup" class="row g-3 d-none">
+                    <div class="col-md-3">
+                      <label for="regManualState" class="form-label small fw-bold">State <span class="auth-muted fw-normal">(state)</span></label>
+                      <input type="text" class="form-control form-control-sm" id="regManualState" maxlength="100" placeholder="Optional" />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="regManualDistrict" class="form-label small fw-bold">District <span class="auth-muted fw-normal">(district)</span></label>
+                      <input type="text" class="form-control form-control-sm" id="regManualDistrict" maxlength="100" placeholder="Optional" />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="regManualSubDistrict" class="form-label small fw-bold">Sub-District <span class="auth-muted fw-normal">(sub_district)</span></label>
+                      <input type="text" class="form-control form-control-sm" id="regManualSubDistrict" maxlength="100" placeholder="Optional" />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="regManualVillage" class="form-label small fw-bold">Village <span class="auth-muted fw-normal">(village)</span></label>
+                      <input type="text" class="form-control form-control-sm" id="regManualVillage" maxlength="100" placeholder="Optional" />
+                    </div>
+                  </div>
+
+                  <div class="row g-3 mt-1">
+                    <div class="col-md-4">
+                      <label for="regPincode" class="form-label small fw-bold">Pincode <span class="auth-muted fw-normal">(pincode)</span></label>
+                      <input type="text" class="form-control form-control-sm" id="regPincode" maxlength="10" placeholder="e.g. 560001 (optional)" />
+                    </div>
+                    <div class="col-md-8 d-flex align-items-end">
+                      <div class="small auth-muted">
+                        Selected <code>location_id</code>: <strong class="text-success" id="regResolvedLocationIdDisplay">Not selected</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-3">
+                  <button type="button" class="boc btn px-3 py-2" id="step2BackBtn">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back
+                  </button>
+                  <button type="button" class="bgrd btn px-4 py-2" id="step2NextBtn">
+                    Next: Landholdings, Crops &amp; Assets <i class="fa-solid fa-arrow-right ms-1"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 3 -->
+              <div class="wizard-pane d-none" id="regStep3">
+                <div class="db-table-section">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <div>
+                      <h5 class="fw-bold mb-0 fs-6">Landholding Plots <span class="auth-muted fw-normal small">(0 or more)</span></h5>
+                      <span class="small auth-muted">Columns: <code>land_area</code>, <code>land_area_unit</code>, <code>ownership_type</code>, <code>irrigation_available</code>, <code>state</code>, <code>district</code>, <code>village</code>, <code>location_id</code></span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="db-table-badge">farmer_landholdings</span>
+                      <button type="button" class="bgrd btn btn-sm px-3 py-1" id="addPlotBtn">
+                        <i class="bi bi-plus-circle me-1"></i>Add Plot
+                      </button>
+                    </div>
+                  </div>
+                  <div id="plotsContainer">
+                    <div class="small auth-muted fst-italic py-2" id="noPlotsPlaceholder">
+                      No landholding plots added yet. Click "Add Plot" to attach land records, or leave empty.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="db-table-section">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <div>
+                      <h5 class="fw-bold mb-0 fs-6">Crops Cultivated <span class="auth-muted fw-normal small">(0 or more)</span></h5>
+                      <span class="small auth-muted">Columns: <code>landholding_id</code> (optional), <code>crop_name</code>, <code>crop_season</code>, <code>cultivation_year</code></span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="db-table-badge">farmer_crops</span>
+                      <button type="button" class="boc btn btn-sm px-3 py-1" id="addCropBtn">
+                        <i class="bi bi-plus-circle me-1 text-success"></i>Add Crop
+                      </button>
+                    </div>
+                  </div>
+                  <div id="cropsContainer">
+                    <div class="small auth-muted fst-italic py-2" id="noCropsPlaceholder">
+                      No crop entries added yet. Click "Add Crop" to attach seasonal crop records.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="db-table-section">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <div>
+                      <h5 class="fw-bold mb-0 fs-6">Horticulture &amp; Plantation Trees <span class="auth-muted fw-normal small">(0 or more)</span></h5>
+                      <span class="small auth-muted">Columns: <code>landholding_id</code>, <code>tree_name</code>, <code>tree_variety</code>, <code>tree_count &gt; 0</code>, <code>tree_age_years</code>, <code>purpose</code></span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="db-table-badge">farmer_trees</span>
+                      <button type="button" class="boc btn btn-sm px-3 py-1" id="addTreeBtn">
+                        <i class="bi bi-plus-circle me-1 text-success"></i>Add Tree
+                      </button>
+                    </div>
+                  </div>
+                  <div id="treesFkHint" class="small text-warning fw-semibold mb-2">
+                    <i class="bi bi-link-45deg me-1"></i>Add at least 1 landholding plot above first to attach tree records.
+                  </div>
+                  <div id="treesContainer">
+                    <div class="small auth-muted fst-italic py-1" id="noTreesPlaceholder">No tree entries added.</div>
+                  </div>
+                </div>
+
+                <div class="db-table-section">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <div>
+                      <h5 class="fw-bold mb-0 fs-6">Livestock &amp; Poultry <span class="auth-muted fw-normal small">(0 or more)</span></h5>
+                      <span class="small auth-muted">Columns: <code>landholding_id</code>, <code>animal_type</code>, <code>breed</code>, <code>animal_count &gt; 0</code>, <code>age_years</code>, <code>purpose</code></span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="db-table-badge">farmer_livestock</span>
+                      <button type="button" class="boc btn btn-sm px-3 py-1" id="addLivestockBtn">
+                        <i class="bi bi-plus-circle me-1 text-success"></i>Add Livestock
+                      </button>
+                    </div>
+                  </div>
+                  <div id="livestockFkHint" class="small text-warning fw-semibold mb-2">
+                    <i class="bi bi-link-45deg me-1"></i>Add at least 1 landholding plot above first to attach livestock records.
+                  </div>
+                  <div id="livestockContainer">
+                    <div class="small auth-muted fst-italic py-1" id="noLivestockPlaceholder">No livestock entries added.</div>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+                  <button type="button" class="boc btn px-3 py-2" id="step3BackBtn">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back
+                  </button>
+                  <button type="submit" class="bgrd btn px-4 py-2" id="regSubmitBtn">
+                    <i class="fa-solid fa-database me-1"></i> Register New Farmer
+                  </button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
 </body>
+
 </html>

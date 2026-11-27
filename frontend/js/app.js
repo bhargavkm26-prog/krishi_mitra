@@ -6,7 +6,7 @@
 
 class KrishiMitraApp {
   constructor() {
-    this.currentLang = localStorage.getItem(ApiService.STORAGE_KEYS.LANGUAGE) || "kn";
+    this.currentLang = localStorage.getItem(ApiService.STORAGE_KEYS.LANGUAGE) || "en";
     this.currentView = "login"; // 'login', 'wizard', 'main'
     this.currentTab = "eligible"; // 'eligible', 'almost', 'saved'
     this.currentBottomNav = "home"; // 'home', 'docs', 'tips', 'help'
@@ -38,13 +38,23 @@ class KrishiMitraApp {
       window.speechController.setLanguage(this.currentLang);
     }
 
+    // Check URL parameters for direct farmer login (e.g. ?farmer=KM26@0001)
+    const urlParams = new URLSearchParams(window.location.search);
+    const farmerIdParam = urlParams.get("farmer");
+    if (farmerIdParam) {
+      const backendProfile = await ApiService.loadFarmerFromBackend(farmerIdParam);
+      if (backendProfile) {
+        this.profile = backendProfile;
+      }
+    }
+
     // Check existing session
     const session = ApiService.getSession();
     const savedProfile = await ApiService.getProfile();
-    this.profile = savedProfile;
+    if (!this.profile) this.profile = savedProfile;
 
     // Route to appropriate view
-    if (session) {
+    if (session || this.profile) {
       const wizardProgress = ApiService.getWizardProgress();
       if (wizardProgress && !localStorage.getItem(ApiService.STORAGE_KEYS.PROFILE_DATA)) {
         this.wizardStepIndex = wizardProgress.stepIndex || 0;
@@ -245,9 +255,50 @@ class KrishiMitraApp {
 
   async handleSendOtp() {
     const phoneInput = document.getElementById("login-phone");
+    const passInput = document.getElementById("login-password");
     const phoneError = document.getElementById("phone-error-msg");
-    const phone = phoneInput ? phoneInput.value.trim() : "";
+    const identifier = phoneInput ? phoneInput.value.trim() : "";
+    const password = passInput ? passInput.value.trim() : "";
 
+    // 1. Direct User ID + Plain Password Authentication (per user rule)
+    if (password || identifier.toUpperCase().startsWith("KM") || identifier.includes("@")) {
+      if (!identifier) {
+        if (phoneError) phoneError.textContent = "Please enter your Farmer Unique ID or Mobile Number.";
+        return;
+      }
+      if (!password) {
+        if (phoneError) phoneError.textContent = "Please enter your password.";
+        return;
+      }
+
+      if (phoneError) phoneError.textContent = "";
+      const submitBtn = document.getElementById("btn-send-otp");
+      const origText = submitBtn ? submitBtn.innerHTML : "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Verifying...';
+      }
+
+      try {
+        const session = await ApiService.loginWithCredentials(identifier, password);
+        if (phoneError) phoneError.textContent = "";
+        this.profile = await ApiService.getProfile();
+        await this.refreshData();
+        this.showView("main");
+        this.renderAll();
+      } catch (err) {
+        if (phoneError) phoneError.textContent = err.message || "Invalid User ID or Password.";
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origText || '<i class="fa-solid fa-arrow-right-to-bracket me-2"></i>Sign In to Dashboard';
+        }
+      }
+      return;
+    }
+
+    // 2. Legacy Phone + OTP fallback flow
+    const phone = identifier;
     if (!phone || phone.length !== 10 || !/^\d{10}$/.test(phone)) {
       if (phoneError) phoneError.textContent = this.t("phoneError");
       return;
@@ -255,9 +306,12 @@ class KrishiMitraApp {
     if (phoneError) phoneError.textContent = "";
 
     // Show OTP container
-    document.getElementById("phone-step-container").style.display = "none";
-    document.getElementById("otp-step-container").style.display = "block";
-    document.getElementById("otp-sent-phone").textContent = `+91 ${phone}`;
+    const phoneContainer = document.getElementById("phone-step-container");
+    const otpContainer = document.getElementById("otp-step-container");
+    if (phoneContainer) phoneContainer.style.display = "none";
+    if (otpContainer) otpContainer.style.display = "block";
+    const otpSentPhone = document.getElementById("otp-sent-phone");
+    if (otpSentPhone) otpSentPhone.textContent = `+91 ${phone}`;
     
     const otpInput = document.getElementById("login-otp");
     if (otpInput) {
@@ -296,10 +350,14 @@ class KrishiMitraApp {
   }
 
   resetLoginStep() {
-    document.getElementById("phone-step-container").style.display = "block";
-    document.getElementById("otp-step-container").style.display = "none";
+    const phoneStep = document.getElementById("phone-step-container");
+    const otpStep = document.getElementById("otp-step-container");
+    if (phoneStep) phoneStep.style.display = "block";
+    if (otpStep) otpStep.style.display = "none";
     const otpInput = document.getElementById("login-otp");
     if (otpInput) otpInput.value = "";
+    const passInput = document.getElementById("login-password");
+    if (passInput) passInput.value = "";
   }
 
   fillDemoOtp() {
@@ -1094,20 +1152,46 @@ class KrishiMitraApp {
     if (!drawer) return;
 
     const session = ApiService.getSession();
+    const nameEl = drawer.querySelector(".user-name");
     const phoneEl = document.getElementById("profile-drawer-phone");
-    if (phoneEl) phoneEl.textContent = session ? `+91 ${session.phone}` : "+91 98XXXXXXXX";
+    if (nameEl && session && session.full_name) {
+      nameEl.textContent = session.full_name;
+    }
+    if (phoneEl) {
+      if (session && session.farmer_unique_id) {
+        phoneEl.textContent = session.phone
+          ? `${session.farmer_unique_id} • +91 ${session.phone}`
+          : session.farmer_unique_id;
+      } else if (session && session.phone) {
+        phoneEl.textContent = `+91 ${session.phone}`;
+      } else {
+        phoneEl.textContent = "Guest Citizen";
+      }
+    }
 
     const summaryEl = document.getElementById("profile-drawer-summary");
-    if (summaryEl && this.profile) {
-      const distOpt = MOCK_DATA.questions[0].options.find(o => o.id === this.profile.district);
-      const cropOpt = MOCK_DATA.questions[3].options.find(o => o.id === this.profile.crop);
-      const distName = distOpt ? distOpt[this.currentLang] : this.profile.district;
-      const cropName = cropOpt ? cropOpt[this.currentLang] : this.profile.crop;
-      summaryEl.innerHTML = `
-        <div class="drawer-chip">📍 ${distName}</div>
-        <div class="drawer-chip">🌾 ${cropName}</div>
-        <div class="drawer-chip">📏 ${this.profile.land_size} ${this.t('acres')}</div>
-      `;
+    if (summaryEl) {
+      if (window.ProfileEditor && typeof window.ProfileEditor.renderDrawerSummary === "function") {
+        window.ProfileEditor.renderDrawerSummary(summaryEl, this.profile, session);
+      } else if (this.profile) {
+        const distOpt = MOCK_DATA.questions[0].options.find(o => o.id === this.profile.district);
+        const cropOpt = MOCK_DATA.questions[3].options.find(o => o.id === this.profile.crop);
+        const distName = this.profile.district_display
+          ? `${this.profile.district_display}${this.profile.state ? ', ' + this.profile.state : ''}`
+          : (distOpt ? distOpt[this.currentLang] : this.profile.district);
+        const cropName = (this.profile.crops_list && this.profile.crops_list.length > 0)
+          ? this.profile.crops_list.slice(0, 3).join(", ")
+          : (cropOpt ? cropOpt[this.currentLang] : this.profile.crop);
+        const landText = this.profile.total_land_hectares
+          ? `${this.profile.total_land_hectares} ha`
+          : `${this.profile.land_size} ${this.t('acres')}`;
+        summaryEl.innerHTML = `
+          <div class="drawer-chip">📍 ${distName}</div>
+          <div class="drawer-chip">🌾 ${cropName}</div>
+          <div class="drawer-chip">📏 ${landText}</div>
+          ${this.profile.social_category ? `<div class="drawer-chip">🪪 ${this.profile.social_category}</div>` : ''}
+        `;
+      }
     }
 
     drawer.classList.add("open");
@@ -1118,60 +1202,27 @@ class KrishiMitraApp {
     if (drawer) drawer.classList.remove("open");
   }
 
-  openEditProfileModal() {
+  async openEditProfileModal() {
     this.closeProfileDrawer();
     const modal = document.getElementById("edit-profile-modal");
     if (!modal) return;
 
     const formContainer = document.getElementById("edit-profile-fields");
-    formContainer.innerHTML = "";
-
-    MOCK_DATA.questions.forEach(q => {
-      const fieldCard = document.createElement("div");
-      fieldCard.className = "edit-field-card";
-
-      const currentVal = this.profile ? (this.profile[q.id] || "") : "";
-
-      fieldCard.innerHTML = `
-        <div class="field-card-header">
-          <label class="field-label">${this.t(`q_${q.id}`)}</label>
-          <button type="button" class="btn-field-mic" data-qid="${q.id}" title="${this.t('voicePrompt')}">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-              <line x1="12" y1="19" x2="12" y2="23"></line>
-              <line x1="8" y1="23" x2="16" y2="23"></line>
-            </svg>
-          </button>
-        </div>
-        <div class="field-input-box" id="edit-box-${q.id}"></div>
-      `;
-
-      const inputContainer = fieldCard.querySelector(`#edit-box-${q.id}`);
-
-      const select = document.createElement("select");
-      select.className = "form-select-large";
-      select.id = `edit-input-${q.id}`;
-      q.options.forEach(opt => {
-        const option = document.createElement("option");
-        option.value = opt.id;
-        option.textContent = opt[this.currentLang] || opt.en;
-        if (opt.id === currentVal) option.selected = true;
-        select.appendChild(option);
-      });
-      inputContainer.appendChild(select);
-
-      const fieldMicBtn = fieldCard.querySelector(".btn-field-mic");
-      if (fieldMicBtn) {
-        fieldMicBtn.onclick = () => {
-          this.triggerVoiceRecognitionForField(q, fieldCard);
-        };
-      }
-
-      formContainer.appendChild(fieldCard);
-    });
-
+    formContainer.innerHTML = '<div class="db-empty">Loading latest farmer records from PostgreSQL...</div>';
     modal.classList.add("open");
+
+    const session = ApiService.getSession();
+    const targetId = (this.profile && this.profile.farmer_unique_id) || (session && session.farmer_unique_id);
+    if (targetId) {
+      const fresh = await ApiService.loadFarmerFromBackend(targetId);
+      if (fresh) {
+        this.profile = fresh;
+      }
+    }
+
+    if (window.ProfileEditor) {
+      await window.ProfileEditor.mount(formContainer, this.profile || {});
+    }
   }
 
   triggerVoiceRecognitionForField(question, cardElement) {
@@ -1208,18 +1259,60 @@ class KrishiMitraApp {
   }
 
   async saveEditedProfile() {
-    const updated = { ...this.profile };
-    MOCK_DATA.questions.forEach(q => {
-      const select = document.getElementById(`edit-input-${q.id}`);
-      if (select) {
-        updated[q.id] = select.value;
-      }
-    });
+    const saveBtn = document.getElementById("btn-save-edit-profile");
+    const origText = saveBtn ? saveBtn.innerHTML : "";
+    const session = ApiService.getSession();
+    const targetId = (this.profile && this.profile.farmer_unique_id) || (session && session.farmer_unique_id);
 
-    await ApiService.saveProfile(updated);
-    await this.refreshData();
-    this.closeEditProfileModal();
-    this.renderAll();
+    if (!window.ProfileEditor) return;
+
+    let payload;
+    try {
+      payload = window.ProfileEditor.buildPayload();
+    } catch (valErr) {
+      window.ProfileEditor.showError(valErr.message);
+      return;
+    }
+
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Saving to PostgreSQL...';
+    }
+
+    try {
+      if (targetId) {
+        const res = await ApiService.updateFarmerProfile(targetId, payload);
+        this.profile = res.profile;
+        await this.refreshData();
+        this.closeEditProfileModal();
+        this.renderAll();
+        this.showToast(res.response.message || "Farmer profile & all 6 table links updated in PostgreSQL.");
+      } else {
+        // Offline/local fallback without farmer_unique_id
+        const localNormalized = ApiService._normalizeBackendFarmerPayload({
+          farmer: payload,
+          landholdings: payload.landholdings,
+          unassigned_crops: payload.crops
+        });
+        await ApiService.saveProfile({ ...this.profile, ...localNormalized });
+        await this.refreshData();
+        this.closeEditProfileModal();
+        this.renderAll();
+        this.showToast("Profile updated locally.");
+      }
+    } catch (err) {
+      const isNetworkErr = err instanceof TypeError || /fetch|network/i.test(err.message || "");
+      if (isNetworkErr && targetId) {
+        window.ProfileEditor.showError("Could not reach backend API on port 8000 to update PostgreSQL. Please verify FastAPI is running.");
+      } else {
+        window.ProfileEditor.showError(err.message || "Could not save profile changes.");
+      }
+    } finally {
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = origText || "Save Changes ✔";
+      }
+    }
   }
 
   closeEditProfileModal() {
@@ -1397,14 +1490,21 @@ class KrishiMitraApp {
     const loginSignupBtn = document.getElementById("btn-login-signup");
     if (loginSignupBtn) {
       loginSignupBtn.onclick = () => {
-        const phoneInput = document.getElementById("login-phone");
-        if (phoneInput) {
-          phoneInput.focus();
-          phoneInput.select();
-        }
-        this.showToast(this.t("signUpNotice"));
+        window.location.href = "page-login.html?tab=register";
       };
     }
+
+    // Enter key submits User ID + Password login cleanly
+    const enterLoginHandler = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        this.handleSendOtp();
+      }
+    };
+    const loginIdInput = document.getElementById("login-phone");
+    const loginPassInput = document.getElementById("login-password");
+    if (loginIdInput) loginIdInput.addEventListener("keydown", enterLoginHandler);
+    if (loginPassInput) loginPassInput.addEventListener("keydown", enterLoginHandler);
 
     const loginHelpBtn = document.getElementById("btn-login-help");
     if (loginHelpBtn) loginHelpBtn.onclick = () => this.openLoginHelpModal();

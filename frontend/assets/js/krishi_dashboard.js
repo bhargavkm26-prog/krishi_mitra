@@ -7,37 +7,94 @@ let currentView = 'governance'; // 'governance' | 'farmer' | 'ai-secretary' | 's
 let activeFarmerProfile = null;
 let currentSchemesPage = 0;
 const SCHEMES_PAGE_SIZE = 12;
+let sectorChartInstance = null;
+let allocChartInstance = null;
 
 document.addEventListener('DOMContentLoaded', async function () {
-    // 1. Mobile & Desktop Sidebar Toggles
+    // 1. Shared Theme (Obsidian Dark / Mint Pearl Light) + Spotlight Effects
+    initDashboardThemeAndEffects();
+
+    // 2. Navigation & Scroll Shadow Controls
     initSidebarControls();
 
-    // 2. Check Login State from localStorage or URL parameter
+    // 3. Check Login State from localStorage or URL parameter
     checkLoginState();
 
-    // 3. Initialize Top Navbar Status & KPIs
+    // 4. Initialize Top Navbar Status & KPIs
     loadSystemHealth();
 
-    // 4. Initialize Charts
+    // 5. Initialize Charts
     initGovernanceCharts();
 
-    // 5. Load Public Schemes Catalog
+    // 6. Load Public Schemes Catalog
     loadSchemesCatalog();
 
-    // 6. Handle URL Parameters (e.g. ?view=farmer or ?view=ai)
+    // 7. Handle URL Parameters (e.g. ?view=farmer or ?view=ai-secretary)
     handleUrlView();
 
-    // 7. Setup Event Listeners
+    // 8. Setup Event Listeners
     setupEventListeners();
 });
 
 /* -------------------------------------------------------------
- * 1. SIDEBAR & VIEW NAVIGATION
+ * 1. THEME SYNC, SPOTLIGHT & HORIZONTAL/BOTTOM VIEW NAVIGATION
  * ----------------------------------------------------------- */
+function isLightThemeActive() {
+    const root = document.getElementById('htmlRoot');
+    return Boolean(root && root.classList.contains('lm'));
+}
+
+function applyDashboardTheme(isDark) {
+    const root = document.getElementById('htmlRoot');
+    if (root) {
+        root.classList.toggle('lm', !isDark);
+        root.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+    }
+    localStorage.setItem('krishi_theme', isDark ? 'dark' : 'light');
+
+    const sunIcon = document.getElementById('suni');
+    const moonIcon = document.getElementById('mooni');
+    if (sunIcon && moonIcon) {
+        sunIcon.style.display = isDark ? 'none' : 'inline-block';
+        moonIcon.style.display = isDark ? 'inline-block' : 'none';
+    }
+
+    updateChartTheme(!isDark);
+}
+
+function initDashboardThemeAndEffects() {
+    const saved = localStorage.getItem('krishi_theme');
+    const isDark = saved ? saved === 'dark' : true;
+    applyDashboardTheme(isDark);
+
+    const toggleBtn = document.getElementById('thbtn');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function () {
+            applyDashboardTheme(isLightThemeActive());
+        });
+    }
+
+    const nbar = document.getElementById('nbar');
+    if (nbar) {
+        window.addEventListener('scroll', function () {
+            nbar.classList.toggle('scr', window.scrollY > 40);
+        });
+    }
+
+    document.querySelectorAll('.gc').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+    });
+}
+
 function initSidebarControls() {
     const sidebar = document.querySelector('.sidebar-wrapper');
     const toggleBtn = document.querySelector('.sidebar-toggle-btn');
     const desktopToggle = document.getElementById('desktop-sidebar-toggle');
+    if (!sidebar && !toggleBtn && !desktopToggle) return;
 
     let overlay = document.querySelector('.sidebar-overlay');
     if (!overlay) {
@@ -71,13 +128,31 @@ function initSidebarControls() {
     }
 }
 
-function switchView(viewName) {
-    currentView = viewName;
+function switchGovernanceSubtab(tabName) {
+    const isAnalytics = tabName === 'analytics';
+    const catBtn = document.getElementById('subtab-btn-catalog');
+    const anaBtn = document.getElementById('subtab-btn-analytics');
+    const catPanel = document.getElementById('governance-catalog-subpanel');
+    const anaPanel = document.getElementById('governance-analytics-subpanel');
 
-    // Update active nav link
+    if (catBtn) catBtn.classList.toggle('active', !isAnalytics);
+    if (anaBtn) anaBtn.classList.toggle('active', isAnalytics);
+    if (catPanel) catPanel.classList.toggle('d-none', isAnalytics);
+    if (anaPanel) anaPanel.classList.toggle('d-none', !isAnalytics);
+
+    if (isAnalytics) {
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
+    }
+}
+
+function switchView(viewName) {
+    const resolvedView = viewName === 'schemes' ? 'governance' : viewName;
+    currentView = resolvedView;
+
+    // Update active nav pills across top header and mobile bottom bar
     document.querySelectorAll('.sidebar-menu-link').forEach(link => {
         link.classList.remove('active');
-        if (link.getAttribute('data-view') === viewName) {
+        if (link.getAttribute('data-view') === resolvedView) {
             link.classList.add('active');
         }
     });
@@ -88,21 +163,22 @@ function switchView(viewName) {
     });
 
     // Show target section
-    const target = document.getElementById(`view-${viewName}`);
+    const target = document.getElementById(`view-${resolvedView}`);
     if (target) {
         target.classList.remove('d-none');
     }
 
     // View specific triggers
-    if (viewName === 'farmer') {
+    if (resolvedView === 'farmer') {
         if (!activeFarmerProfile) {
             showLoginModal();
         } else {
             renderFarmerView();
         }
-    } else if (viewName === 'ai-secretary') {
+    } else if (resolvedView === 'ai-secretary') {
         updateAiFarmerContext();
     } else if (viewName === 'schemes') {
+        switchGovernanceSubtab('catalog');
         loadSchemesCatalog();
     }
 
@@ -118,8 +194,17 @@ function handleUrlView() {
 }
 
 /* -------------------------------------------------------------
- * 2. AUTHENTICATION & FARMER STATE (NO PASSWORD)
+ * 2. AUTHENTICATION & FARMER STATE (USER ID + PASSWORD)
  * ----------------------------------------------------------- */
+function escDash(v) {
+    if (v === null || v === undefined) return '';
+    return String(v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
 function checkLoginState() {
     const stored = window.KrishiAPI.getLoggedInFarmer();
     if (stored && stored.farmer) {
@@ -133,7 +218,12 @@ function checkLoginState() {
 
 function renderLoggedInUserUI() {
     const f = activeFarmerProfile.farmer;
-    const l = (activeFarmerProfile.landholdings && activeFarmerProfile.landholdings[0]) || {};
+    const displayName = f.full_name || f.farmer_unique_id || `Farmer #${f.farmer_id}`;
+    const idLabel = f.farmer_unique_id ? `${f.farmer_unique_id} (#${f.farmer_id})` : `ID #${f.farmer_id}`;
+    const metaParts = [idLabel];
+    if (f.state) metaParts.push(f.state);
+    if (f.social_category) metaParts.push(`(${f.social_category})`);
+    const subMeta = metaParts.join(' • ');
 
     // Top Navbar Profile Pill
     const profileWrap = document.getElementById('navbar-auth-section');
@@ -141,10 +231,10 @@ function renderLoggedInUserUI() {
         profileWrap.innerHTML = `
             <div class="dropdown">
                 <button class="navbar-profile-btn dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-                    <img src="assets/images/user_1.jpg" alt="${f.full_name}" class="navbar-profile-img" onerror="this.src='assets/images/avatar.png'">
+                    <img src="assets/images/user_1.jpg" alt="${escDash(displayName)}" class="navbar-profile-img" onerror="this.src='assets/images/avatar.png'">
                     <div class="text-start d-none d-md-block">
-                        <div class="navbar-profile-name fw-bold">${f.full_name}</div>
-                        <div class="small text-muted" style="font-size:0.75rem;">ID #${f.farmer_id} • ${f.state} (${f.social_category})</div>
+                        <div class="navbar-profile-name fw-bold">${escDash(displayName)}</div>
+                        <div class="small text-muted" style="font-size:0.75rem;">${escDash(subMeta)}</div>
                     </div>
                     <i class="bi bi-chevron-down navbar-profile-caret"></i>
                 </button>
@@ -175,10 +265,10 @@ function renderLoggedInUserUI() {
     const sidebarProfile = document.getElementById('sidebar-profile-card');
     if (sidebarProfile) {
         sidebarProfile.innerHTML = `
-            <img src="assets/images/user_1.jpg" alt="${f.full_name}" class="sidebar-profile-img" onerror="this.src='assets/images/avatar.png'">
+            <img src="assets/images/user_1.jpg" alt="${escDash(displayName)}" class="sidebar-profile-img" onerror="this.src='assets/images/avatar.png'">
             <div class="sidebar-profile-info">
-                <div class="sidebar-profile-name">${f.full_name}</div>
-                <div class="sidebar-profile-email">ID #${f.farmer_id} • ${f.state}</div>
+                <div class="sidebar-profile-name">${escDash(displayName)}</div>
+                <div class="sidebar-profile-email">${escDash(idLabel)}${f.state ? ' • ' + escDash(f.state) : ''}</div>
             </div>
         `;
     }
@@ -191,10 +281,15 @@ function renderGuestUserUI() {
     const profileWrap = document.getElementById('navbar-auth-section');
     if (profileWrap) {
         profileWrap.innerHTML = `
-            <button class="btn btn-sm btn-success d-flex align-items-center gap-2 fw-semibold px-3 py-2 shadow-sm rounded-pill" onclick="showLoginModal()">
-                <i class="bi bi-person-check-fill"></i>
-                <span>Farmer Login (No Password)</span>
-            </button>
+            <div class="d-flex align-items-center gap-2">
+                <a href="page-login.html?tab=register" class="boc px-3 py-2 text-decoration-none small d-none d-sm-inline-flex align-items-center gap-1">
+                    <i class="bi bi-person-plus text-success"></i><span>Register</span>
+                </a>
+                <button class="bgrd btn px-3 py-2 small d-inline-flex align-items-center gap-1" onclick="showLoginModal()">
+                    <i class="bi bi-person-check-fill"></i>
+                    <span>Farmer Login</span>
+                </button>
+            </div>
         `;
     }
 
@@ -210,11 +305,27 @@ function renderGuestUserUI() {
     }
 }
 
-async function loginFarmerById(farmerId) {
+async function loginFarmerWithCredentials(farmerUniqueId, password) {
+    const errBox = document.getElementById('modalFarmerLoginError');
+    const btn = document.getElementById('modalFarmerLoginBtn');
+    if (errBox) {
+        errBox.classList.add('d-none');
+        errBox.textContent = '';
+    }
+    const origBtnHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = 'Verifying credentials...';
+    }
+
     try {
-        const profile = await window.KrishiAPI.getFarmerDetails(farmerId);
+        const profile = await window.KrishiAPI.loginFarmer(farmerUniqueId, password);
         if (profile && profile.found) {
-            window.KrishiAPI.setLoggedInFarmer(profile);
+            window.KrishiAPI.setLoggedInFarmer({
+                ...profile,
+                authenticated: true,
+                logged_in_at: new Date().toISOString()
+            });
             activeFarmerProfile = profile;
             renderLoggedInUserUI();
 
@@ -229,11 +340,39 @@ async function loginFarmerById(farmerId) {
             switchView('farmer');
             return true;
         } else {
-            throw new Error(`Farmer ID #${farmerId} not found.`);
+            throw new Error(`Invalid credentials for Farmer User ID '${farmerUniqueId}'.`);
         }
     } catch (err) {
-        alert(err.message || 'Login failed. Please check backend connection.');
+        const msg = err.message || 'Login failed. Please check User ID, Password, and API server.';
+        if (errBox) {
+            errBox.textContent = msg;
+            errBox.classList.remove('d-none');
+        } else {
+            alert(msg);
+        }
         return false;
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origBtnHtml;
+        }
+    }
+}
+
+async function loginFarmerById() {
+    showLoginModal();
+    return false;
+}
+
+function prefillModalFarmer(farmerUniqueId) {
+    const idInput = document.getElementById('modalFarmerId');
+    const pwInput = document.getElementById('modalFarmerPassword');
+    const errBox = document.getElementById('modalFarmerLoginError');
+    if (errBox) errBox.classList.add('d-none');
+    if (idInput) idInput.value = farmerUniqueId || '';
+    if (pwInput) {
+        pwInput.value = farmerUniqueId || '';
+        pwInput.focus();
     }
 }
 
@@ -265,15 +404,20 @@ async function loadSystemHealth() {
             const bgeSub = health.subsystems.bge_m3_embedding_engine;
             const gemmaSub = health.subsystems.gemma_4_e4b_reasoning_server;
 
-            // Header status badges
+            // Header & strip status badges
             const dbBadge = document.getElementById('badge-db-status');
             if (dbBadge) {
-                dbBadge.innerHTML = `<i class="bi bi-check-circle-fill me-1 text-success"></i> PostgreSQL: <strong>${dbSub.schemes_indexed}</strong> Schemes`;
+                dbBadge.innerHTML = `<i class="bi bi-check-circle-fill text-success"></i> PostgreSQL: <strong>${dbSub.schemes_indexed}</strong> Schemes`;
+            }
+
+            const topBadge = document.getElementById('badge-top-schemes');
+            if (topBadge && dbSub.schemes_indexed) {
+                topBadge.textContent = Number(dbSub.schemes_indexed).toLocaleString();
             }
 
             const gemmaBadge = document.getElementById('badge-gemma-status');
             if (gemmaBadge) {
-                gemmaBadge.innerHTML = `<i class="bi bi-cpu-fill me-1 text-primary"></i> Gemma 4: <strong>Online (8080)</strong>`;
+                gemmaBadge.innerHTML = `<i class="bi bi-cpu-fill text-info"></i> Gemma 4 E4B: <strong>Online (8080)</strong>`;
             }
 
             // KPI Numbers
@@ -292,9 +436,38 @@ async function loadSystemHealth() {
 }
 
 /* -------------------------------------------------------------
- * 4. GOVERNANCE CHARTS (ApexCharts)
+ * 4. GOVERNANCE CHARTS (ApexCharts — Dual Theme Aware)
  * ----------------------------------------------------------- */
+function updateChartTheme(isLight) {
+    const textColor = isLight ? '#334155' : '#cbd5e1';
+    const gridColor = isLight ? '#e2e8f0' : 'rgba(34, 197, 94, 0.14)';
+    const tooltipTheme = isLight ? 'light' : 'dark';
+
+    if (sectorChartInstance) {
+        sectorChartInstance.updateOptions({
+            chart: { foreColor: textColor },
+            legend: { labels: { colors: textColor } },
+            tooltip: { theme: tooltipTheme }
+        }, false, false);
+    }
+    if (allocChartInstance) {
+        allocChartInstance.updateOptions({
+            chart: { foreColor: textColor },
+            xaxis: { labels: { style: { colors: textColor, fontSize: '11px' } } },
+            yaxis: { labels: { style: { colors: textColor } } },
+            legend: { labels: { colors: textColor } },
+            grid: { borderColor: gridColor },
+            tooltip: { theme: tooltipTheme }
+        }, false, false);
+    }
+}
+
 function initGovernanceCharts() {
+    const isLight = isLightThemeActive();
+    const textColor = isLight ? '#334155' : '#cbd5e1';
+    const gridColor = isLight ? '#e2e8f0' : 'rgba(34, 197, 94, 0.14)';
+    const tooltipTheme = isLight ? 'light' : 'dark';
+
     // 1. Sector Breakdown Chart
     const sectorEl = document.querySelector('#sector-distribution-chart');
     if (sectorEl) {
@@ -303,15 +476,19 @@ function initGovernanceCharts() {
             labels: ['Agriculture & Crops', 'Horticulture & Fruits', 'Credit & Crop Insurance', 'Animal Husbandry & Dairy', 'Micro Irrigation & Water', 'Agri-Tech & Mechanization'],
             chart: {
                 type: 'donut',
-                height: 260,
-                fontFamily: 'inherit'
+                height: 270,
+                background: 'transparent',
+                foreColor: textColor,
+                fontFamily: 'Space Grotesk, inherit'
             },
-            colors: ['#072F1F', '#15803d', '#22c55e', '#B4F105', '#f59e0b', '#0284c7'],
+            stroke: { colors: ['transparent'] },
+            colors: ['#22c55e', '#06b6d4', '#10b981', '#f59e0b', '#3b82f6', '#a855f7'],
             dataLabels: { enabled: false },
-            legend: { position: 'bottom', fontSize: '12px' },
-            tooltip: { theme: 'dark' }
+            legend: { position: 'bottom', fontSize: '12px', labels: { colors: textColor } },
+            tooltip: { theme: tooltipTheme }
         };
-        new ApexCharts(sectorEl, sectorOptions).render();
+        sectorChartInstance = new ApexCharts(sectorEl, sectorOptions);
+        sectorChartInstance.render();
     }
 
     // 2. Central vs State Allocation Chart
@@ -324,46 +501,53 @@ function initGovernanceCharts() {
             ],
             chart: {
                 type: 'bar',
-                height: 260,
-                fontFamily: 'inherit',
+                height: 270,
+                background: 'transparent',
+                foreColor: textColor,
+                fontFamily: 'Space Grotesk, inherit',
                 toolbar: { show: false }
             },
-            colors: ['#072F1F', '#B4F105'],
+            colors: ['#22c55e', '#06b6d4'],
             plotOptions: {
-                bar: { horizontal: false, columnWidth: '45%', borderRadius: 3 }
+                bar: { horizontal: false, columnWidth: '48%', borderRadius: 4 }
             },
             xaxis: {
                 categories: ['Karnataka', 'Maharashtra', 'Uttar Pradesh', 'Gujarat', 'Assam', 'Tamil Nadu'],
-                labels: { style: { fontSize: '11px' } }
+                labels: { style: { colors: textColor, fontSize: '11px' } }
             },
-            legend: { position: 'top' },
-            grid: { borderColor: '#E9EFEF', strokeDashArray: 4 },
-            tooltip: { theme: 'dark' }
+            yaxis: {
+                labels: { style: { colors: textColor } }
+            },
+            legend: { position: 'top', labels: { colors: textColor } },
+            grid: { borderColor: gridColor, strokeDashArray: 4 },
+            tooltip: { theme: tooltipTheme }
         };
-        new ApexCharts(allocEl, allocOptions).render();
+        allocChartInstance = new ApexCharts(allocEl, allocOptions);
+        allocChartInstance.render();
     }
 }
 
 /* -------------------------------------------------------------
- * 5. SCHEMES CATALOG (Public & Filterable)
+ * 5. SCHEMES CATALOG (legacy_index.html 2-Column Cards Grid)
  * ----------------------------------------------------------- */
 async function loadSchemesCatalog(page = 0) {
     currentSchemesPage = page;
+    const cardsEl = document.getElementById('schemes-cards-container');
     const tableBody = document.getElementById('schemes-table-body');
     const searchInput = document.getElementById('schemes-search-input');
     const stateFilter = document.getElementById('schemes-state-filter');
     const totalCountEl = document.getElementById('schemes-total-badge');
 
-    if (!tableBody) return;
+    if (!cardsEl && !tableBody) return;
 
-    tableBody.innerHTML = `
-        <tr>
-            <td colspan="5" class="text-center py-4">
+    if (cardsEl) {
+        cardsEl.innerHTML = `
+            <div class="text-center py-5" style="grid-column: 1 / -1;">
                 <div class="spinner-border spinner-border-sm text-success" role="status"></div>
-                <span class="ms-2 text-muted">Retrieving statutory schemes from PostgreSQL...</span>
-            </td>
-        </tr>
-    `;
+                <span class="ms-2 dash-muted">Retrieving statutory schemes from PostgreSQL...</span>
+            </div>
+        `;
+    }
 
     const search = searchInput ? searchInput.value.trim() : '';
     const state = stateFilter ? stateFilter.value : '';
@@ -377,52 +561,65 @@ async function loadSchemesCatalog(page = 0) {
             offset: offset
         });
 
-        if (totalCountEl) totalCountEl.textContent = `${res.total.toLocaleString()} Schemes Found`;
+        if (totalCountEl) totalCountEl.textContent = res.total.toLocaleString();
 
         if (!res.schemes || res.schemes.length === 0) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">
-                        <i class="bi bi-search me-1"></i> No matching schemes found for the specified criteria.
-                    </td>
-                </tr>
-            `;
+            if (cardsEl) {
+                cardsEl.innerHTML = `
+                    <div class="scheme-card text-center py-5" style="grid-column: 1 / -1;">
+                        <div class="fs-2 mb-2">🌾</div>
+                        <div class="fw-bold mb-1">No matching statutory schemes found</div>
+                        <div class="dash-muted small">Try clearing the filter chip or broadening your search keyword.</div>
+                    </div>
+                `;
+            }
+            renderPaginationControls(0, SCHEMES_PAGE_SIZE, 0);
             return;
         }
 
-        tableBody.innerHTML = res.schemes.map(s => {
-            const isCentral = s.level === 'Central Government';
-            const levelBadge = isCentral
-                ? `<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Central</span>`
-                : `<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">${s.state_ut_ministry || 'State'}</span>`;
+        if (cardsEl) {
+            cardsEl.innerHTML = res.schemes.map(s => {
+                const isCentral = s.level === 'Central Government';
+                const levelBadge = isCentral
+                    ? `<span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50">Central Government</span>`
+                    : `<span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">${escDash(s.state_ut_ministry || 'State Govt')}</span>`;
 
-            return `
-                <tr>
-                    <td class="fw-semibold text-dark" style="max-width: 320px;">
-                        <div class="text-truncate" title="${s.scheme_name}">${s.scheme_name}</div>
-                        <small class="text-muted d-block text-truncate" style="font-size:0.75rem;">${s.scheme_slug || ''}</small>
-                    </td>
-                    <td>${levelBadge}</td>
-                    <td class="text-muted small">${s.state_ut_ministry || 'Ministry of Agriculture'}</td>
-                    <td><span class="badge bg-light text-dark border">${s.application_mode || 'Online / Offline'}</span></td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-outline-success" onclick="openSchemeDossierModal(${s.id})">
-                            <i class="bi bi-journal-text me-1"></i> 17-Col Dossier
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
+                return `
+                    <article class="scheme-card">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                                ${levelBadge}
+                                <span class="ticker-tag">${escDash(s.application_mode || 'Online / Offline')}</span>
+                            </div>
+                            <h4 class="scheme-title">${escDash(s.scheme_name)}</h4>
+                            <p class="scheme-dept mb-0">${escDash(s.state_ut_ministry || 'Ministry of Agriculture & Farmers Welfare')}</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center gap-2 pt-2 border-top border-secondary border-opacity-25">
+                            <span class="small font-monospace dash-muted">ID #${s.id}</span>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="hero-btn-outline py-1 px-3 small" onclick="openSchemeDossierModal(${s.id})">
+                                    <i class="bi bi-journal-text text-success"></i> 17-Col Dossier
+                                </button>
+                                <button type="button" class="hero-btn-white py-1 px-3 small" onclick="setAiQuery('Explain eligibility, subsidies and steps to apply for ${escDash(s.scheme_name).replace(/'/g, '')}'); switchView('ai-secretary');">
+                                    <i class="bi bi-robot"></i> Ask AI
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
 
         renderPaginationControls(res.total, SCHEMES_PAGE_SIZE, page);
     } catch (err) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="5" class="text-center text-danger py-4">
-                    <i class="bi bi-exclamation-triangle me-1"></i> Error loading schemes: ${err.message}
-                </td>
-            </tr>
-        `;
+        if (cardsEl) {
+            cardsEl.innerHTML = `
+                <div class="alert alert-danger" style="grid-column: 1 / -1;">
+                    <i class="bi bi-exclamation-triangle me-1"></i> Error loading schemes: ${escDash(err.message)}
+                </div>
+            `;
+        }
     }
 }
 
@@ -463,53 +660,81 @@ function renderPaginationControls(total, limit, currentPage) {
 function renderFarmerBanner() {
     if (!activeFarmerProfile || !activeFarmerProfile.farmer) return;
     const f = activeFarmerProfile.farmer;
-    const l = (activeFarmerProfile.landholdings && activeFarmerProfile.landholdings[0]) || {};
+    const plots = activeFarmerProfile.landholdings || [];
+    const l = plots[0] || {};
+    const unassignedCrops = activeFarmerProfile.unassigned_crops || [];
+
+    const allCrops = [
+        ...plots.flatMap(p => p.crops || []),
+        ...unassignedCrops
+    ];
+    const allTrees = plots.flatMap(p => p.trees || []);
+    const allLivestock = plots.flatMap(p => p.livestock || []);
 
     const banner = document.getElementById('farmer-profile-banner');
     if (banner) {
-        const cropsList = l.crops && l.crops.length > 0
-            ? l.crops.map(c => `<span class="badge bg-success bg-opacity-25 text-success me-1">${c.crop_name} (${c.crop_season || 'Current'})</span>`).join('')
-            : '<span class="text-muted">None listed</span>';
+        const displayName = f.full_name || f.farmer_unique_id || `Farmer #${f.farmer_id}`;
+        const categoryBadges = [f.social_category, f.farmer_category ? `${f.farmer_category} Farmer` : null].filter(Boolean).join(' • ');
+        const locationParts = [f.village, f.sub_district, f.district, f.state].filter(Boolean);
+        const locationLine = locationParts.length > 0 ? locationParts.join(', ') : 'Location not specified';
 
-        const livestockList = l.livestock && l.livestock.length > 0
-            ? l.livestock.map(a => `<span class="badge bg-warning bg-opacity-25 text-dark me-1">${a.animal_type} (${a.animal_count})</span>`).join('')
-            : '<span class="text-muted">None</span>';
+        const totalArea = plots.reduce((sum, p) => sum + (parseFloat(p.land_area) || 0), 0);
+        const landSummary = plots.length > 0
+            ? `${totalArea > 0 ? totalArea.toFixed(2) : '0'} ${l.land_area_unit || 'HECTARE'} (${plots.length} plot${plots.length > 1 ? 's' : ''}${l.ownership_type ? ' • ' + l.ownership_type : ''})`
+            : 'Not specified';
+        const irrigSummary = plots.length > 0
+            ? (l.irrigation_available === true ? 'Available' : (l.irrigation_available === false ? 'Rainfed' : 'Not specified'))
+            : 'Not specified';
+        const incomeSummary = (f.annual_family_income !== null && f.annual_family_income !== undefined)
+            ? `₹${Math.round(Number(f.annual_family_income)).toLocaleString()}`
+            : 'Not specified';
+
+        const cropsList = allCrops.length > 0
+            ? allCrops.map(c => `<span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 me-1">${escDash(c.crop_name || 'Crop')} (${escDash(c.crop_season || 'Current')})</span>`).join('')
+            : '<span class="dash-muted">None listed</span>';
+
+        const treesList = allTrees.length > 0
+            ? allTrees.map(t => `<span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-25 me-1">${escDash(t.tree_name)} (${escDash(t.tree_count)})</span>`).join('')
+            : '<span class="dash-muted">None</span>';
+
+        const livestockList = allLivestock.length > 0
+            ? allLivestock.map(a => `<span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 me-1">${escDash(a.animal_type)} (${escDash(a.animal_count)})</span>`).join('')
+            : '<span class="dash-muted">None</span>';
 
         banner.innerHTML = `
-            <div class="card border-0 shadow-sm overflow-hidden mb-4" style="background: linear-gradient(135deg, #072F1F 0%, #0d4a32 100%); color: #fff;">
-                <div class="card-body p-4">
-                    <div class="row align-items-center">
-                        <div class="col-md-2 text-center text-md-start mb-3 mb-md-0">
-                            <img src="assets/images/user_1.jpg" alt="${f.full_name}" class="rounded-circle border border-3 border-light shadow" style="width: 86px; height: 86px; object-fit: cover;" onerror="this.src='assets/images/avatar.png'">
+            <div class="hero-banner-card mb-4" style="padding: 28px 32px;">
+                <div class="row align-items-center g-3 w-100">
+                    <div class="col-md-2 text-center text-md-start">
+                        <img src="assets/images/user_1.jpg" alt="${escDash(displayName)}" class="rounded-circle border border-2 border-success shadow" style="width: 84px; height: 84px; object-fit: cover;" onerror="this.src='assets/images/avatar.png'">
+                    </div>
+                    <div class="col-md-7">
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            <h3 class="mb-0 fw-bold">${escDash(displayName)}</h3>
+                            <span class="badge bg-warning text-dark fw-bold">ID #${escDash(f.farmer_id)}</span>
+                            <span class="ticker-tag">${escDash(f.farmer_unique_id || '')}</span>
+                            ${categoryBadges ? `<span class="badge bg-success">${escDash(categoryBadges)}</span>` : ''}
                         </div>
-                        <div class="col-md-7">
-                            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                                <h3 class="mb-0 fw-bold text-white">${f.full_name}</h3>
-                                <span class="badge bg-warning text-dark fw-bold">ID #${f.farmer_id}</span>
-                                <span class="badge bg-light text-dark">${f.farmer_unique_id || 'KM26@0001'}</span>
-                                <span class="badge bg-success">${f.social_category} • ${f.farmer_category} Farmer</span>
-                            </div>
-                            <p class="text-white-50 mb-2 small">
-                                <i class="bi bi-geo-alt-fill text-warning me-1"></i> ${f.village || ''}, ${f.sub_district || ''}, ${f.district}, <strong>${f.state}</strong>
-                            </p>
-                            <div class="d-flex flex-wrap gap-3 small text-light">
-                                <div><i class="bi bi-bounding-box-circles me-1 text-info"></i> Landholding: <strong>${l.land_area || '0'} ${l.land_area_unit || 'HECTARE'}</strong> (${l.ownership_type || 'OWNED'})</div>
-                                <div><i class="bi bi-droplet-fill me-1 text-info"></i> Irrigation: <strong>${l.irrigation_available ? 'Available' : 'Rainfed'}</strong></div>
-                                <div><i class="bi bi-cash-stack me-1 text-warning"></i> Family Income: <strong>₹${Math.round(f.annual_family_income || 0).toLocaleString()}</strong></div>
-                            </div>
-                            <div class="mt-2 small">
-                                <span class="text-white-50 me-1">Crops:</span> ${cropsList}
-                                <span class="text-white-50 ms-3 me-1">Livestock:</span> ${livestockList}
-                            </div>
+                        <p class="dash-muted mb-2 small">
+                            <i class="bi bi-geo-alt-fill text-warning me-1"></i> ${escDash(locationLine)}
+                        </p>
+                        <div class="d-flex flex-wrap gap-3 small">
+                            <div><i class="bi bi-bounding-box-circles me-1 text-info"></i> Landholding: <strong>${escDash(landSummary)}</strong></div>
+                            <div><i class="bi bi-droplet-fill me-1 text-info"></i> Irrigation: <strong>${escDash(irrigSummary)}</strong></div>
+                            <div><i class="bi bi-cash-stack me-1 text-warning"></i> Family Income: <strong>${escDash(incomeSummary)}</strong></div>
                         </div>
-                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                            <button class="btn btn-outline-light btn-sm px-3 py-2 rounded-pill me-2" onclick="showLoginModal()">
-                                <i class="bi bi-arrow-repeat me-1"></i> Switch Farmer
-                            </button>
-                            <button class="btn btn-success btn-sm px-3 py-2 rounded-pill" onclick="switchView('ai-secretary')">
-                                <i class="bi bi-robot me-1"></i> Consult AI
-                            </button>
+                        <div class="mt-2 small d-flex flex-wrap gap-3">
+                            <div><span class="dash-muted me-1">Crops:</span> ${cropsList}</div>
+                            <div><span class="dash-muted me-1">Trees:</span> ${treesList}</div>
+                            <div><span class="dash-muted me-1">Livestock:</span> ${livestockList}</div>
                         </div>
+                    </div>
+                    <div class="col-md-3 text-md-end mt-2 mt-md-0 d-flex flex-md-column gap-2 justify-content-end align-items-md-end">
+                        <button class="hero-btn-outline py-1 px-3 small" onclick="showLoginModal()">
+                            <i class="bi bi-arrow-repeat text-success"></i> Switch Farmer
+                        </button>
+                        <button class="hero-btn-white py-1 px-3 small" onclick="switchView('ai-secretary')">
+                            <i class="bi bi-robot"></i> Consult AI
+                        </button>
                     </div>
                 </div>
             </div>
@@ -527,25 +752,26 @@ async function loadFarmerTargetedSchemes() {
     const f = activeFarmerProfile.farmer;
     const gridEl = document.getElementById('farmer-schemes-grid');
     if (!gridEl) return;
+    const scopeLabel = f.state ? escDash(f.state) : 'India (All States)';
 
     gridEl.innerHTML = `
-        <div class="col-12 text-center py-5">
+        <div class="text-center py-5" style="grid-column: 1 / -1;">
             <div class="spinner-border text-success" role="status"></div>
-            <p class="text-muted mt-2">Aggregating statutory schemes for ${f.state} and Central Government...</p>
+            <p class="dash-muted mt-2">Aggregating statutory schemes for ${scopeLabel} and Central Government...</p>
         </div>
     `;
 
     try {
         const res = await window.KrishiAPI.listSchemes({
-            state: f.state,
+            state: f.state || undefined,
             limit: 30,
             offset: 0
         });
 
         if (!res.schemes || res.schemes.length === 0) {
             gridEl.innerHTML = `
-                <div class="col-12 text-center py-4 text-muted">
-                    No state or central schemes found for ${f.state}.
+                <div class="scheme-card text-center py-4 dash-muted" style="grid-column: 1 / -1;">
+                    No state or central schemes found for ${scopeLabel}.
                 </div>
             `;
             return;
@@ -554,39 +780,37 @@ async function loadFarmerTargetedSchemes() {
         gridEl.innerHTML = res.schemes.map(s => {
             const isCentral = s.level === 'Central Government';
             return `
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 border-0 shadow-sm scheme-card" id="card-scheme-${s.id}">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <span class="badge ${isCentral ? 'bg-success' : 'bg-primary'} bg-opacity-10 ${isCentral ? 'text-success' : 'text-primary'} border">
-                                    ${isCentral ? 'Central Govt' : (s.state_ut_ministry || 'State Govt')}
-                                </span>
-                                <span class="badge bg-light text-muted border">ID #${s.id}</span>
-                            </div>
-                            <h6 class="card-title fw-bold text-dark mb-1" style="line-height: 1.35;">${s.scheme_name}</h6>
-                            <p class="text-muted small mb-3 flex-grow-1">${s.state_ut_ministry || 'Nodal Ministry'}</p>
-
-                            <!-- AI Eligibility Result Slot -->
-                            <div class="eval-result-slot mb-3" id="eval-result-${s.id}"></div>
-
-                            <div class="d-flex gap-2 mt-auto">
-                                <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="openSchemeDossierModal(${s.id})">
-                                    <i class="bi bi-file-text me-1"></i> Dossier
-                                </button>
-                                <button class="btn btn-success btn-sm flex-fill" id="btn-eval-${s.id}" onclick="triggerAiEligibility(${f.farmer_id}, ${s.id})">
-                                    <i class="bi bi-cpu me-1"></i> Check AI
-                                </button>
-                            </div>
+                <article class="scheme-card" id="card-scheme-${s.id}">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
+                            <span class="badge ${isCentral ? 'bg-success' : 'bg-info'} bg-opacity-10 ${isCentral ? 'text-success' : 'text-info'} border ${isCentral ? 'border-success' : 'border-info'} border-opacity-25">
+                                ${isCentral ? 'Central Govt' : escDash(s.state_ut_ministry || 'State Govt')}
+                            </span>
+                            <span class="ticker-tag">ID #${s.id}</span>
                         </div>
+                        <h4 class="scheme-title">${escDash(s.scheme_name)}</h4>
+                        <p class="scheme-dept mb-3">${escDash(s.state_ut_ministry || 'Nodal Ministry')}</p>
+
+                        <!-- AI Eligibility Result Slot -->
+                        <div class="eval-result-slot mb-2" id="eval-result-${s.id}"></div>
                     </div>
-                </div>
+
+                    <div class="d-flex gap-2 mt-auto pt-2 border-top border-secondary border-opacity-25">
+                        <button type="button" class="hero-btn-outline py-1 px-3 flex-fill justify-content-center small" onclick="openSchemeDossierModal(${s.id})">
+                            <i class="bi bi-file-text text-success"></i> Dossier
+                        </button>
+                        <button type="button" class="hero-btn-white py-1 px-3 flex-fill justify-content-center small" id="btn-eval-${s.id}" onclick="triggerAiEligibility(${f.farmer_id}, ${s.id})">
+                            <i class="bi bi-cpu"></i> Check AI
+                        </button>
+                    </div>
+                </article>
             `;
         }).join('');
 
     } catch (e) {
         gridEl.innerHTML = `
-            <div class="col-12 text-center text-danger py-4">
-                Failed to load farmer targeted schemes: ${e.message}
+            <div class="alert alert-danger" style="grid-column: 1 / -1;">
+                Failed to load farmer targeted schemes: ${escDash(e.message)}
             </div>
         `;
     }
@@ -603,7 +827,7 @@ async function triggerAiEligibility(farmerId, schemeId) {
 
     if (slot) {
         slot.innerHTML = `
-            <div class="p-2 rounded bg-light border text-center small text-muted">
+            <div class="p-2 rounded border border-success border-opacity-25 text-center small dash-muted">
                 <span class="spinner-border spinner-border-sm text-success me-1"></span> Gemma 4 evaluating statutory conditions...
             </div>
         `;
@@ -721,7 +945,7 @@ async function openSchemeDossierModal(schemeId) {
                     </h2>
                     <div id="col-benefits" class="accordion-collapse collapse" data-bs-parent="#dossierAccordion">
                         <div class="accordion-body">
-                            ${d.benefits ? `<div class="p-3 bg-light rounded">${d.benefits}</div>` : '<p class="text-muted">Standard departmental subsidies apply.</p>'}
+                            ${d.benefits ? `<div class="p-3 rounded border border-success border-opacity-25">${d.benefits}</div>` : '<p class="dash-muted">Standard departmental subsidies apply.</p>'}
                         </div>
                     </div>
                 </div>
@@ -735,8 +959,8 @@ async function openSchemeDossierModal(schemeId) {
                     </h2>
                     <div id="col-eligibility" class="accordion-collapse collapse" data-bs-parent="#dossierAccordion">
                         <div class="accordion-body">
-                            ${d.eligibility_criteria ? `<div class="p-3 bg-light rounded">${d.eligibility_criteria}</div>` : '<p class="text-muted">Open to agricultural landholders.</p>'}
-                            ${d.beneficiary_category ? `<div class="mt-2 small text-muted"><strong>Target Beneficiary:</strong> ${d.beneficiary_category}</div>` : ''}
+                            ${d.eligibility_criteria ? `<div class="p-3 rounded border border-info border-opacity-25">${d.eligibility_criteria}</div>` : '<p class="dash-muted">Open to agricultural landholders.</p>'}
+                            ${d.beneficiary_category ? `<div class="mt-2 small dash-muted"><strong>Target Beneficiary:</strong> ${d.beneficiary_category}</div>` : ''}
                         </div>
                     </div>
                 </div>
@@ -750,7 +974,7 @@ async function openSchemeDossierModal(schemeId) {
                     </h2>
                     <div id="col-exclusions" class="accordion-collapse collapse" data-bs-parent="#dossierAccordion">
                         <div class="accordion-body">
-                            ${d.exclusions ? `<div class="p-3 bg-light rounded text-danger-emphasis">${d.exclusions}</div>` : '<p class="text-muted">No statutory negative exclusions listed.</p>'}
+                            ${d.exclusions ? `<div class="p-3 rounded border border-danger border-opacity-25 text-danger">${d.exclusions}</div>` : '<p class="dash-muted">No statutory negative exclusions listed.</p>'}
                         </div>
                     </div>
                 </div>
@@ -796,21 +1020,23 @@ function updateAiFarmerContext() {
 
     if (activeFarmerProfile && activeFarmerProfile.farmer) {
         const f = activeFarmerProfile.farmer;
+        const aiName = f.full_name || f.farmer_unique_id || `Farmer #${f.farmer_id}`;
+        const aiMeta = [f.state, f.social_category].filter(Boolean).join(' • ') || 'Registered Farmer';
         banner.innerHTML = `
             <div class="d-flex align-items-center gap-2">
-                <span class="badge atmos-status-pill text-light border border-success border-opacity-50">
-                    <i class="bi bi-person-fill text-success me-1"></i> ${f.full_name} (${f.state} • ${f.social_category})
+                <span class="ticker-tag">
+                    <i class="bi bi-person-fill text-success"></i> ${escDash(aiName)} (${escDash(aiMeta)})
                 </span>
-                <button class="btn btn-outline-light btn-sm py-0 px-2" style="font-size:0.7rem; border-radius:12px;" onclick="showLoginModal()">Switch</button>
+                <button class="hero-btn-outline py-1 px-2" style="font-size:0.74rem;" onclick="showLoginModal()">Switch</button>
             </div>
         `;
     } else {
         banner.innerHTML = `
             <div class="d-flex align-items-center gap-2">
-                <span class="badge atmos-status-pill text-white-50 border border-secondary border-opacity-50">
-                    <i class="bi bi-globe me-1"></i> Public Citizen Mode
+                <span class="ticker-tag">
+                    <i class="bi bi-globe text-info"></i> Public Citizen Mode
                 </span>
-                <button class="btn btn-success btn-sm py-0 px-2 fw-semibold" style="font-size:0.7rem; border-radius:12px;" onclick="showLoginModal()">Login</button>
+                <button class="hero-btn-white py-1 px-3" style="font-size:0.74rem;" onclick="showLoginModal()">Login</button>
             </div>
         `;
     }
@@ -1067,16 +1293,38 @@ function setupEventListeners() {
         });
     }
 
-    // Modal quick login form
+    // legacy_index.html Filter Chips quick-filter row
+    document.querySelectorAll('#scheme-filter-chips .filter-chip').forEach(chip => {
+        chip.addEventListener('click', function () {
+            document.querySelectorAll('#scheme-filter-chips .filter-chip').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            const st = this.getAttribute('data-state') || '';
+            const q = this.getAttribute('data-query') || '';
+            if (stateFilter) stateFilter.value = st;
+            if (searchInput) searchInput.value = q;
+            switchGovernanceSubtab('catalog');
+            loadSchemesCatalog(0);
+        });
+    });
+
+    // Modal login form (User ID + Password checked against PostgreSQL)
     const modalForm = document.getElementById('modalFarmerLoginForm');
     if (modalForm) {
         modalForm.addEventListener('submit', async function (e) {
             e.preventDefault();
             const idInput = document.getElementById('modalFarmerId');
-            const id = parseInt(idInput.value.trim());
-            if (id) {
-                await loginFarmerById(id);
+            const pwInput = document.getElementById('modalFarmerPassword');
+            const uid = idInput ? idInput.value.trim() : '';
+            const pw = pwInput ? pwInput.value : '';
+            if (!uid || !pw) {
+                const errBox = document.getElementById('modalFarmerLoginError');
+                if (errBox) {
+                    errBox.textContent = 'Please enter both your Farmer User ID and Password.';
+                    errBox.classList.remove('d-none');
+                }
+                return;
             }
+            await loginFarmerWithCredentials(uid, pw);
         });
     }
 
@@ -1092,7 +1340,10 @@ function setupEventListeners() {
 
 // Window exports
 window.switchView = switchView;
+window.switchGovernanceSubtab = switchGovernanceSubtab;
 window.loginFarmerById = loginFarmerById;
+window.loginFarmerWithCredentials = loginFarmerWithCredentials;
+window.prefillModalFarmer = prefillModalFarmer;
 window.handleFarmerLogout = handleFarmerLogout;
 window.showLoginModal = showLoginModal;
 window.openSchemeDossierModal = openSchemeDossierModal;

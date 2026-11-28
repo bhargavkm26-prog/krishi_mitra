@@ -1,20 +1,24 @@
 <html lang="en" id="htmlRoot">
-  <!DOCTYPE html>
+<!DOCTYPE html>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Krishi Mitra — Sovereign Agrarian Intelligence & Governance OS</title>
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
   <!-- CSS Assets -->
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/all.min.css">
   <link rel="stylesheet" href="css/krishi-nexus.css?v=4.5">
 </head>
+
 <body>
 
   <!-- ========================================================================= -->
@@ -23,7 +27,7 @@
   <nav id="nbar">
     <div class="container">
       <div class="d-flex align-items-center justify-content-between w-100">
-        
+
         <!-- Logo -->
         <a href="#" class="d-flex align-items-center gap-2 text-decoration-none">
           <div class="logo-leaf">
@@ -33,42 +37,58 @@
             <div class="fw-bold text-white" style="font-size:1.25rem; letter-spacing:-0.02em; line-height:1.1;">
               Krishi<span class="text-success">Mitra</span>
             </div>
-            <div class="text-white-50 font-monospace" style="font-size:0.65rem; letter-spacing:0.12em;">SOVEREIGN AGRI-OS</div>
+            <div class="text-white-50 font-monospace" style="font-size:0.65rem; letter-spacing:0.12em;">SOVEREIGN
+              AGRI-OS</div>
           </div>
         </a>
 
         <!-- Desktop Navigation Links -->
         <div class="d-none d-lg-flex align-items-center gap-4 mx-auto">
-          <a href="ai_chat.html" class="text-white text-decoration-none small fw-bold" style="color:#22c55e !important;">
+          <a href="ai_chat.html" class="text-white text-decoration-none small fw-bold"
+            style="color:#22c55e !important;">
             <i class="fa-solid fa-comments me-1"></i>AI Chatbot
           </a>
           <a href="#pillars" class="text-white-50 text-decoration-none small fw-semibold hover-success">Architecture</a>
-          <a href="#how-it-works" class="text-white-50 text-decoration-none small fw-semibold hover-success">3-Step Flow</a>
-          <a href="#benchmark" class="text-white-50 text-decoration-none small fw-semibold hover-success">Governance Matrix</a>
+          <a href="#how-it-works" class="text-white-50 text-decoration-none small fw-semibold hover-success">3-Step
+            Flow</a>
+          <a href="#benchmark" class="text-white-50 text-decoration-none small fw-semibold hover-success">Governance
+            Matrix</a>
         </div>
 
         <!-- Action Buttons & Theme Toggle -->
         <div class="d-flex align-items-center gap-2">
           <!-- AI Chatbot Direct Button -->
-          <a href="ai_chat.html" class="boc px-3 py-2 d-none d-md-flex align-items-center gap-2 text-decoration-none" style="border-color:rgba(34,197,94,0.5); background:rgba(34,197,94,0.12);">
+          <a href="ai_chat.html" class="boc px-3 py-2 d-none d-md-flex align-items-center gap-2 text-decoration-none"
+            style="border-color:rgba(34,197,94,0.5); background:rgba(34,197,94,0.12);">
             <i class="fa-solid fa-comments text-success"></i>
             <span class="fw-bold">AI Chatbot</span>
           </a>
 
           <!-- Theme Toggle -->
-          <button class="boc d-flex align-items-center justify-content-center" id="thbtn" style="width:38px; height:38px; padding:0; border-radius:12px;" aria-label="Toggle Theme">
+          <button class="boc d-flex align-items-center justify-content-center" id="thbtn"
+            style="width:38px; height:38px; padding:0; border-radius:12px;" aria-label="Toggle Theme">
             <i class="fa-solid fa-sun" id="suni" style="display:none; color:var(--gold);"></i>
             <i class="fa-solid fa-moon" id="mooni" style="color:var(--pur);"></i>
           </button>
 
+          <!-- Language Toggle (English <-> Kannada) -->
+          <button type="button" class="boc px-2 px-sm-3 py-2 d-flex align-items-center gap-2 lang-toggle-pill"
+            id="indexLangToggle" data-km-lang-toggle="1" data-km-no-translate="1" style="border-radius:12px;"
+            aria-label="Toggle Kannada and English">
+            <i class="fa-solid fa-language text-success"></i>
+            <span class="lang-text-display">ಕನ್ನಡ</span>
+          </button>
+
           <!-- Direct Login Button -->
-          <button class="boc px-3 py-2 d-none d-sm-flex align-items-center gap-2" data-bs-toggle="offcanvas" data-bs-target="#farmerLoginOffcanvas">
+          <button class="boc px-3 py-2 d-none d-sm-flex align-items-center gap-2" data-bs-toggle="offcanvas"
+            data-bs-target="#farmerLoginOffcanvas">
             <i class="fa-solid fa-id-card-clip text-success"></i>
             <span>Farmer Login</span>
           </button>
 
           <!-- Launch Full Portal Dashboard -->
-          <a href="dashboard_app.html" class="bgrd btn px-3 py-2 d-none d-sm-flex align-items-center gap-2 text-decoration-none">
+          <a href="dashboard_app.html"
+            class="bgrd btn px-3 py-2 d-none d-sm-flex align-items-center gap-2 text-decoration-none">
             <span>Launch Portal</span>
             <i class="fa-solid fa-arrow-right fa-xs"></i>
           </a>
@@ -85,16 +105,22 @@
   </nav>
 
   <!-- Mobile Menu Dropdown -->
-  <div id="mbmenu" class="d-lg-none p-3" style="display:none; background:var(--bg2); border-bottom:1px solid var(--bd2); position:fixed; top:var(--nav); left:0; right:0; z-index:999;">
-    <a href="ai_chat.html" class="nav-link py-2 border-bottom border-secondary border-opacity-25 fw-bold" style="color:#22c55e !important;">
+  <div id="mbmenu" class="d-lg-none p-3"
+    style="display:none; background:var(--bg2); border-bottom:1px solid var(--bd2); position:fixed; top:var(--nav); left:0; right:0; z-index:999;">
+    <a href="ai_chat.html" class="nav-link py-2 border-bottom border-secondary border-opacity-25 fw-bold"
+      style="color:#22c55e !important;">
       <i class="fa-solid fa-comments me-2"></i>Krishi AI Chatbot
     </a>
     <a href="#pillars" class="nav-link py-2 border-bottom border-secondary border-opacity-25">Architecture</a>
     <a href="#how-it-works" class="nav-link py-2 border-bottom border-secondary border-opacity-25">3-Step Flow</a>
     <a href="#benchmark" class="nav-link py-2 border-bottom border-secondary border-opacity-25">Governance Matrix</a>
-    <div class="d-flex gap-2 mt-3">
-      <a href="ai_chat.html" class="boc flex-fill py-2 btn text-center text-decoration-none" style="border-color:#22c55e; color:#22c55e;">AI Chat</a>
-      <button class="boc flex-fill py-2 btn" data-bs-toggle="offcanvas" data-bs-target="#farmerLoginOffcanvas">Farmer Login</button>
+    <div class="d-flex gap-2 mt-3 flex-wrap">
+      <button type="button" class="boc py-2 px-3 btn lang-toggle-pill" data-km-lang-toggle="1"
+        data-km-no-translate="1">ಕನ್ನಡ</button>
+      <a href="ai_chat.html" class="boc flex-fill py-2 btn text-center text-decoration-none"
+        style="border-color:#22c55e; color:#22c55e;">AI Chat</a>
+      <button class="boc flex-fill py-2 btn" data-bs-toggle="offcanvas" data-bs-target="#farmerLoginOffcanvas">Farmer
+        Login</button>
       <a href="dashboard_app.html" class="bgrd flex-fill py-2 btn text-center text-decoration-none">Launch Portal</a>
     </div>
   </div>
@@ -103,7 +129,7 @@
   <!-- ========================================================================= -->
   <!-- 2. HERO SECTION                                                           -->
   <!-- ========================================================================= -->
-  <section id="hero">
+  <section id="hero" class="overflow-hidden">
     <!-- Ambient Aurora Glows -->
     <div class="aur aur-a" style="top:-60px; left:-100px;"></div>
     <div class="aur aur-b" style="top:140px; right:-140px;"></div>
@@ -111,7 +137,7 @@
 
     <div class="container position-relative" style="z-index:2;">
       <div class="text-center mb-5">
-        
+
         <!-- Live System Badge -->
         <div class="mb-3">
           <span class="hbadge">
@@ -128,7 +154,8 @@
 
         <!-- The Atmos Mission Subtitle -->
         <p class="hero-sub">
-          We connect statutory schemes, citizen land records, agro-climatic conditions, and procedural mandates into one evolving deliberation layer that reflects farmer reality in real time.
+          We connect statutory schemes, citizen land records, agro-climatic conditions, and procedural mandates into one
+          evolving deliberation layer that reflects farmer reality in real time.
         </p>
 
         <!-- CTAs -->
@@ -152,11 +179,13 @@
           <p class="text-uppercase text-white-50 font-monospace mb-2" style="font-size:0.72rem; letter-spacing:0.12em;">
             Autonomous Architecture Powered By Sovereign Open Weights
           </p>
-          <div class="d-flex align-items-center justify-content-center gap-4 flex-wrap text-white-50 small font-monospace">
+          <div
+            class="d-flex align-items-center justify-content-center gap-4 flex-wrap text-white-50 small font-monospace">
             <span><i class="fa-solid fa-database text-success me-1"></i> PostgreSQL pgvector</span>
             <span><i class="fa-solid fa-network-wired text-info me-1"></i> BGE-M3 Dense RAG</span>
             <span><i class="fa-solid fa-brain text-warning me-1"></i> Gemma 4 E4B (llama.cpp)</span>
-            <span id="heroRepoCountSpan"><i class="fa-solid fa-landmark text-success me-1"></i> National Scheme Repository (2,066 Programs)</span>
+            <span id="heroRepoCountSpan"><i class="fa-solid fa-landmark text-success me-1"></i> National Scheme
+              Repository (2,066 Programs)</span>
             <span><i class="fa-solid fa-shield-halved text-info me-1"></i> 100% On-Premise Airgap</span>
           </div>
         </div>
@@ -182,8 +211,8 @@
           <div class="plbl">Official FAQs &amp; SOPs</div>
         </div>
         <div class="col-6 col-md-3">
-          <div class="pnum" data-target="38" data-suffix=" States &amp; UTs">38 States &amp; UTs</div>
-          <div class="plbl">States &amp; UTs Indexed</div>
+          <div class="pnum" data-target="36">36</div>
+          <div class="plbl">28 States &amp; 8 Union Territories</div>
         </div>
         <div class="col-6 col-md-3">
           <div class="pnum" data-target="100" data-suffix="% Local">100% Local</div>
@@ -194,19 +223,25 @@
       <!-- Scrolling Ticker of Central & State Ministries -->
       <div class="lscroll mt-4 pt-3">
         <div class="ltrack">
-          <span class="lbr"><i class="fa-solid fa-wheat-awn text-success"></i> Ministry of Agriculture &amp; Farmers Welfare</span>
+          <span class="lbr"><i class="fa-solid fa-wheat-awn text-success"></i> Ministry of Agriculture &amp; Farmers
+            Welfare</span>
           <span class="lbr"><i class="fa-solid fa-sun text-warning"></i> Ministry of New &amp; Renewable Energy</span>
           <span class="lbr"><i class="fa-solid fa-droplet text-info"></i> Department of Water Resources (DoWR)</span>
           <span class="lbr"><i class="fa-solid fa-cow text-success"></i> Animal Husbandry &amp; Dairying</span>
-          <span class="lbr"><i class="fa-solid fa-building-columns text-primary"></i> NABARD &amp; Reserve Bank Priority Credit</span>
-          <span class="lbr"><i class="fa-solid fa-seedling text-success"></i> Indian Council of Agricultural Research (ICAR)</span>
+          <span class="lbr"><i class="fa-solid fa-building-columns text-primary"></i> NABARD &amp; Reserve Bank Priority
+            Credit</span>
+          <span class="lbr"><i class="fa-solid fa-seedling text-success"></i> Indian Council of Agricultural Research
+            (ICAR)</span>
           <!-- Seamless Infinite Loop Duplicate Track -->
-          <span class="lbr"><i class="fa-solid fa-wheat-awn text-success"></i> Ministry of Agriculture &amp; Farmers Welfare</span>
+          <span class="lbr"><i class="fa-solid fa-wheat-awn text-success"></i> Ministry of Agriculture &amp; Farmers
+            Welfare</span>
           <span class="lbr"><i class="fa-solid fa-sun text-warning"></i> Ministry of New &amp; Renewable Energy</span>
           <span class="lbr"><i class="fa-solid fa-droplet text-info"></i> Department of Water Resources (DoWR)</span>
           <span class="lbr"><i class="fa-solid fa-cow text-success"></i> Animal Husbandry &amp; Dairying</span>
-          <span class="lbr"><i class="fa-solid fa-building-columns text-primary"></i> NABARD &amp; Reserve Bank Priority Credit</span>
-          <span class="lbr"><i class="fa-solid fa-seedling text-success"></i> Indian Council of Agricultural Research (ICAR)</span>
+          <span class="lbr"><i class="fa-solid fa-building-columns text-primary"></i> NABARD &amp; Reserve Bank Priority
+            Credit</span>
+          <span class="lbr"><i class="fa-solid fa-seedling text-success"></i> Indian Council of Agricultural Research
+            (ICAR)</span>
         </div>
       </div>
     </div>
@@ -216,15 +251,16 @@
   <!-- ========================================================================= -->
   <!-- 4. THE PROBLEM: FRAGMENTATION IN AGRARIAN GOVERNANCE                       -->
   <!-- ========================================================================= -->
-  <section class="sp position-relative">
+  <section class="sp position-relative overflow-hidden">
     <div class="aur aur-b" style="top:50%; right:-200px; transform:translateY(-50%);"></div>
     <div class="container position-relative" style="z-index:1;">
-      
+
       <div class="text-center mb-5">
         <span class="slbl">The Governance Dilemma</span>
         <h2 class="stitle">Agrarian Welfare is <span class="gt">Fragmented</span></h2>
         <p class="ssub mx-auto">
-          Despite over 2,000 public assistance schemes, millions of Indian farmers are excluded by procedural bureaucracy, opaque eligibility criteria, and disjointed administrative portals.
+          Despite over 2,000 public assistance schemes, millions of Indian farmers are excluded by procedural
+          bureaucracy, opaque eligibility criteria, and disjointed administrative portals.
         </p>
       </div>
 
@@ -232,12 +268,14 @@
         <!-- Card 1 -->
         <div class="col-md-4">
           <div class="gc p-4 h-100">
-            <div style="width:52px; height:52px; border-radius:14px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); display:flex; align-items:center; justify-content:center; margin-bottom:20px;">
+            <div
+              style="width:52px; height:52px; border-radius:14px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); display:flex; align-items:center; justify-content:center; margin-bottom:20px;">
               <i class="fa-solid fa-network-wired fa-lg" style="color:#f87171;"></i>
             </div>
             <h4 class="fw-bold mb-2">2,066 Disconnected Portals</h4>
             <p class="text-white-50 small mb-0">
-              Schemes exist across 28 separate state revenue boards and dozens of central ministries. Farmers have no unified interface to cross-reference overlapping benefits, input quotas, and subsidy thresholds.
+              Schemes exist across 28 separate state revenue boards and dozens of central ministries. Farmers have no
+              unified interface to cross-reference overlapping benefits, input quotas, and subsidy thresholds.
             </p>
           </div>
         </div>
@@ -245,12 +283,14 @@
         <!-- Card 2 -->
         <div class="col-md-4">
           <div class="gc p-4 h-100">
-            <div style="width:52px; height:52px; border-radius:14px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25); display:flex; align-items:center; justify-content:center; margin-bottom:20px;">
+            <div
+              style="width:52px; height:52px; border-radius:14px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25); display:flex; align-items:center; justify-content:center; margin-bottom:20px;">
               <i class="fa-solid fa-triangle-exclamation fa-lg" style="color:#fbbf24;"></i>
             </div>
             <h4 class="fw-bold mb-2">40%+ Rejection from Minor Errors</h4>
             <p class="text-white-50 small mb-0">
-              Spelling mismatches in Aadhaar, unseeded bank accounts on the NPCI mapper, and unverified mutation entries stop PM-KISAN, PMFBY, and solar subsidies without clear procedural redressal.
+              Spelling mismatches in Aadhaar, unseeded bank accounts on the NPCI mapper, and unverified mutation entries
+              stop PM-KISAN, PMFBY, and solar subsidies without clear procedural redressal.
             </p>
           </div>
         </div>
@@ -258,12 +298,14 @@
         <!-- Card 3 -->
         <div class="col-md-4">
           <div class="gc p-4 h-100">
-            <div style="width:52px; height:52px; border-radius:14px; background:rgba(6,182,212,0.12); border:1px solid rgba(6,182,212,0.25); display:flex; align-items:center; justify-content:center; margin-bottom:20px;">
+            <div
+              style="width:52px; height:52px; border-radius:14px; background:rgba(6,182,212,0.12); border:1px solid rgba(6,182,212,0.25); display:flex; align-items:center; justify-content:center; margin-bottom:20px;">
               <i class="fa-solid fa-lock fa-lg" style="color:#22d3ee;"></i>
             </div>
             <h4 class="fw-bold mb-2">Cloud Vulnerability &amp; Latency</h4>
             <p class="text-white-50 small mb-0">
-              Commercial cloud LLMs expose sensitive farmer identities, landholding coordinates, and family income data to third-party offshore APIs while suffering from severe latency and hallucinated policy advice.
+              Commercial cloud LLMs expose sensitive farmer identities, landholding coordinates, and family income data
+              to third-party offshore APIs while suffering from severe latency and hallucinated policy advice.
             </p>
           </div>
         </div>
@@ -278,12 +320,13 @@
   <!-- ========================================================================= -->
   <section id="pillars" class="sp position-relative">
     <div class="container">
-      
+
       <div class="text-center mb-5">
         <span class="slbl">Architectural Capabilities</span>
         <h2 class="stitle">Everything Needed for <span class="gt">Agrarian Justice</span></h2>
         <p class="ssub mx-auto">
-          An autonomous local stack engineering deterministic policy evaluation, semantic retrieval, and legally sound citizen directives.
+          An autonomous local stack engineering deterministic policy evaluation, semantic retrieval, and legally sound
+          citizen directives.
         </p>
 
         <!-- Reactive Pillar Filter Chips -->
@@ -296,14 +339,15 @@
       </div>
 
       <div class="row g-4" id="pillarsGrid">
-        
+
         <!-- Pillar 1 -->
         <div class="col-md-4 pillar-col" data-category="ai">
           <div class="gc p-4 h-100">
             <div class="ftico"><i class="fa-solid fa-scale-balanced"></i></div>
             <h4 class="fs-5 fw-bold mb-2">Chief Secretary Agent</h4>
             <p class="text-white-50 small">
-              Autonomous 5-turn multi-agent deliberation engine that synthesizes inter-ministerial packages, administrative action steps, and official grievance letters.
+              Autonomous 5-turn multi-agent deliberation engine that synthesizes inter-ministerial packages,
+              administrative action steps, and official grievance letters.
             </p>
             <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
               <span class="ftag mt-0">Gemma 4 Local Engine</span>
@@ -318,7 +362,8 @@
             <div class="ftico"><i class="fa-solid fa-brain"></i></div>
             <h4 class="fs-5 fw-bold mb-2">BGE-M3 Dense Retrieval</h4>
             <p class="text-white-50 small">
-              1024-dimensional pgvector index embedding 2,066 statutory schemes and 20,110 FAQs for instant cross-lingual semantic search with sub-second latency.
+              1024-dimensional pgvector index embedding 2,066 statutory schemes and 20,110 FAQs for instant
+              cross-lingual semantic search with sub-second latency.
             </p>
             <span class="ftag">CUDA:0 Embedded PyTorch</span>
           </div>
@@ -330,7 +375,8 @@
             <div class="ftico"><i class="fa-solid fa-certificate"></i></div>
             <h4 class="fs-5 fw-bold mb-2">4-State Statutory Evaluator</h4>
             <p class="text-white-50 small">
-              Strict constitutional evaluation logic returning <code>PASS</code>, <code>FAIL</code>, <code>UNKNOWN</code>, or <code>CONDITIONAL</code>. Never hallucinates an invalid government benefit.
+              Strict constitutional evaluation logic returning <code>PASS</code>, <code>FAIL</code>,
+              <code>UNKNOWN</code>, or <code>CONDITIONAL</code>. Never hallucinates an invalid government benefit.
             </p>
             <span class="ftag">100% Deterministic</span>
           </div>
@@ -342,7 +388,8 @@
             <div class="ftico"><i class="fa-solid fa-layer-group"></i></div>
             <h4 class="fs-5 fw-bold mb-2">Citizen Profile Graph</h4>
             <p class="text-white-50 small">
-              Deep aggregation of citizen landholdings, soil records, irrigation sources, social categories, crop cycles, and livestock under unique IDs (e.g. <code>KM26@0001</code>).
+              Deep aggregation of citizen landholdings, soil records, irrigation sources, social categories, crop
+              cycles, and livestock under unique IDs (e.g. <code>KM26@0001</code>).
             </p>
             <span class="ftag">Relational Postgres</span>
           </div>
@@ -354,7 +401,8 @@
             <div class="ftico"><i class="fa-solid fa-lock"></i></div>
             <h4 class="fs-5 fw-bold mb-2">Air-Gapped Edge Sovereignty</h4>
             <p class="text-white-50 small">
-              Runs completely offline on local RTX GPUs. Zero cloud dependencies, zero external API keys, ensuring complete privacy for national land and citizen datasets.
+              Runs completely offline on local RTX GPUs. Zero cloud dependencies, zero external API keys, ensuring
+              complete privacy for national land and citizen datasets.
             </p>
             <span class="ftag">Air-Gapped Local Stack</span>
           </div>
@@ -366,7 +414,8 @@
             <div class="ftico"><i class="fa-solid fa-file-signature"></i></div>
             <h4 class="fs-5 fw-bold mb-2">Procedural Action Dossier</h4>
             <p class="text-white-50 small">
-              Produces actionable administrative guidance: exact annexure download paths, mandatory document checklists, and district grievance appeal workflows.
+              Produces actionable administrative guidance: exact annexure download paths, mandatory document checklists,
+              and district grievance appeal workflows.
             </p>
             <span class="ftag">Immediate Citizen Redressal</span>
           </div>
@@ -383,7 +432,7 @@
   <!-- ========================================================================= -->
   <section id="how-it-works" class="sp position-relative">
     <div class="container">
-      
+
       <div class="text-center mb-5">
         <span class="slbl">Citizen Workflow</span>
         <h2 class="stitle">Entitlement in <span class="gt">3 Simple Steps</span></h2>
@@ -399,7 +448,8 @@
             <div class="hnum">1</div>
             <h4 class="fs-5 fw-bold mb-2">Citizen Unique ID &amp; Registration</h4>
             <p class="text-white-50 small mb-0">
-              Existing or newly registered farmers sign in with their unique User ID (e.g. <code>KM26@0001</code>) and Password to pull PostgreSQL landholding, crop, and category records.
+              Existing or newly registered farmers sign in with their unique User ID (e.g. <code>KM26@0001</code>) and
+              Password to pull PostgreSQL landholding, crop, and category records.
             </p>
           </div>
         </div>
@@ -410,7 +460,8 @@
             <div class="hnum">2</div>
             <h4 class="fs-5 fw-bold mb-2">Neural Cross-Matching</h4>
             <p class="text-white-50 small mb-0">
-              BGE-M3 and PostgreSQL cross-evaluate the farmer's land area, state jurisdiction, and category against 2,066 statutory rules and 20,110 policy provisions.
+              BGE-M3 and PostgreSQL cross-evaluate the farmer's land area, state jurisdiction, and category against
+              2,066 statutory rules and 20,110 policy provisions.
             </p>
           </div>
         </div>
@@ -421,7 +472,8 @@
             <div class="hnum">3</div>
             <h4 class="fs-5 fw-bold mb-2">Executive Directive</h4>
             <p class="text-white-50 small mb-0">
-              Gemma 4 deliberates autonomously to produce a binding administrative roadmap with exact document checklists, online submission steps, and official appeal channels.
+              Gemma 4 deliberates autonomously to produce a binding administrative roadmap with exact document
+              checklists, online submission steps, and official appeal channels.
             </p>
           </div>
         </div>
@@ -436,9 +488,9 @@
   <!-- ========================================================================= -->
   <section id="benchmark" class="sp position-relative">
     <div class="aur aur-a" style="top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.22;"></div>
-    
+
     <div class="container position-relative" style="z-index:2;">
-      
+
       <div class="text-center mb-5">
         <span class="slbl">Governance Benchmark</span>
         <h2 class="stitle">Statutory Efficiency &amp; <span class="gt">Sovereignty Matrix</span></h2>
@@ -454,8 +506,10 @@
             <thead>
               <tr>
                 <th style="width:26%;">Architectural Dimension</th>
-                <th style="width:37%;"><i class="fa-solid fa-building-columns text-danger me-2"></i>Legacy Bureaucracy / Portals</th>
-                <th style="width:37%;"><i class="fa-solid fa-microchip text-success me-2"></i>Krishi Mitra Sovereign OS</th>
+                <th style="width:37%;"><i class="fa-solid fa-building-columns text-danger me-2"></i>Legacy Bureaucracy /
+                  Portals</th>
+                <th style="width:37%;"><i class="fa-solid fa-microchip text-success me-2"></i>Krishi Mitra Sovereign OS
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -466,11 +520,13 @@
                 </td>
                 <td class="matrix-legacy">
                   <div>3 to 6 Weeks</div>
-                  <small class="text-white-50">Manual physical visits to Taluk office / CSC, offline paper file queues.</small>
+                  <small class="text-white-50">Manual physical visits to Taluk office / CSC, offline paper file
+                    queues.</small>
                 </td>
                 <td class="matrix-sovereign">
                   <div>1.8 Seconds Local Edge Inference</div>
-                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-bolt me-1"></i> Sub-second dense vector lookup</span>
+                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-bolt me-1"></i> Sub-second dense vector
+                    lookup</span>
                 </td>
               </tr>
 
@@ -481,11 +537,13 @@
                 </td>
                 <td class="matrix-legacy">
                   <div>Discretionary &amp; 40%+ Error Rate</div>
-                  <small class="text-white-50">Minor Aadhaar spelling mismatches or unseeded bank accounts result in silent rejection.</small>
+                  <small class="text-white-50">Minor Aadhaar spelling mismatches or unseeded bank accounts result in
+                    silent rejection.</small>
                 </td>
                 <td class="matrix-sovereign">
                   <div>Deterministic 4-State Evaluator</div>
-                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-shield-check me-1"></i> PASS • FAIL • UNKNOWN • CONDITIONAL</span>
+                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-shield-check me-1"></i> PASS • FAIL •
+                    UNKNOWN • CONDITIONAL</span>
                 </td>
               </tr>
 
@@ -496,11 +554,13 @@
                 </td>
                 <td class="matrix-legacy">
                   <div>Isolated Silos (Dozens of Sites)</div>
-                  <small class="text-white-50">Farmers must independently discover and apply across Agriculture, Water, Energy, and Animal Husbandry.</small>
+                  <small class="text-white-50">Farmers must independently discover and apply across Agriculture, Water,
+                    Energy, and Animal Husbandry.</small>
                 </td>
                 <td class="matrix-sovereign">
                   <div>Unified 2,066-Program Graph</div>
-                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-layer-group me-1"></i> Synthesizes Central + 28 State gazettes</span>
+                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-layer-group me-1"></i> Synthesizes Central
+                    + 28 State gazettes</span>
                 </td>
               </tr>
 
@@ -511,11 +571,13 @@
                 </td>
                 <td class="matrix-legacy">
                   <div>Opaque "Application Rejected"</div>
-                  <small class="text-white-50">No statutory explanation, missing annexure lists, or appellate contact info.</small>
+                  <small class="text-white-50">No statutory explanation, missing annexure lists, or appellate contact
+                    info.</small>
                 </td>
                 <td class="matrix-sovereign">
                   <div>Binding Action Directives</div>
-                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-file-pen me-1"></i> Biometric e-KYC &amp; NPCI Mandate Checklists</span>
+                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-file-pen me-1"></i> Biometric e-KYC &amp;
+                    NPCI Mandate Checklists</span>
                 </td>
               </tr>
 
@@ -526,11 +588,13 @@
                 </td>
                 <td class="matrix-legacy">
                   <div>Public Cloud &amp; Third-Party APIs</div>
-                  <small class="text-white-50">Sensitive farmer identity, land coordinates, and bank details sent across commercial offshore cloud servers.</small>
+                  <small class="text-white-50">Sensitive farmer identity, land coordinates, and bank details sent across
+                    commercial offshore cloud servers.</small>
                 </td>
                 <td class="matrix-sovereign">
                   <div>100% Air-Gapped Local RTX GPU</div>
-                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-lock me-1"></i> Zero cloud leakage • 100% Data-Sovereign</span>
+                  <span class="matrix-badge-sovereign"><i class="fa-solid fa-lock me-1"></i> Zero cloud leakage • 100%
+                    Data-Sovereign</span>
                 </td>
               </tr>
             </tbody>
@@ -544,28 +608,32 @@
           <div class="stpill py-3">
             <i class="fa-solid fa-server text-success mb-2 fs-5"></i>
             <div class="fw-bold text-white small">Local Gemma 4 E4B</div>
-            <span id="telemetryGemmaBadge" class="badge bg-success bg-opacity-25 text-success font-monospace" style="font-size:0.65rem;">llama-server (Port 8080)</span>
+            <span id="telemetryGemmaBadge" class="badge bg-success bg-opacity-25 text-success font-monospace"
+              style="font-size:0.65rem;">llama-server (Port 8080)</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stpill py-3">
             <i class="fa-solid fa-microchip text-info mb-2 fs-5"></i>
             <div class="fw-bold text-white small">BGE-M3 Dense RAG</div>
-            <span id="telemetryBgeBadge" class="badge bg-info bg-opacity-25 text-info font-monospace" style="font-size:0.65rem;">CUDA:0 Embedded PyTorch</span>
+            <span id="telemetryBgeBadge" class="badge bg-info bg-opacity-25 text-info font-monospace"
+              style="font-size:0.65rem;">CUDA:0 Embedded PyTorch</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stpill py-3">
             <i class="fa-solid fa-database text-warning mb-2 fs-5"></i>
             <div class="fw-bold text-white small">PostgreSQL 16 pgvector</div>
-            <span id="telemetryDbBadge" class="badge bg-warning bg-opacity-25 text-warning font-monospace" style="font-size:0.65rem;">2,066 Schemes / 20,110 FAQs</span>
+            <span id="telemetryDbBadge" class="badge bg-warning bg-opacity-25 text-warning font-monospace"
+              style="font-size:0.65rem;">2,066 Schemes / 20,110 FAQs</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stpill py-3">
             <i class="fa-solid fa-shield-halved text-primary mb-2 fs-5"></i>
             <div class="fw-bold text-white small">Airgap Data Sovereignty</div>
-            <span class="badge bg-primary bg-opacity-25 text-primary font-monospace" style="font-size:0.65rem;">Zero Foreign Cloud Egress</span>
+            <span class="badge bg-primary bg-opacity-25 text-primary font-monospace" style="font-size:0.65rem;">Zero
+              Foreign Cloud Egress</span>
           </div>
         </div>
       </div>
@@ -579,7 +647,7 @@
   <!-- ========================================================================= -->
   <section id="cta" class="py-5 position-relative overflow-hidden">
     <div class="aur aur-a" style="top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.3;"></div>
-    
+
     <div class="container position-relative py-5 text-center" style="z-index:2;">
       <span class="hbadge mb-3 d-inline-flex">
         <span class="bdot"></span>
@@ -590,7 +658,8 @@
         <span class="gt">Sovereign Agrarian Intelligence?</span>
       </h2>
       <p class="hero-sub mx-auto mb-4" style="max-width:560px;">
-        Access your authenticated citizen entitlement dossier across 2,066 statutory programs with zero password barriers.
+        Access your authenticated citizen entitlement dossier across 2,066 statutory programs with zero password
+        barriers.
       </p>
       <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
         <a href="ai_chat.html" class="bgrd btn px-4 py-3 fs-6 text-decoration-none">
@@ -613,7 +682,7 @@
   <footer id="foot">
     <div class="container">
       <div class="row g-5 mb-5 align-items-center">
-        
+
         <div class="col-lg-6">
           <a class="d-flex align-items-center gap-2 mb-3 text-decoration-none" href="#">
             <div class="logo-leaf">
@@ -624,7 +693,8 @@
             </div>
           </a>
           <p class="footer-desc mb-0">
-            Sovereign, air-gapped agrarian operating system unifying statutory schemes, land records, and autonomous edge reasoning for Indian agriculture.
+            Sovereign, air-gapped agrarian operating system unifying statutory schemes, land records, and autonomous
+            edge reasoning for Indian agriculture.
           </p>
         </div>
 
@@ -656,7 +726,8 @@
         </div>
         <div class="footer-status-pill">
           <span id="footerSystemDot" class="bdot" style="width:8px; height:8px;"></span>
-          <span>System Status: <strong id="footerSystemStatus" class="text-white">Checking Subsystems...</strong> (Local Edge)</span>
+          <span>System Status: <strong id="footerSystemStatus" class="text-white">Checking Subsystems...</strong> (Local
+            Edge)</span>
         </div>
       </div>
     </div>
@@ -666,7 +737,8 @@
   <!-- ========================================================================= -->
   <!-- 10. OFFCANVAS: FARMER PORTAL LOGIN (USER ID + PASSWORD)                    -->
   <!-- ========================================================================= -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="farmerLoginOffcanvas" aria-labelledby="farmerLoginOffcanvasLabel">
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="farmerLoginOffcanvas"
+    aria-labelledby="farmerLoginOffcanvasLabel">
     <div class="offcanvas-header border-bottom border-secondary border-opacity-25 pb-3">
       <div class="d-flex align-items-center gap-2">
         <div class="logo-leaf" style="width:34px; height:34px; font-size:1rem;">
@@ -674,7 +746,8 @@
         </div>
         <div>
           <h5 class="offcanvas-title fw-bold text-white mb-0" id="farmerLoginOffcanvasLabel">Farmer Portal Login</h5>
-          <small class="text-success font-monospace" style="font-size:0.75rem;"><i class="fa-solid fa-shield-halved me-1"></i> USER ID &amp; PASSWORD VERIFIED</small>
+          <small class="text-success font-monospace" style="font-size:0.75rem;"><i
+              class="fa-solid fa-shield-halved me-1"></i> USER ID &amp; PASSWORD VERIFIED</small>
         </div>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" style="filter:invert(1);"></button>
@@ -682,19 +755,23 @@
 
     <div class="offcanvas-body p-4">
       <p class="text-white-50 small mb-3">
-        Enter your registered <strong>Farmer User ID</strong> (e.g. <code>KM26@0001</code> or your newly registered User ID) and <strong>Password</strong> to access personalized statutory schemes and the Farmer Dashboard.
+        Enter your registered <strong>Farmer User ID</strong> (e.g. <code>KM26@0001</code> or your newly registered User
+        ID) and <strong>Password</strong> to access personalized statutory schemes and the Farmer Dashboard.
       </p>
 
       <div id="offcanvasLoginError" class="alert alert-danger py-2 px-3 small d-none mb-3" role="alert"></div>
 
       <form id="offcanvasLoginForm">
         <div class="mb-3">
-          <label class="olbl" for="offcanvasFarmerId"><i class="fa-solid fa-id-card-clip me-1 text-success"></i> Farmer User ID</label>
-          <input type="text" class="oinp font-monospace" id="offcanvasFarmerId" placeholder="e.g. KM26@0001 or RAVI@2026" required autofocus>
+          <label class="olbl" for="offcanvasFarmerId"><i class="fa-solid fa-id-card-clip me-1 text-success"></i> Farmer
+            User ID</label>
+          <input type="text" class="oinp font-monospace" id="offcanvasFarmerId"
+            placeholder="e.g. KM26@0001 or RAVI@2026" required autofocus>
         </div>
 
         <div class="mb-3">
-          <label class="olbl" for="offcanvasFarmerPassword"><i class="fa-solid fa-key me-1 text-success"></i> Password</label>
+          <label class="olbl" for="offcanvasFarmerPassword"><i class="fa-solid fa-key me-1 text-success"></i>
+            Password</label>
           <input type="password" class="oinp" id="offcanvasFarmerPassword" placeholder="Enter your password" required>
         </div>
 
@@ -768,6 +845,8 @@
   <!-- ========================================================================= -->
   <script src="js/bootstrap.bundle.min.js"></script>
   <script src="js/krishi-nexus.js?v=4.0"></script>
+  <script src="js/kannada-layer.js"></script>
 
 </body>
+
 </html>

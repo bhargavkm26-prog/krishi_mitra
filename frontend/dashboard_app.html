@@ -61,6 +61,11 @@
 
         <!-- Center & Right Navigation -->
         <nav class="header-nav">
+          <a href="index.html" id="top-nav-home" class="nav-home-pill" title="Krishi Mitra Home">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+          </a>
+
           <button type="button" class="nav-menu-link active" id="top-nav-eligible" data-tab="eligible">
             <span data-i18n="navEligible">Eligible Schemes</span>
             <span id="badge-top-eligible" class="nav-count-badge">0</span>
@@ -81,7 +86,7 @@
           </a>
 
           <div class="nav-lang-wrap">
-            <button type="button" class="lang-toggle-pill" aria-label="Toggle Kannada and English">
+            <button type="button" class="lang-toggle-pill" data-km-no-translate="1" aria-label="Toggle Kannada and English">
               <span class="lang-text-display">ಕನ್ನಡ</span>
             </button>
           </div>
@@ -96,8 +101,9 @@
 
         <!-- Mobile Header Actions -->
         <div class="mobile-header-actions">
+          <a href="index.html" id="mobile-header-home" class="mobile-home-pill" aria-label="Home">🏠</a>
           <a href="ai_chat.html" id="mobile-header-ai" class="mobile-ai-pill" aria-label="Open KrishiMitra AI">✨ AI</a>
-          <button type="button" class="lang-toggle-pill mobile-lang-btn">ಕನ್ನಡ</button>
+          <button type="button" class="lang-toggle-pill mobile-lang-btn" data-km-no-translate="1">ಕನ್ನಡ</button>
           <button type="button" id="btn-mobile-profile" class="mobile-profile-avatar" aria-label="Profile">
             👨‍🌾
           </button>
@@ -112,17 +118,22 @@
     <section id="view-login" class="view-container login-fullscreen-hero">
 
       <div class="login-top-bar">
-        <div class="login-brand-tag">
+        <a href="index.html" class="login-brand-tag" style="text-decoration:none;">
           <svg class="login-leaf-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
             <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
           </svg>
           <span class="login-brand-title">Krishi Mitra</span>
-        </div>
+        </a>
 
-        <div class="login-lang-capsule">
-          <button type="button" class="login-lang-btn kn" data-lang="kn">ಕನ್ನಡ</button>
-          <button type="button" class="login-lang-btn en active" data-lang="en">English</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <a href="index.html" class="boc px-3 py-1 text-decoration-none" style="color:#86efac; border:1px solid rgba(34,197,94,0.45); border-radius:999px; font-size:0.85rem; padding:5px 12px;">
+            ← Home
+          </a>
+          <div class="login-lang-capsule" data-km-no-translate="1">
+            <button type="button" class="login-lang-btn kn" data-lang="kn">ಕನ್ನಡ</button>
+            <button type="button" class="login-lang-btn en active" data-lang="en">English</button>
+          </div>
         </div>
       </div>
 
@@ -710,6 +721,11 @@
           <div id="profile-drawer-summary" class="profile-chips-grid"></div>
 
           <div class="drawer-menu-list">
+            <a href="index.html" id="drawer-link-home" class="drawer-menu-btn" style="text-decoration:none;">
+              <span class="menu-icon">🏠</span>
+              <span>Home</span>
+            </a>
+
             <a href="ai_chat.html" id="drawer-link-krishi-ai" class="drawer-menu-btn" style="text-decoration:none; border-color:rgba(6,182,212,0.45);">
               <span class="menu-icon">🤖</span>
               <span>KrishiMitra AI Chief Secretary</span>
@@ -856,5 +872,6 @@
   <script src="js/speech.js"></script>
   <script src="js/profileEditor.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/kannada-layer.js"></script>
 </body>
 </html>

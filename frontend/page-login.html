@@ -463,12 +463,17 @@
             <i class="fa-solid fa-moon" id="mooni" style="color:var(--pur);"></i>
           </button>
 
-          <a href="index.html" class="boc px-3 py-2 d-none d-sm-flex align-items-center gap-2 text-decoration-none">
-            <i class="fa-solid fa-arrow-left text-success"></i>
+          <button type="button" class="boc px-2 px-sm-3 py-2 d-flex align-items-center gap-1 lang-toggle-pill" id="loginLangToggle" data-km-lang-toggle="1" data-km-no-translate="1" style="border-radius:12px;" aria-label="Toggle Kannada and English">
+            <i class="fa-solid fa-language text-success"></i>
+            <span class="lang-text-display">ಕನ್ನಡ</span>
+          </button>
+
+          <a href="index.html" id="loginNavHomeBtn" class="boc px-2 px-sm-3 py-2 d-flex align-items-center gap-2 text-decoration-none">
+            <i class="fa-solid fa-house text-success"></i>
             <span>Home</span>
           </a>
 
-          <a href="dashboard_app.html" class="bgrd btn px-3 py-2 d-flex align-items-center gap-2 text-decoration-none">
+          <a href="dashboard_app.html" class="bgrd btn px-2 px-sm-3 py-2 d-flex align-items-center gap-2 text-decoration-none">
             <span>Public Portal</span>
             <i class="fa-solid fa-arrow-right fa-xs"></i>
           </a>
@@ -960,6 +965,7 @@
   <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/js/api.js"></script>
   <script src="assets/js/auth.js"></script>
+  <script src="js/kannada-layer.js"></script>
 </body>
 
 </html>

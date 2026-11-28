@@ -52,7 +52,8 @@ html.lm {
   --border-input: #cbd5e1;
 }
 
-html, body {
+html,
+body {
   background-color: #030704 !important;
   background-image:
     radial-gradient(circle at 50% -5%, rgba(16, 185, 129, 0.22) 0%, transparent 65%),
@@ -171,6 +172,41 @@ html, body {
   transition: all 0.2s ease;
 }
 
+.nav-home-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.08);
+  color: #a7f3d0 !important;
+  font-weight: 600;
+  font-size: 0.84rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.nav-home-pill:hover {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #22c55e;
+  color: #ffffff !important;
+}
+
+.mobile-home-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
+  border-radius: 9px;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.1);
+  color: #86efac !important;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
 .nav-ai-pill:hover {
   background: rgba(6, 182, 212, 0.24);
   border-color: #22d3ee;
@@ -229,6 +265,36 @@ html, body {
   color: #021a0f !important;
   font-family: "JetBrains Mono", monospace;
   font-weight: 800;
+}
+
+/* Kannada Header Single-Line Fit (dashboard_app.html) */
+html[lang="kn"] .site-header .header-inner {
+  gap: 8px;
+}
+
+html[lang="kn"] .site-header .header-nav {
+  gap: 5px !important;
+}
+
+html[lang="kn"] .site-header .nav-menu-link,
+html[lang="kn"] .site-header .nav-home-pill,
+html[lang="kn"] .site-header .nav-ai-pill,
+html[lang="kn"] .site-header .btn-profile-pill,
+html[lang="kn"] .site-header .lang-toggle-pill {
+  white-space: nowrap !important;
+  font-size: 0.76rem !important;
+  padding: 6px 9px !important;
+}
+
+html[lang="kn"] .site-header .brand-heading {
+  font-size: 1.05rem !important;
+  white-space: nowrap !important;
+}
+
+html[lang="kn"] .site-header .brand-subheading {
+  font-size: 0.55rem !important;
+  letter-spacing: 0.04em !important;
+  white-space: nowrap !important;
 }
 
 .nav-count-badge.badge-amber {
@@ -929,10 +995,10 @@ html, body {
   opacity: 1;
 }
 
-.scheme-card > *,
-.doc-guide-card > *,
-.tip-full-card > *,
-.help-card > * {
+.scheme-card>*,
+.doc-guide-card>*,
+.tip-full-card>*,
+.help-card>* {
   position: relative;
   z-index: 1;
 }
@@ -1149,14 +1215,18 @@ html, body {
     padding: 12px 18px !important;
     gap: 10px;
   }
+
   .header-nav {
     gap: 6px !important;
   }
+
   .nav-menu-link,
+  .nav-home-pill,
   .nav-ai-pill {
     font-size: 0.8rem !important;
     padding: 6px 9px !important;
   }
+
   .btn-profile-pill {
     padding: 7px 12px !important;
     font-size: 0.82rem !important;
@@ -1168,21 +1238,26 @@ html, body {
     padding: 12px 14px !important;
     gap: 8px;
   }
+
   .brand-heading {
     font-size: 1.08rem !important;
   }
+
   .brand-subheading {
     font-size: 0.56rem !important;
     letter-spacing: 0.09em;
   }
+
   .mobile-lang-btn {
     padding: 5px 9px !important;
     font-size: 0.76rem !important;
   }
+
   .mobile-profile-avatar {
     width: 34px !important;
     height: 34px !important;
   }
+
   .hero-pill-badge {
     font-size: 0.68rem !important;
     letter-spacing: 0.04em !important;
@@ -1190,10 +1265,12 @@ html, body {
     max-width: 100%;
     white-space: normal;
   }
+
   .hero-actions-row {
     flex-direction: column;
     align-items: stretch;
   }
+
   .hero-btn-white,
   .hero-btn-ai,
   .hero-btn-outline {
@@ -1201,17 +1278,21 @@ html, body {
     justify-content: center;
     text-align: center;
   }
+
   .main-content-layout {
     padding: 14px 12px 84px !important;
   }
+
   .scheme-tabs-nav {
     flex-wrap: wrap;
     gap: 6px;
   }
+
   .scheme-tab-btn {
     font-size: 0.88rem;
     padding: 6px 10px;
   }
+
   .hero-headline {
     font-size: 1.5rem !important;
   }
@@ -1792,7 +1873,20 @@ html, body {
   border-color: rgba(34, 197, 94, 0.55) !important;
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #030704; }
-::-webkit-scrollbar-thumb { background: rgba(34, 197, 94, 0.35); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(34, 197, 94, 0.6); }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #030704;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.35);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.6);
+}

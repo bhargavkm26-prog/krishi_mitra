@@ -54,6 +54,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -448,7 +449,18 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.12em;
   font-weight: 800;
   margin-top: 8px;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.4;
+  padding: 0 8px;
+}
+
+html[lang="kn"] .pnum {
+  font-size: clamp(1.65rem, 2.2vw, 2.6rem);
+}
+
+html[lang="kn"] .plbl {
+  letter-spacing: 0.02em;
+  font-size: 0.85rem;
 }
 
 /* Ticker Logolist — Razor Sharp, High Contrast & Zero Blur */
@@ -988,6 +1000,38 @@ code {
 
 .lm #nbar .hover-success:hover {
   color: #10b981 !important;
+}
+
+/* Kannada Header Single-Line Fit (index.html) */
+html[lang="kn"] #nbar .container > .d-flex {
+  gap: 8px;
+}
+
+html[lang="kn"] #nbar .d-lg-flex {
+  gap: 14px !important;
+}
+
+html[lang="kn"] #nbar a,
+html[lang="kn"] #nbar button,
+html[lang="kn"] #nbar .boc,
+html[lang="kn"] #nbar .bgrd {
+  white-space: nowrap !important;
+}
+
+html[lang="kn"] #nbar .d-lg-flex a {
+  font-size: 0.78rem !important;
+}
+
+html[lang="kn"] #nbar .boc,
+html[lang="kn"] #nbar .bgrd {
+  font-size: 0.78rem !important;
+  padding: 6px 10px !important;
+}
+
+html[lang="kn"] #nbar .font-monospace {
+  font-size: 0.56rem !important;
+  letter-spacing: 0.04em !important;
+  white-space: nowrap !important;
 }
 
 .lm .hbadge {

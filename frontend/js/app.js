@@ -1641,10 +1641,30 @@ class KrishiMitraApp {
         })
         .catch(err => console.warn("Failed to hydrate full dossier:", err));
 
-      ApiService.searchFaqsBGE(scheme.name.en, 3)
+      ApiService.searchFaqsBGE(scheme.name.en, 5)
         .then(faqRes => {
           if (!this.selectedScheme || String(this.selectedScheme.id) !== String(scheme.id)) return;
-          const faqs = faqRes?.faqs || [];
+          // Filter out low-relevance cross-scheme BGE-M3 matches (e.g. 50-51% unrelated state schemes).
+          const MIN_SCORE = 0.60;
+          const HIGH_CONF_SCORE = 0.72;
+          const STOP_WORDS = new Set([
+            "scheme", "yojana", "pradhan", "mantri", "state", "central", "government",
+            "india", "national", "mission", "program", "programme", "ministry",
+            "department", "welfare", "farmer", "farmers", "kisan", "kalyan", "krishi", "for", "and", "the"
+          ]);
+          const schemeWords = new Set(
+            (scheme.name?.en || "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/)
+              .filter(w => w.length > 2 && !STOP_WORDS.has(w))
+          );
+          const scoreOf = f => f.relevance_score || 0;
+          const hasSchemeOverlap = f => {
+            if (schemeWords.size === 0) return false;
+            const fw = (f.scheme || "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/);
+            return fw.some(w => w.length > 2 && schemeWords.has(w));
+          };
+          const allAboveThreshold = (faqRes?.faqs || []).filter(f => scoreOf(f) >= MIN_SCORE);
+          const matched = allAboveThreshold.filter(hasSchemeOverlap);
+          const faqs = (matched.length > 0 ? matched : allAboveThreshold.filter(f => scoreOf(f) >= HIGH_CONF_SCORE)).slice(0, 3);
           if (faqs.length > 0 && faqBox && faqBody) {
             faqBox.style.display = "block";
             faqBody.innerHTML = faqs.map(f => `

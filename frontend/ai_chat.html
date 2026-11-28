@@ -46,10 +46,23 @@
       padding: 0;
     }
 
-    ::-webkit-scrollbar { width: 6px; height: 5px; }
-    ::-webkit-scrollbar-track { background: rgba(3, 10, 6, 0.6); }
-    ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.38); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.65); }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(3, 10, 6, 0.6);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.38);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(16, 185, 129, 0.65);
+    }
 
     body.has-chat {
       height: 100vh;
@@ -119,6 +132,7 @@
       font-size: 0.76rem;
       border-bottom: 1px solid rgba(16, 185, 129, 0.18);
     }
+
     .header-links {
       display: flex;
       align-items: center;
@@ -139,6 +153,7 @@
     .back-link:hover {
       color: #a7f3d0;
     }
+
     .back-dash-pill {
       padding: 5px 12px;
       border-radius: 9999px;
@@ -146,17 +161,20 @@
       border: 1px solid rgba(52, 211, 153, 0.35);
       color: #a7f3d0;
     }
+
     .back-dash-pill:hover {
       background: rgba(16, 185, 129, 0.24);
       border-color: #34d399;
       color: #ffffff;
     }
+
     .header-right {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
     }
+
     .new-chat-btn {
       display: none;
       align-items: center;
@@ -172,10 +190,12 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .new-chat-btn:hover {
       background: rgba(6, 182, 212, 0.25);
       color: #ffffff;
     }
+
     body.has-chat .new-chat-btn {
       display: inline-flex;
     }
@@ -430,10 +450,12 @@
       margin-bottom: 8px;
       transition: all 0.25s ease;
     }
+
     body.has-chat .title-box {
       margin-bottom: 0;
       display: none;
     }
+
     body.has-chat.has-farmer .title-box {
       display: flex;
       align-items: center;
@@ -442,11 +464,13 @@
       gap: 8px;
       text-align: left;
     }
+
     body.has-chat .title-box .cs-badge,
     body.has-chat .title-box h1,
     body.has-chat .title-box .subtitle {
       display: none;
     }
+
     body.has-chat .farmer-ctx-pill {
       margin: 0;
     }
@@ -507,6 +531,7 @@
       border-radius: 18px;
       backdrop-filter: blur(14px);
     }
+
     body.has-chat #chatThread {
       display: flex;
     }
@@ -580,6 +605,7 @@
       resize: none;
       line-height: 1.5;
     }
+
     body.has-chat textarea {
       min-height: 54px;
       padding: 14px 20px 10px;
@@ -685,6 +711,7 @@
       margin-top: 0;
       scrollbar-width: thin;
     }
+
     body.has-chat .quick-btn {
       white-space: nowrap;
       flex-shrink: 0;
@@ -708,18 +735,66 @@
     }
 
     @media (max-width: 768px) {
-      header { max-width: 100%; padding: 12px 14px; }
-      main { max-width: 100%; min-width: 0; padding: 14px 12px; gap: 14px; }
-      body.has-chat main { padding: 8px 10px; gap: 10px; }
-      #chatThread { padding: 14px 12px; }
+      header {
+        max-width: 100%;
+        padding: 12px 14px;
+      }
+
+      main {
+        max-width: 100%;
+        min-width: 0;
+        padding: 14px 12px;
+        gap: 14px;
+      }
+
+      body.has-chat main {
+        padding: 8px 10px;
+        gap: 10px;
+      }
+
+      #chatThread {
+        padding: 14px 12px;
+      }
+
       .chat-bubble,
       .chat-bubble.user,
-      .chat-bubble.bot { width: 100%; max-width: 100%; min-width: 0; padding: 12px 14px; }
-      .input-bottom { flex-wrap: wrap; gap: 8px; padding: 10px 14px 12px; }
-      .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-      .quick-btn { width: 100%; min-width: 0; white-space: normal; line-height: 1.25; font-size: 0.74rem; padding: 8px 10px; }
-      .quick-btn span { min-width: 0; overflow-wrap: anywhere; }
-      footer { font-size: 0.65rem; padding: 10px 12px; line-height: 1.4; }
+      .chat-bubble.bot {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        padding: 12px 14px;
+      }
+
+      .input-bottom {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 14px 12px;
+      }
+
+      .quick-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .quick-btn {
+        width: 100%;
+        min-width: 0;
+        white-space: normal;
+        line-height: 1.25;
+        font-size: 0.74rem;
+        padding: 8px 10px;
+      }
+
+      .quick-btn span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      footer {
+        font-size: 0.65rem;
+        padding: 10px 12px;
+        line-height: 1.4;
+      }
     }
   </style>
 </head>
@@ -745,6 +820,10 @@
       </a>
     </div>
     <div class="header-right">
+      <button type="button" id="chatLangToggle" class="back-link back-dash-pill lang-toggle-pill" data-km-lang-toggle="1" data-km-no-translate="1" style="cursor:pointer;" aria-label="Toggle Kannada and English">
+        <i class="fa-solid fa-language"></i>
+        <span class="lang-text-display">ಕನ್ನಡ</span>
+      </button>
       <button type="button" id="newChatBtn" class="new-chat-btn">
         <i class="fa-solid fa-plus"></i>
         <span>New Chat</span>
@@ -1328,7 +1407,7 @@
 
     function startNewChat() {
       if (activeEventSource) {
-        try { activeEventSource.close(); } catch (_) {}
+        try { activeEventSource.close(); } catch (_) { }
         activeEventSource = null;
       }
       isConsulting = false;
@@ -1361,6 +1440,7 @@
       }
     });
   </script>
+  <script src="js/kannada-layer.js"></script>
 
 </body>
 

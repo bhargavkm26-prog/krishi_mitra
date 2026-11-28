@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  const KRISHI_API_BASE = (window.location.origin && window.location.origin.includes(':8000'))
+  const KRISHI_API_BASE = (window.location.protocol && window.location.protocol.startsWith('http') && !['5500', '3000', '5173'].includes(window.location.port))
     ? window.location.origin
     : 'http://127.0.0.1:8000';
 

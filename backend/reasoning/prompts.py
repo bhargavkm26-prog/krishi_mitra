@@ -84,11 +84,15 @@ KEY RETRIEVED EVIDENCE CHUNKS:
 {evidence_text or 'Dossier text provides complete evidence.'}
 
 DIRECTIVES:
-1. Cross-examine the farmer's facts against the Scheme Objective, Eligibility, and Exclusions.
-2. Check the official FAQs to resolve any special circumstances (e.g., shared land, tenant status, unverified profile).
-3. In Stage 1, determine if the farmer meets statutory conditions to apply (ELIGIBLE, INELIGIBLE, or UNCERTAIN_NEEDS_INFO).
-4. In Stage 2, determine their priority allocation standing (ST/SC preference, Small/Marginal priority, Women preference).
-5. Output strictly a JSON object matching this schema:
+1. Cross-examine the farmer's facts against the Scheme Objective, Eligibility, Exclusions, and Official FAQs.
+2. Check State/UT domicile, Social Category (`SC`/`ST`/`OBC`/Religious Minority), Gender, Age, Annual Family Income ceiling, Farmer Category (`Small/Marginal` vs `Medium/Large`), KCC status, and Landholding Ownership (`OWNED` vs `LEASED`/`TENANT`/`SHARED`).
+3. MANDATORY MULTI-PLOT RULE: If the farmer holds at least one `OWNED` plot alongside additional `LEASED`/`TENANT` plots, evaluate owned-land eligibility (like PM-KISAN `"cultivable land holding in their names"`) as `PASS` based on the `OWNED` plot(s). However, if ALL plots are `LEASED` or `TENANT` with ZERO `OWNED` plots, strictly mark owned-land requirements as `FAIL` -> `INELIGIBLE`.
+4. STRICT 4-STATE VERDICT MATRIX (ZERO CONTRADICTIONS ALLOWED):
+   - Set `"verdict": "INELIGIBLE"` whenever ANY mandatory eligibility rule is marked `"FAIL"` (e.g., wrong State/UT, wrong Social Category SC/ST/Minority, wrong Gender, Age out of bounds, Family Income exceeding ceiling stated in Eligibility OR FAQs, Medium/Large farmer when restricted "Only small and marginal farmers", or LEASED-only on an owned-land scheme). NEVER return `"ELIGIBLE"` or `"UNCERTAIN_NEEDS_INFO"` when any mandatory rule failed!
+   - Set `"verdict": "UNCERTAIN_NEEDS_INFO"` ONLY when ZERO rules are `"FAIL"` and at least one essential criterion is `"UNKNOWN"` from the profile facts.
+   - Set `"verdict": "ELIGIBLE"` ONLY when ALL mandatory rules are `"PASS"` or `"NOT_APPLICABLE"`. When `"ELIGIBLE"`, `"disqualifying_factors"` MUST be `[]` (place advisory species/process cautions in `faq_insights_applied` instead).
+5. In Stage 2, determine priority allocation standing (`HIGH` for reserved ST/SC/Small/Marginal/Women preference, else `MEDIUM`/`NORMAL`/`LOW`).
+6. Output strictly a JSON object matching this schema:
 {{
   "scheme_name": "{scheme_record.get('scheme_name')}",
   "stage_1_individual_eligibility": {{

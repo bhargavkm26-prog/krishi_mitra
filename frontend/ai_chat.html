@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Krishi Mitra AI — Chief Secretary Consultation</title>
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <!-- FontAwesome -->
   <link rel="stylesheet" href="css/all.min.css">
 
@@ -20,18 +23,38 @@
       padding: 0;
     }
 
+    html {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       background-color: #030704;
       color: #ffffff;
       font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      max-width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      align-items: center;
+      align-items: stretch;
       position: relative;
       overflow-x: hidden;
       padding: 0;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 5px; }
+    ::-webkit-scrollbar-track { background: rgba(3, 10, 6, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.38); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.65); }
+
+    body.has-chat {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
     }
 
     /* Emerald Horizon Atmosphere (Matches Landing Page Obsidian Palette) */
@@ -42,28 +65,31 @@
       z-index: 0;
       overflow: hidden;
     }
+
     .horizon-top {
       position: absolute;
       top: -120px;
       left: 50%;
       transform: translateX(-50%);
-      width: 700px;
-      height: 350px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
+      width: max(700px, 65vw);
+      height: 360px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.14) 0%, transparent 70%);
       filter: blur(80px);
     }
+
     .horizon-arc {
       position: absolute;
       bottom: -100px;
       left: 50%;
       transform: translateX(-50%);
-      width: 1400px;
+      width: max(1400px, 115vw);
       height: 520px;
       border-radius: 100% 100% 0 0;
       background: radial-gradient(ellipse at bottom, rgba(16, 185, 129, 0.35) 0%, rgba(6, 95, 70, 0.25) 40%, rgba(3, 7, 4, 0.95) 75%);
       filter: blur(50px);
       box-shadow: 0 -20px 80px rgba(16, 185, 129, 0.25);
     }
+
     .horizon-arc::after {
       content: '';
       position: absolute;
@@ -78,17 +104,28 @@
     /* Top Bar */
     header {
       width: 100%;
-      max-width: 1000px;
-      padding: 24px 20px 10px;
+      max-width: min(1380px, 96vw);
+      margin: 0 auto;
+      padding: 16px 24px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
       position: relative;
       z-index: 10;
+      flex-shrink: 0;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+      font-size: 0.76rem;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.18);
     }
+    .header-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
     .back-link {
       display: inline-flex;
       align-items: center;
@@ -96,17 +133,60 @@
       color: #34d399;
       text-decoration: none;
       font-weight: 500;
-      transition: color 0.2s;
+      transition: all 0.2s;
     }
+
     .back-link:hover {
       color: #a7f3d0;
     }
+    .back-dash-pill {
+      padding: 5px 12px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #a7f3d0;
+    }
+    .back-dash-pill:hover {
+      background: rgba(16, 185, 129, 0.24);
+      border-color: #34d399;
+      color: #ffffff;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .new-chat-btn {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      background: rgba(6, 182, 212, 0.14);
+      color: #67e8f9;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .new-chat-btn:hover {
+      background: rgba(6, 182, 212, 0.25);
+      color: #ffffff;
+    }
+    body.has-chat .new-chat-btn {
+      display: inline-flex;
+    }
+
     .project-tag {
       color: #94a3b8;
       display: flex;
       align-items: center;
       gap: 8px;
     }
+
     .p-dot {
       width: 6px;
       height: 6px;
@@ -115,63 +195,299 @@
       box-shadow: 0 0 8px #10b981;
       animation: pulseDot 2s infinite;
     }
+
+    .p-dot.online {
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .p-dot.degraded {
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    .p-dot.offline {
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+      animation: none;
+    }
+
+    .farmer-ctx-pill {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px auto 0;
+      padding: 5px 14px;
+      max-width: 100%;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.32);
+      color: #a7f3d0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      word-break: break-word;
+    }
+
+    /* Chief Secretary Structured Output Cards */
+    .cs-status-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: #34d399;
+      margin-bottom: 10px;
+    }
+
+    .cs-summary {
+      color: #f1f5f9;
+      font-size: 0.94rem;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+
+    .cs-warn-box {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fde68a;
+      font-size: 0.84rem;
+      margin-bottom: 12px;
+    }
+
+    .cs-section {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(16, 185, 129, 0.16);
+    }
+
+    .cs-sec-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6ee7b7;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cs-pkg-card {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(6, 78, 59, 0.25);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      margin-bottom: 8px;
+    }
+
+    .cs-pkg-min {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: #34d399;
+      margin-bottom: 2px;
+    }
+
+    .cs-pkg-name {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .cs-pkg-prov {
+      color: #cbd5e1;
+      font-size: 0.83rem;
+    }
+
+    .cs-list {
+      padding-left: 18px;
+      color: #cbd5e1;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .cs-list li {
+      margin-bottom: 5px;
+    }
+
+    .cs-doc-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .cs-doc-chip {
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(52, 211, 153, 0.28);
+      color: #e2e8f0;
+      font-size: 0.78rem;
+    }
+
+    .cs-portal-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      margin: 3px 6px 3px 0;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      text-decoration: none;
+    }
+
+    .cs-portal-link:hover {
+      background: rgba(16, 185, 129, 0.26);
+      color: #ffffff;
+    }
+
+    .cs-delib {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: rgba(2, 10, 5, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    .cs-delib summary {
+      cursor: pointer;
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+    }
+
+    .cs-delib pre {
+      white-space: pre-wrap;
+      margin-top: 8px;
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.5;
+    }
+
+    .cs-rag-strip {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(6, 20, 11, 0.75);
+      border: 1px dashed rgba(34, 197, 94, 0.28);
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
     @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.85);
+      }
     }
 
     /* Main Container */
     main {
       width: 100%;
-      max-width: 780px;
-      padding: 20px;
+      max-width: min(1340px, 95vw);
+      margin: 0 auto;
+      padding: 24px 24px 20px;
       position: relative;
       z-index: 10;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      flex: 1;
+      align-items: stretch;
+      flex: 1 1 auto;
+      min-height: 0;
       justify-content: center;
-      margin: auto 0;
+      gap: 18px;
+    }
+
+    body.has-chat main {
+      justify-content: flex-start;
+      padding: 12px 24px 12px;
+      gap: 12px;
     }
 
     /* Title Section */
     .title-box {
+      width: 100%;
+      min-width: 0;
       text-align: center;
-      margin-bottom: 28px;
-      transition: all 0.3s ease;
+      margin-bottom: 8px;
+      transition: all 0.25s ease;
     }
+    body.has-chat .title-box {
+      margin-bottom: 0;
+      display: none;
+    }
+    body.has-chat.has-farmer .title-box {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+      text-align: left;
+    }
+    body.has-chat .title-box .cs-badge,
+    body.has-chat .title-box h1,
+    body.has-chat .title-box .subtitle {
+      display: none;
+    }
+    body.has-chat .farmer-ctx-pill {
+      margin: 0;
+    }
+
     .cs-badge {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
       gap: 6px;
-      padding: 4px 14px;
+      padding: 5px 16px;
+      max-width: 100%;
       border-radius: 9999px;
       background: rgba(6, 78, 59, 0.5);
       border: 1px solid rgba(16, 185, 129, 0.35);
       color: #6ee7b7;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       margin-bottom: 14px;
     }
+
     h1 {
-      font-size: 2.8rem;
+      font-size: clamp(2.3rem, 4.2vw, 3.6rem);
       font-weight: 700;
       letter-spacing: -0.03em;
-      line-height: 1.1;
+      line-height: 1.08;
       color: #ffffff;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
+
     h1 span {
       color: #10b981;
     }
+
     .subtitle {
       color: #cbd5e1;
-      font-size: 1rem;
-      max-width: 580px;
+      font-size: clamp(0.95rem, 1.3vw, 1.12rem);
+      max-width: 780px;
       margin: 0 auto;
       line-height: 1.6;
     }
@@ -179,46 +495,55 @@
     /* Active Conversation Container */
     #chatThread {
       width: 100%;
-      max-height: 45vh;
+      flex: 1 1 auto;
+      min-height: 0;
       overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 16px;
-      background: rgba(4, 16, 9, 0.65);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
-      margin-bottom: 20px;
       display: none;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px 24px;
+      background: rgba(4, 16, 9, 0.7);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
     }
+    body.has-chat #chatThread {
+      display: flex;
+    }
+
     .chat-bubble {
-      max-width: 85%;
-      padding: 14px 18px;
+      max-width: min(88%, 1040px);
+      padding: 16px 20px;
       border-radius: 16px;
-      font-size: 0.92rem;
-      line-height: 1.6;
+      font-size: 0.96rem;
+      line-height: 1.62;
       display: flex;
       gap: 12px;
       align-items: flex-start;
     }
+
     .chat-bubble.user {
       margin-left: auto;
-      background: rgba(6, 78, 59, 0.6);
-      border: 1px solid rgba(52, 211, 153, 0.4);
+      max-width: min(74%, 760px);
+      background: rgba(6, 78, 59, 0.65);
+      border: 1px solid rgba(52, 211, 153, 0.42);
       color: #ecfdf5;
       border-top-right-radius: 4px;
     }
+
     .chat-bubble.bot {
       margin-right: auto;
+      width: min(92%, 1080px);
+      max-width: min(92%, 1120px);
       background: #08190f;
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      border: 1px solid rgba(16, 185, 129, 0.32);
       color: #f1f5f9;
       border-top-left-radius: 4px;
     }
+
     .bubble-role {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       color: #94a3b8;
       margin-bottom: 4px;
     }
@@ -226,32 +551,41 @@
     /* Floating Capsule Input Box */
     .input-capsule {
       width: 100%;
-      background: rgba(6, 17, 9, 0.88);
-      border: 1px solid rgba(34, 197, 94, 0.35);
+      flex-shrink: 0;
+      background: rgba(6, 17, 9, 0.9);
+      border: 1px solid rgba(34, 197, 94, 0.38);
       border-radius: 18px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.15);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.16);
       backdrop-filter: blur(16px);
       transition: all 0.25s ease;
       overflow: hidden;
     }
+
     .input-capsule:focus-within {
       border-color: #10b981;
       box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), 0 0 35px rgba(16, 185, 129, 0.28);
     }
+
     textarea {
       width: 100%;
-      min-height: 52px;
-      max-height: 150px;
-      padding: 16px 20px 12px;
+      min-height: 72px;
+      max-height: 180px;
+      padding: 18px 22px 14px;
       background: transparent;
       border: none;
       outline: none;
       color: #ffffff;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.98rem;
+      font-size: 1.02rem;
       resize: none;
       line-height: 1.5;
     }
+    body.has-chat textarea {
+      min-height: 54px;
+      padding: 14px 20px 10px;
+      font-size: 0.98rem;
+    }
+
     textarea::placeholder {
       color: #64748b;
     }
@@ -264,6 +598,7 @@
       border-top: 1px solid rgba(16, 185, 129, 0.15);
       background: rgba(0, 0, 0, 0.25);
     }
+
     .audit-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
@@ -272,6 +607,7 @@
       align-items: center;
       gap: 6px;
     }
+
     .send-btn {
       display: inline-flex;
       align-items: center;
@@ -287,12 +623,14 @@
       cursor: not-allowed;
       transition: all 0.2s ease;
     }
+
     .send-btn.active {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: #ffffff;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
     }
+
     .send-btn.active:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
@@ -300,44 +638,67 @@
 
     /* Quick Action Pills */
     .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 10px;
-      margin-top: 20px;
+      margin-top: 4px;
       width: 100%;
+      flex-shrink: 0;
     }
+
     .quick-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      border-radius: 9999px;
-      border: 1px solid rgba(34, 197, 94, 0.25);
-      background: rgba(6, 17, 9, 0.75);
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(34, 197, 94, 0.28);
+      background: rgba(6, 17, 9, 0.78);
       color: #cbd5e1;
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       cursor: pointer;
       transition: all 0.2s ease;
       backdrop-filter: blur(8px);
       text-decoration: none;
       font-family: 'Space Grotesk', sans-serif;
     }
+
     .quick-btn:hover {
       border-color: #10b981;
       color: #ffffff;
       background: rgba(16, 185, 129, 0.15);
       transform: translateY(-1px);
     }
+
     .quick-btn i {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    body.has-chat .quick-actions {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 8px;
+      padding-bottom: 2px;
+      margin-top: 0;
+      scrollbar-width: thin;
+    }
+    body.has-chat .quick-btn {
+      white-space: nowrap;
+      flex-shrink: 0;
+      padding: 6px 12px;
+      font-size: 0.76rem;
+      border-radius: 9999px;
     }
 
     /* Footer */
     footer {
       width: 100%;
       text-align: center;
-      padding: 16px;
+      padding: 10px 16px;
+      flex-shrink: 0;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.7rem;
       color: #64748b;
@@ -346,14 +707,23 @@
       z-index: 10;
     }
 
-    @media (max-width: 640px) {
-      h1 { font-size: 2.1rem; }
-      .subtitle { font-size: 0.88rem; }
-      .quick-actions { gap: 6px; }
-      .quick-btn { font-size: 0.72rem; padding: 6px 10px; }
+    @media (max-width: 768px) {
+      header { max-width: 100%; padding: 12px 14px; }
+      main { max-width: 100%; min-width: 0; padding: 14px 12px; gap: 14px; }
+      body.has-chat main { padding: 8px 10px; gap: 10px; }
+      #chatThread { padding: 14px 12px; }
+      .chat-bubble,
+      .chat-bubble.user,
+      .chat-bubble.bot { width: 100%; max-width: 100%; min-width: 0; padding: 12px 14px; }
+      .input-bottom { flex-wrap: wrap; gap: 8px; padding: 10px 14px 12px; }
+      .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .quick-btn { width: 100%; min-width: 0; white-space: normal; line-height: 1.25; font-size: 0.74rem; padding: 8px 10px; }
+      .quick-btn span { min-width: 0; overflow-wrap: anywhere; }
+      footer { font-size: 0.65rem; padding: 10px 12px; line-height: 1.4; }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Atmospheric Emerald Horizon Background -->
@@ -364,19 +734,31 @@
 
   <!-- Header -->
   <header>
-    <a href="index.html" class="back-link">
-      <i class="fa-solid fa-arrow-left"></i>
-      <span>Krishi Mitra Home</span>
-    </a>
-    <div class="project-tag">
-      <div class="p-dot"></div>
-      <span>SOVEREIGN AGRI-OS // LOCAL CUDA:0 ENGINE</span>
+    <div class="header-links">
+      <a href="dashboard_app.html" id="backDashboardLink" class="back-link back-dash-pill">
+        <i class="fa-solid fa-table-columns"></i>
+        <span>← Farmer Dashboard</span>
+      </a>
+      <a href="index.html" class="back-link">
+        <i class="fa-solid fa-house"></i>
+        <span>Krishi Mitra Home</span>
+      </a>
+    </div>
+    <div class="header-right">
+      <button type="button" id="newChatBtn" class="new-chat-btn">
+        <i class="fa-solid fa-plus"></i>
+        <span>New Chat</span>
+      </button>
+      <div class="project-tag">
+        <div id="engineStatusDot" class="p-dot"></div>
+        <span id="engineStatusText">SOVEREIGN AGRI-OS // CHECKING ENGINES...</span>
+      </div>
     </div>
   </header>
 
   <!-- Main AI Interaction Section -->
   <main>
-    
+
     <!-- Title / Empty State -->
     <div class="title-box" id="titleBox">
       <div class="cs-badge">
@@ -385,8 +767,10 @@
       </div>
       <h1>Krishi<span>Mitra</span> AI</h1>
       <p class="subtitle">
-        Official AI Chief Secretary — Cross-Ministerial Statutory Guidance &amp; Scheme Resolution for Indian &amp; Karnataka Farmers.
+        Official AI Chief Secretary — Cross-Ministerial Statutory Guidance &amp; Scheme Resolution for Indian &amp;
+        Karnataka Farmers.
       </p>
+      <div id="farmerCtxPill" class="farmer-ctx-pill"></div>
     </div>
 
     <!-- Active Conversation View (Appears on send) -->
@@ -394,12 +778,9 @@
 
     <!-- Floating Capsule Input Box (No attachment icon) -->
     <div class="input-capsule">
-      <textarea 
-        id="queryInput" 
-        rows="1" 
+      <textarea id="queryInput" rows="1"
         placeholder="Ask the Chief Secretary about schemes, PMFBY claim window, RTC linking, subsidies..."
-        autofocus
-      ></textarea>
+        autofocus></textarea>
 
       <div class="input-bottom">
         <div class="audit-label">
@@ -415,42 +796,50 @@
 
     <!-- Agricultural Quick Action Pills -->
     <div class="quick-actions">
-      <button class="quick-btn" onclick="applyQuickAction('Am I eligible for PM-KISAN ₹6,000 annual installment if I hold 1.8 hectares of dryland?')">
+      <button class="quick-btn"
+        onclick="applyQuickAction('Am I eligible for PM-KISAN ₹6,000 annual installment if I hold 1.8 hectares of dryland?')">
         <i class="fa-solid fa-wheat-awn" style="color:#10b981;"></i>
         <span>PM-KISAN ₹6,000</span>
       </button>
 
-      <button class="quick-btn" onclick="applyQuickAction('What are the mandatory steps to claim PMFBY crop loss within the 72-hour intimation window?')">
+      <button class="quick-btn"
+        onclick="applyQuickAction('What are the mandatory steps to claim PMFBY crop loss within the 72-hour intimation window?')">
         <i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24;"></i>
         <span>PMFBY 72h Crop Loss</span>
       </button>
 
-      <button class="quick-btn" onclick="applyQuickAction('How can I apply for a Kisan Credit Card (KCC) crop loan at 4% subvention interest rate?')">
+      <button class="quick-btn"
+        onclick="applyQuickAction('How can I apply for a Kisan Credit Card (KCC) crop loan at 4% subvention interest rate?')">
         <i class="fa-solid fa-credit-card" style="color:#38bdf8;"></i>
         <span>KCC Crop Loan (4%)</span>
       </button>
 
-      <button class="quick-btn" onclick="applyQuickAction('What is the subsidy percentage for Krishi Bhagya farm ponds and micro-drip irrigation in Karnataka?')">
+      <button class="quick-btn"
+        onclick="applyQuickAction('What is the subsidy percentage for Krishi Bhagya farm ponds and micro-drip irrigation in Karnataka?')">
         <i class="fa-solid fa-droplet" style="color:#22d3ee;"></i>
         <span>Krishi Bhagya Drip</span>
       </button>
 
-      <button class="quick-btn" onclick="applyQuickAction('How do I link my Bhoomi RTC/Pahani land record with my Karnataka FRUITS Farmer ID (FID)?')">
+      <button class="quick-btn"
+        onclick="applyQuickAction('How do I link my Bhoomi RTC/Pahani land record with my Karnataka FRUITS Farmer ID (FID)?')">
         <i class="fa-solid fa-id-card" style="color:#a7f3d0;"></i>
         <span>FRUITS FID &amp; RTC</span>
       </button>
 
-      <button class="quick-btn" onclick="applyQuickAction('What subsidies are available for farm mechanization, tractors, and Custom Hiring Centres in Karnataka?')">
+      <button class="quick-btn"
+        onclick="applyQuickAction('What subsidies are available for farm mechanization, tractors, and Custom Hiring Centres in Karnataka?')">
         <i class="fa-solid fa-tractor" style="color:#fb923c;"></i>
         <span>Machinery &amp; Tractor Subsidy</span>
       </button>
 
-      <button class="quick-btn" onclick="applyQuickAction('Give me the complete mandatory document checklist before visiting the Taluk or RSK office.')">
+      <button class="quick-btn"
+        onclick="applyQuickAction('Give me the complete mandatory document checklist before visiting the Taluk or RSK office.')">
         <i class="fa-solid fa-file-check" style="color:#fde047;"></i>
         <span>Document Checklist</span>
       </button>
 
-      <button class="quick-btn" onclick="applyQuickAction('Where is my nearest Raitha Samparka Kendra (RSK) in Karnataka and what services do they provide?')">
+      <button class="quick-btn"
+        onclick="applyQuickAction('Where is my nearest Raitha Samparka Kendra (RSK) in Karnataka and what services do they provide?')">
         <i class="fa-solid fa-landmark" style="color:#2dd4bf;"></i>
         <span>Raitha Samparka Kendra</span>
       </button>
@@ -464,24 +853,178 @@
   </footer>
 
   <script>
+    const API_BASE = (window.location.origin && window.location.origin.includes(':8000'))
+      ? window.location.origin
+      : 'http://127.0.0.1:8000';
+
     const textarea = document.getElementById('queryInput');
     const sendBtn = document.getElementById('sendBtn');
     const chatThread = document.getElementById('chatThread');
     const titleBox = document.getElementById('titleBox');
+    const engineStatusDot = document.getElementById('engineStatusDot');
+    const engineStatusText = document.getElementById('engineStatusText');
+    const farmerCtxPill = document.getElementById('farmerCtxPill');
 
-    // Auto-resize textarea
-    textarea.addEventListener('input', () => {
-      textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
-      
+    let isConsulting = false;
+    let activeEventSource = null;
+    const chatHistory = [];
+    const farmerCtx = {
+      farmer_id: null,
+      farmer_unique_id: '',
+      full_name: '',
+      state: ''
+    };
+
+    function escapeHtml(str) {
+      return String(str ?? '').replace(/[&<>"']/g, function (m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+    function safeHttpUrl(raw) {
+      try {
+        const parsed = new URL(String(raw || '').trim());
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+          return parsed.href;
+        }
+      } catch (_) { }
+      return null;
+    }
+
+    function renderFarmerContextPill() {
+      const backDash = document.getElementById('backDashboardLink');
+      if (backDash) {
+        if (farmerCtx.farmer_unique_id) {
+          backDash.setAttribute('href', `dashboard_app.html?farmer=${encodeURIComponent(farmerCtx.farmer_unique_id)}`);
+        } else {
+          backDash.setAttribute('href', 'dashboard_app.html');
+        }
+      }
+      if (!farmerCtxPill) return;
+      if (farmerCtx.farmer_id || farmerCtx.farmer_unique_id) {
+        const label = farmerCtx.full_name || farmerCtx.farmer_unique_id || `Farmer #${farmerCtx.farmer_id}`;
+        const uidPart = farmerCtx.farmer_unique_id ? ` • ${farmerCtx.farmer_unique_id}` : '';
+        const idPart = farmerCtx.farmer_id ? ` (ID #${farmerCtx.farmer_id})` : '';
+        const statePart = farmerCtx.state ? ` • ${farmerCtx.state}` : '';
+        document.body.classList.add('has-farmer');
+        farmerCtxPill.style.display = 'inline-flex';
+        farmerCtxPill.innerHTML = `<i class="fa-solid fa-user-check"></i><span>Personalized Context: ${escapeHtml(label + uidPart + idPart + statePart)}</span>`;
+      } else {
+        document.body.classList.remove('has-farmer');
+        farmerCtxPill.style.display = 'none';
+      }
+    }
+
+    async function resolveFarmerContext() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramId = urlParams.get('farmer_id');
+      const paramUnique = urlParams.get('farmer');
+
+      try {
+        const sharedRaw = localStorage.getItem('krishi_farmer_profile');
+        if (sharedRaw) {
+          const shared = JSON.parse(sharedRaw);
+          const f = shared && shared.farmer ? shared.farmer : shared;
+          if (f) {
+            if (f.farmer_id) farmerCtx.farmer_id = parseInt(f.farmer_id, 10);
+            if (f.farmer_unique_id) farmerCtx.farmer_unique_id = f.farmer_unique_id;
+            if (f.full_name) farmerCtx.full_name = f.full_name;
+            if (f.state) farmerCtx.state = f.state;
+          }
+        }
+      } catch (_) { }
+
+      if (!farmerCtx.farmer_id) {
+        try {
+          const profRaw = localStorage.getItem('km_farmer_profile');
+          if (profRaw) {
+            const p = JSON.parse(profRaw);
+            if (p.farmer_id) farmerCtx.farmer_id = parseInt(p.farmer_id, 10);
+            if (p.farmer_unique_id) farmerCtx.farmer_unique_id = p.farmer_unique_id;
+            if (p.full_name) farmerCtx.full_name = p.full_name;
+            if (p.state) farmerCtx.state = p.state;
+          }
+        } catch (_) { }
+      }
+
+      if (!farmerCtx.farmer_id) {
+        const storedId = parseInt(localStorage.getItem('krishi_farmer_id') || '', 10);
+        if (Number.isFinite(storedId)) farmerCtx.farmer_id = storedId;
+      }
+
+      if (paramId && Number.isFinite(parseInt(paramId, 10))) {
+        farmerCtx.farmer_id = parseInt(paramId, 10);
+      }
+      if (paramUnique && !farmerCtx.farmer_unique_id) {
+        farmerCtx.farmer_unique_id = paramUnique;
+      }
+
+      // Hydrate numeric farmer_id from PostgreSQL if we only have farmer_unique_id or URL param
+      const lookupIdent = farmerCtx.farmer_unique_id || (farmerCtx.farmer_id ? String(farmerCtx.farmer_id) : '');
+      if (lookupIdent && (!farmerCtx.farmer_id || !farmerCtx.full_name)) {
+        try {
+          const resp = await fetch(`${API_BASE}/api/v1/database/farmers/${encodeURIComponent(lookupIdent)}`);
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && data.farmer) {
+              farmerCtx.farmer_id = data.farmer.farmer_id;
+              farmerCtx.farmer_unique_id = data.farmer.farmer_unique_id || farmerCtx.farmer_unique_id;
+              farmerCtx.full_name = data.farmer.full_name || farmerCtx.full_name;
+              farmerCtx.state = data.farmer.state || farmerCtx.state;
+            }
+          }
+        } catch (_) { }
+      }
+
+      renderFarmerContextPill();
+    }
+
+    async function checkEngineHealth() {
+      try {
+        const [sysRes, gemmaRes] = await Promise.allSettled([
+          fetch(`${API_BASE}/health`).then(r => r.json()),
+          fetch(`${API_BASE}/api/v1/gemma/health`).then(r => r.json())
+        ]);
+
+        const sys = sysRes.status === 'fulfilled' ? sysRes.value : null;
+        const gemma = gemmaRes.status === 'fulfilled' ? gemmaRes.value : null;
+        const dbOk = Boolean(sys && sys.subsystems?.postgresql_pgvector?.healthy);
+        const gemmaOk = Boolean((gemma && gemma.healthy) || (sys && sys.subsystems?.gemma_4_e4b_reasoning_server?.healthy));
+        const bgeDev = (sys && sys.subsystems?.bge_m3_embedding_engine?.device) || 'cpu';
+
+        if (engineStatusDot) {
+          engineStatusDot.className = 'p-dot ' + (dbOk && gemmaOk ? 'online' : ((dbOk || gemmaOk) ? 'degraded' : 'offline'));
+        }
+        if (engineStatusText) {
+          if (dbOk && gemmaOk) {
+            engineStatusText.textContent = `SOVEREIGN AGRI-OS // GEMMA 4 + ${String(bgeDev).toUpperCase()} LIVE`;
+          } else if (dbOk) {
+            engineStatusText.textContent = `DB + ${String(bgeDev).toUpperCase()} LIVE // GEMMA :8080 OFFLINE`;
+          } else {
+            engineStatusText.textContent = 'API GATEWAY (:8000) UNREACHABLE — OFFLINE';
+          }
+        }
+      } catch (_) {
+        if (engineStatusDot) engineStatusDot.className = 'p-dot offline';
+        if (engineStatusText) engineStatusText.textContent = 'API GATEWAY (:8000) OFFLINE';
+      }
+    }
+
+    function updateSendButtonState() {
       const val = textarea.value.trim();
-      if (val.length > 0) {
+      if (val.length > 0 && !isConsulting) {
         sendBtn.classList.add('active');
         sendBtn.removeAttribute('disabled');
       } else {
         sendBtn.classList.remove('active');
         sendBtn.setAttribute('disabled', 'true');
       }
+    }
+
+    textarea.addEventListener('input', () => {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+      updateSendButtonState();
     });
 
     textarea.addEventListener('keydown', (e) => {
@@ -494,18 +1037,126 @@
     sendBtn.addEventListener('click', sendMessage);
 
     function applyQuickAction(text) {
+      if (isConsulting) return;
       textarea.value = text;
       textarea.dispatchEvent(new Event('input'));
       textarea.focus();
+      sendMessage();
+    }
+
+    function renderRagReferencesHtml(schemesData, faqsData) {
+      const schemes = (schemesData && Array.isArray(schemesData.schemes)) ? schemesData.schemes : [];
+      const faqs = (faqsData && Array.isArray(faqsData.faqs)) ? faqsData.faqs : [];
+      if (!schemes.length && !faqs.length) return '';
+
+      const uniqueSchemes = [];
+      const seen = new Set();
+      schemes.forEach(s => {
+        if (!seen.has(s.scheme_id)) {
+          seen.add(s.scheme_id);
+          uniqueSchemes.push(s);
+        }
+      });
+
+      const schemeItems = uniqueSchemes.slice(0, 3).map(s =>
+        `<span class="cs-doc-chip" style="font-size:0.72rem;"><i class="fa-solid fa-landmark text-success"></i> ${escapeHtml(s.scheme_name)} (${Math.round((s.relevance_score || 0) * 100)}%)</span>`
+      ).join('');
+
+      const faqItems = faqs.slice(0, 2).map(f =>
+        `<div style="margin-top:5px;color:#cbd5e1;"><strong style="color:#6ee7b7;">[${escapeHtml(f.scheme)}]</strong> ${escapeHtml((f.faq_text || '').slice(0, 220))}${f.faq_text && f.faq_text.length > 220 ? '...' : ''}</div>`
+      ).join('');
+
+      return `
+        <div class="cs-rag-strip">
+          <div style="color:#6ee7b7;font-family:'JetBrains Mono',monospace;font-size:0.68rem;margin-bottom:4px;">
+            <i class="fa-solid fa-bolt"></i> BGE-M3 EVIDENCE MATCHED
+          </div>
+          ${schemeItems ? `<div class="cs-doc-chips">${schemeItems}</div>` : ''}
+          ${faqItems}
+        </div>
+      `;
+    }
+
+    function renderDirectiveHtml(dir) {
+      if (!dir) {
+        return `<div class="cs-warn-box">Chief Secretary returned an empty directive.</div>`;
+      }
+      if (typeof dir === 'string') {
+        return `<div class="cs-summary">${escapeHtml(dir)}</div>`;
+      }
+
+      let html = '';
+      if (dir.has_sufficient_data === false && dir.insufficient_data_notice) {
+        html += `<div class="cs-warn-box"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(dir.insufficient_data_notice)}</div>`;
+      }
+      if (dir.executive_summary || dir.summary) {
+        html += `<div class="cs-summary">${escapeHtml(dir.executive_summary || dir.summary)}</div>`;
+      }
+
+      const pkg = Array.isArray(dir.inter_ministerial_package) ? dir.inter_ministerial_package : [];
+      if (pkg.length > 0) {
+        html += `<div class="cs-section"><div class="cs-sec-title"><i class="fa-solid fa-layer-group"></i> Inter-Ministerial Scheme Package</div>`;
+        html += pkg.map(item => `
+          <div class="cs-pkg-card">
+            <div class="cs-pkg-min">${escapeHtml(item.ministry || 'Ministry / State Govt')}</div>
+            <div class="cs-pkg-name">${escapeHtml(item.scheme_name || 'Statutory Program')}</div>
+            <div class="cs-pkg-prov">${escapeHtml(item.provisions || '')}</div>
+          </div>
+        `).join('');
+        html += `</div>`;
+      }
+
+      const faqRes = Array.isArray(dir.faq_and_procedural_resolutions) ? dir.faq_and_procedural_resolutions : [];
+      if (faqRes.length > 0) {
+        html += `<div class="cs-section"><div class="cs-sec-title"><i class="fa-solid fa-circle-info"></i> FAQ &amp; Procedural Resolutions</div><ul class="cs-list">`;
+        html += faqRes.map(r => `<li>${escapeHtml(r)}</li>`).join('');
+        html += `</ul></div>`;
+      }
+
+      const docs = Array.isArray(dir.mandatory_document_checklist) ? dir.mandatory_document_checklist : [];
+      if (docs.length > 0) {
+        html += `<div class="cs-section"><div class="cs-sec-title"><i class="fa-solid fa-file-check"></i> Mandatory Document Checklist</div><div class="cs-doc-chips">`;
+        html += docs.map(d => `<span class="cs-doc-chip"><i class="fa-solid fa-check" style="color:#10b981;"></i> ${escapeHtml(d)}</span>`).join('');
+        html += `</div></div>`;
+      }
+
+      const steps = Array.isArray(dir.administrative_action_plan) ? dir.administrative_action_plan : [];
+      if (steps.length > 0) {
+        html += `<div class="cs-section"><div class="cs-sec-title"><i class="fa-solid fa-list-ol"></i> Administrative Action Plan</div><ol class="cs-list">`;
+        html += steps.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+        html += `</ol></div>`;
+      }
+
+      const portals = Array.isArray(dir.official_portals) ? dir.official_portals : [];
+      if (portals.length > 0) {
+        html += `<div class="cs-section"><div class="cs-sec-title"><i class="fa-solid fa-arrow-up-right-from-square"></i> Official Portals</div><div class="cs-doc-chips">`;
+        html += portals.map(rawPortal => {
+          const u = safeHttpUrl(rawPortal);
+          if (u) {
+            return `<a href="${escapeHtml(u)}" target="_blank" rel="noopener noreferrer" class="cs-portal-link">${escapeHtml(u)} <i class="fa-solid fa-external-link-alt"></i></a>`;
+          }
+          return `<span class="cs-doc-chip"><i class="fa-solid fa-landmark" style="color:#10b981;"></i> ${escapeHtml(rawPortal)}</span>`;
+        }).join('');
+        html += `</div></div>`;
+      }
+
+      return html;
     }
 
     function sendMessage() {
       const q = textarea.value.trim();
-      if (!q) return;
+      if (!q || isConsulting) return;
 
+      if (activeEventSource) {
+        try { activeEventSource.close(); } catch (_) { }
+        activeEventSource = null;
+      }
+
+      document.body.classList.add('has-chat');
       chatThread.style.display = 'flex';
+      isConsulting = true;
 
-      // Append User message
+      // Append User bubble
       const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const userBubble = document.createElement('div');
       userBubble.className = 'chat-bubble user';
@@ -520,38 +1171,197 @@
 
       textarea.value = '';
       textarea.style.height = '52px';
-      sendBtn.classList.remove('active');
-      sendBtn.setAttribute('disabled', 'true');
+      updateSendButtonState();
       chatThread.scrollTop = chatThread.scrollHeight;
 
-      // Simulated Chief Secretary Response (Ready for API integration later)
-      setTimeout(() => {
-        const botBubble = document.createElement('div');
-        botBubble.className = 'chat-bubble bot';
-        botBubble.innerHTML = `
-          <div style="flex-shrink:0; margin-top:2px;"><i class="fa-solid fa-shield-check" style="color:#10b981;"></i></div>
-          <div>
-            <div class="bubble-role">Chief Secretary Secretariat • ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-            <div style="color:#e2e8f0;">
-              Consultation received regarding: <em>"${escapeHtml(q)}"</em>.<br><br>
-              The Chief Secretary secretariat is reviewing official Central &amp; Karnataka gazettes, Bhoomi RTC records, and the FRUITS FID database.
-              <div style="margin-top:8px; font-size:0.75rem; color:#34d399; font-family:'JetBrains Mono',monospace;">
-                <i class="fa-solid fa-circle-notch fa-spin me-1"></i> API Connection Ready — Interface Configured for Future Integration
-              </div>
-            </div>
+      // Prepare multi-turn context hint for follow-ups
+      let effectiveInquiry = q;
+      if (chatHistory.length > 0) {
+        const last = chatHistory[chatHistory.length - 1];
+        effectiveInquiry = `Previous question: "${last.question}". Previous summary: "${last.summary}". Follow-up inquiry: ${q}`;
+      }
+
+      // Create Bot response bubble
+      const botBubble = document.createElement('div');
+      botBubble.className = 'chat-bubble bot';
+      botBubble.innerHTML = `
+        <div style="flex-shrink:0; margin-top:2px;"><i class="fa-solid fa-shield-check" style="color:#10b981;"></i></div>
+        <div style="width:100%;">
+          <div class="bubble-role">Chief Secretary Secretariat • ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+          <div class="cs-status-line" data-role="status">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            <span>Opening SSE Stream &amp; Retrieving Statutory Gazette Records...</span>
           </div>
-        `;
-        chatThread.appendChild(botBubble);
+          <div data-role="directive"></div>
+          <div data-role="deliberation"></div>
+          <div data-role="rag"></div>
+        </div>
+      `;
+      chatThread.appendChild(botBubble);
+      chatThread.scrollTop = chatThread.scrollHeight;
+
+      const statusEl = botBubble.querySelector('[data-role="status"]');
+      const directiveEl = botBubble.querySelector('[data-role="directive"]');
+      const delibEl = botBubble.querySelector('[data-role="deliberation"]');
+      const ragEl = botBubble.querySelector('[data-role="rag"]');
+
+      // Parallel sub-second BGE-M3 retrieval (Schemes + FAQs) for instant grounded citations
+      Promise.allSettled([
+        fetch(`${API_BASE}/api/v1/bge/search/schemes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q, state: farmerCtx.state || null, limit: 4 })
+        }).then(r => r.ok ? r.json() : null),
+        fetch(`${API_BASE}/api/v1/bge/search/faqs`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ issue: q, limit: 2 })
+        }).then(r => r.ok ? r.json() : null)
+      ]).then(([schRes, faqRes]) => {
+        const html = renderRagReferencesHtml(
+          schRes.status === 'fulfilled' ? schRes.value : null,
+          faqRes.status === 'fulfilled' ? faqRes.value : null
+        );
+        if (html) {
+          ragEl.innerHTML = html;
+          chatThread.scrollTop = chatThread.scrollHeight;
+        }
+      });
+
+      const finishConsultation = (finalDir) => {
+        isConsulting = false;
+        updateSendButtonState();
+        if (finalDir && (finalDir.executive_summary || finalDir.summary)) {
+          chatHistory.push({
+            question: q,
+            summary: String(finalDir.executive_summary || finalDir.summary).slice(0, 260)
+          });
+        }
         chatThread.scrollTop = chatThread.scrollHeight;
-      }, 600);
+      };
+
+      const runConsultFallback = async () => {
+        statusEl.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Streaming interrupted — switching to direct Chief Secretary POST API...</span>`;
+        try {
+          const payload = { inquiry: effectiveInquiry, max_turns: 3 };
+          if (farmerCtx.farmer_id) payload.farmer_id = farmerCtx.farmer_id;
+          const resp = await fetch(`${API_BASE}/api/v1/gemma/consult`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) throw new Error(data.detail || `HTTP ${resp.status}`);
+
+          if (data.deliberation) {
+            delibEl.innerHTML = `<details class="cs-delib"><summary>Executive Deliberation Audit Trace</summary><pre>${escapeHtml(data.deliberation)}</pre></details>`;
+          }
+          directiveEl.innerHTML = renderDirectiveHtml(data.directive);
+          statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Official Secretariat Directive Complete</span>`;
+          finishConsultation(data.directive);
+        } catch (err) {
+          statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i><span style="color:#fde68a;">Chief Secretary reasoning offline (${escapeHtml(err.message)}). Showing matched BGE-M3 records above if available.</span>`;
+          finishConsultation(null);
+        }
+      };
+
+      // Primary Live SSE connection
+      let streamCompleted = false;
+      let receivedDirective = null;
+      let sseUrl = `${API_BASE}/api/v1/gemma/consult-stream?inquiry=${encodeURIComponent(effectiveInquiry)}`;
+      if (farmerCtx.farmer_id) {
+        sseUrl += `&farmer_id=${encodeURIComponent(farmerCtx.farmer_id)}`;
+      }
+
+      const es = new EventSource(sseUrl);
+      activeEventSource = es;
+
+      const parseEvt = (evt) => {
+        try { return JSON.parse(evt.data); } catch (_) { return {}; }
+      };
+
+      es.addEventListener('start', (e) => {
+        const d = parseEvt(e);
+        statusEl.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Secretariat Session Started${d.farmer_id ? ` (Farmer #${escapeHtml(d.farmer_id)})` : ''}...</span>`;
+      });
+
+      es.addEventListener('thought', (e) => {
+        const d = parseEvt(e);
+        statusEl.innerHTML = `<i class="fa-solid fa-brain fa-pulse"></i><span>${escapeHtml(d.message || 'Deliberating across ministries...')}</span>`;
+        chatThread.scrollTop = chatThread.scrollHeight;
+      });
+
+      es.addEventListener('deliberation', (e) => {
+        const d = parseEvt(e);
+        if (d.scratchpad) {
+          delibEl.innerHTML = `<details class="cs-delib"><summary>Executive Deliberation Audit Trace</summary><pre>${escapeHtml(d.scratchpad)}</pre></details>`;
+        }
+      });
+
+      es.addEventListener('final_directive', (e) => {
+        const d = parseEvt(e);
+        receivedDirective = d.directive || d;
+        directiveEl.innerHTML = renderDirectiveHtml(receivedDirective);
+        chatThread.scrollTop = chatThread.scrollHeight;
+      });
+
+      es.addEventListener('complete', () => {
+        streamCompleted = true;
+        es.close();
+        activeEventSource = null;
+        statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Official Secretariat Directive Verified</span>`;
+        finishConsultation(receivedDirective);
+      });
+
+      es.onerror = () => {
+        es.close();
+        if (activeEventSource === es) activeEventSource = null;
+        if (streamCompleted) return;
+        if (receivedDirective) {
+          statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Official Secretariat Directive Verified</span>`;
+          finishConsultation(receivedDirective);
+          return;
+        }
+        runConsultFallback();
+      };
     }
 
-    function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, function(m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-      });
+    function startNewChat() {
+      if (activeEventSource) {
+        try { activeEventSource.close(); } catch (_) {}
+        activeEventSource = null;
+      }
+      isConsulting = false;
+      chatHistory.length = 0;
+      if (chatThread) {
+        chatThread.innerHTML = '';
+        chatThread.style.display = 'none';
+      }
+      document.body.classList.remove('has-chat');
+      updateSendButtonState();
+      if (textarea) {
+        textarea.value = '';
+        textarea.style.height = '';
+        textarea.focus();
+      }
     }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const newChatBtn = document.getElementById('newChatBtn');
+      if (newChatBtn) newChatBtn.addEventListener('click', startNewChat);
+      checkEngineHealth();
+      await resolveFarmerContext();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const qParam = (urlParams.get('q') || urlParams.get('inquiry') || '').trim();
+      if (qParam) {
+        textarea.value = qParam;
+        textarea.dispatchEvent(new Event('input'));
+        sendMessage();
+      }
+    });
   </script>
 
 </body>
+
 </html>

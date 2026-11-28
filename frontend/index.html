@@ -116,7 +116,7 @@
         <div class="mb-3">
           <span class="hbadge">
             <span class="bdot"></span>
-            SOVEREIGN AGRI-OS // 2,066 STATUTORY SCHEMES INDEXED
+            <span id="heroSchemeCountBadge">SOVEREIGN AGRI-OS // 2,066 STATUTORY SCHEMES INDEXED</span>
           </span>
         </div>
 
@@ -156,7 +156,7 @@
             <span><i class="fa-solid fa-database text-success me-1"></i> PostgreSQL pgvector</span>
             <span><i class="fa-solid fa-network-wired text-info me-1"></i> BGE-M3 Dense RAG</span>
             <span><i class="fa-solid fa-brain text-warning me-1"></i> Gemma 4 E4B (llama.cpp)</span>
-            <span><i class="fa-solid fa-landmark text-success me-1"></i> National Scheme Repository (2,066 Programs)</span>
+            <span id="heroRepoCountSpan"><i class="fa-solid fa-landmark text-success me-1"></i> National Scheme Repository (2,066 Programs)</span>
             <span><i class="fa-solid fa-shield-halved text-info me-1"></i> 100% On-Premise Airgap</span>
           </div>
         </div>
@@ -174,11 +174,11 @@
     <div class="container-fluid px-3 px-xl-5" style="max-width: 1540px;">
       <div class="row g-4 align-items-center text-center">
         <div class="col-6 col-md-3">
-          <div class="pnum" data-target="2066">2,066</div>
+          <div class="pnum" id="statSchemesCount" data-target="2066">2,066</div>
           <div class="plbl">Active Statutory Schemes</div>
         </div>
         <div class="col-6 col-md-3">
-          <div class="pnum" data-target="20110">20,110</div>
+          <div class="pnum" id="statFaqsCount" data-target="20110">20,110</div>
           <div class="plbl">Official FAQs &amp; SOPs</div>
         </div>
         <div class="col-6 col-md-3">
@@ -544,21 +544,21 @@
           <div class="stpill py-3">
             <i class="fa-solid fa-server text-success mb-2 fs-5"></i>
             <div class="fw-bold text-white small">Local Gemma 4 E4B</div>
-            <span class="badge bg-success bg-opacity-25 text-success font-monospace" style="font-size:0.65rem;">llama-server (Port 8080)</span>
+            <span id="telemetryGemmaBadge" class="badge bg-success bg-opacity-25 text-success font-monospace" style="font-size:0.65rem;">llama-server (Port 8080)</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stpill py-3">
             <i class="fa-solid fa-microchip text-info mb-2 fs-5"></i>
             <div class="fw-bold text-white small">BGE-M3 Dense RAG</div>
-            <span class="badge bg-info bg-opacity-25 text-info font-monospace" style="font-size:0.65rem;">CUDA:0 Embedded PyTorch</span>
+            <span id="telemetryBgeBadge" class="badge bg-info bg-opacity-25 text-info font-monospace" style="font-size:0.65rem;">CUDA:0 Embedded PyTorch</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stpill py-3">
             <i class="fa-solid fa-database text-warning mb-2 fs-5"></i>
             <div class="fw-bold text-white small">PostgreSQL 16 pgvector</div>
-            <span class="badge bg-warning bg-opacity-25 text-warning font-monospace" style="font-size:0.65rem;">2,066 Schemes / 20,110 FAQs</span>
+            <span id="telemetryDbBadge" class="badge bg-warning bg-opacity-25 text-warning font-monospace" style="font-size:0.65rem;">2,066 Schemes / 20,110 FAQs</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
@@ -655,8 +655,8 @@
           © 2026 <strong>Krishi Mitra</strong> — Sovereign Agrarian Operating System. 100% Data-Sovereign.
         </div>
         <div class="footer-status-pill">
-          <span class="bdot" style="width:8px; height:8px;"></span>
-          <span>System Status: <strong class="text-white">All 3 Subsystems Active</strong> (Local Edge)</span>
+          <span id="footerSystemDot" class="bdot" style="width:8px; height:8px;"></span>
+          <span>System Status: <strong id="footerSystemStatus" class="text-white">Checking Subsystems...</strong> (Local Edge)</span>
         </div>
       </div>
     </div>
@@ -713,7 +713,7 @@
 
       <!-- Quick Fill Sample Chips -->
       <div class="d-flex flex-column gap-2">
-        <div class="gc p-3" style="cursor:pointer;" onclick="document.getElementById('offcanvasFarmerId').value='KM26@0001'">
+        <div class="gc p-3" style="cursor:pointer;" onclick="quickLoginFarmer('KM26@0001')">
           <div class="d-flex justify-content-between align-items-center">
             <strong class="text-white">KM26@0001: Suresh Hegde</strong>
             <span class="badge bg-secondary">Assam</span>
@@ -721,7 +721,7 @@
           <small class="text-white-50 d-block mt-1">SC • 6.37 ha • Rice/Mustard</small>
         </div>
 
-        <div class="gc p-3" style="cursor:pointer;" onclick="document.getElementById('offcanvasFarmerId').value='KM26@0002'">
+        <div class="gc p-3" style="cursor:pointer;" onclick="quickLoginFarmer('KM26@0002')">
           <div class="d-flex justify-content-between align-items-center">
             <strong class="text-white">KM26@0002: Vijay Gowda</strong>
             <span class="badge bg-success">Karnataka</span>
@@ -729,7 +729,7 @@
           <small class="text-white-50 d-block mt-1">OBC • 1.80 ha • Maize/Cotton</small>
         </div>
 
-        <div class="gc p-3" style="cursor:pointer;" onclick="document.getElementById('offcanvasFarmerId').value='KM26@0003'">
+        <div class="gc p-3" style="cursor:pointer;" onclick="quickLoginFarmer('KM26@0003')">
           <div class="d-flex justify-content-between align-items-center">
             <strong class="text-white">KM26@0003: Ravi Borah</strong>
             <span class="badge bg-success">Karnataka</span>
@@ -737,7 +737,7 @@
           <small class="text-white-50 d-block mt-1">SC • 0.90 ha • Marginal Farmer</small>
         </div>
 
-        <div class="gc p-3" style="cursor:pointer;" onclick="document.getElementById('offcanvasFarmerId').value='KM26@0007'">
+        <div class="gc p-3" style="cursor:pointer;" onclick="quickLoginFarmer('KM26@0007')">
           <div class="d-flex justify-content-between align-items-center">
             <strong class="text-white">KM26@0007: Manjunath Joshi</strong>
             <span class="badge bg-info text-dark">Meghalaya</span>

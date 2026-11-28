@@ -14,6 +14,7 @@ const TRANSLATIONS = {
     navEligible: "ಅರ್ಹ ಯೋಜನೆಗಳು",
     navAlmost: "ಸ್ವಲ್ಪವೇ ಬಾಕಿ ಇರುವುದು",
     navSaved: "ಉಳಿಸಿದ ಯೋಜನೆಗಳು",
+    navKrishiAi: "✨ ಕೃಷಿಮಿತ್ರ AI",
     langToggle: "English",
     profile: "ರೈತರ ವಿವರ",
     signIn: "ಲಾಗಿನ್",
@@ -59,6 +60,7 @@ const TRANSLATIONS = {
     heroTitle: "ನಿಮ್ಮ ಜಮೀನಿಗೆ ಸಿಗುವ ಸರಕಾರಿ ಕೃಷಿ ಯೋಜನೆಗಳನ್ನು ಪಡೆಯಿರಿ",
     heroDesc: "ಕರ್ನಾಟಕದ ರೈತರಿಗೆ ಕೇಂದ್ರ ಮತ್ತು ರಾಜ್ಯ ಸರ್ಕಾರದ ಡಿಬಿಟಿ ನಗದು ನೆರವು, ಬೆಳೆ ವಿಮೆ, ಬಡ್ಡಿ ರಹಿತ ಸಾಲ ಮತ್ತು ಕೃಷಿ ಹೊಂಡ ಸಬ್ಸಿಡಿಗಳನ್ನು ಸುಲಭವಾಗಿ ಒದಗಿಸುವ ಏಕೈಕ ವೇದಿಕೆ.",
     heroBtnExplore: "ಅರ್ಹ ಯೋಜನೆಗಳನ್ನು ನೋಡಿ",
+    heroBtnAi: "✨ ಕೃಷಿ AI ಕೇಳಿ",
     heroBtnShare: "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಿ",
     heroBenefitTag: "ವಾರ್ಷಿಕವಾಗಿ ₹{amount} ವರೆಗೆ",
 
@@ -211,6 +213,7 @@ const TRANSLATIONS = {
     navEligible: "Eligible Schemes",
     navAlmost: "Almost Eligible",
     navSaved: "Saved Schemes",
+    navKrishiAi: "✨ KrishiMitra AI",
     langToggle: "ಕನ್ನಡ",
     profile: "Farmer Profile",
     signIn: "Sign In",
@@ -256,6 +259,7 @@ const TRANSLATIONS = {
     heroTitle: 'Direct Scheme Matching &amp; <span class="gt">Sovereign Agrarian Governance</span>',
     heroDesc: "We connect statutory schemes, citizen land records, agro-climatic conditions, and procedural mandates into direct DBT income support, crop insurance, zero-interest KCC credit, and micro-irrigation subsidies.",
     heroBtnExplore: "Explore Eligible Schemes",
+    heroBtnAi: "✨ Ask Krishi AI",
     heroBtnShare: "📲 Share Eligibility Summary",
     heroBenefitTag: "Up to ₹{amount}/year",
 

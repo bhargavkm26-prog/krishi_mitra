@@ -21,13 +21,21 @@
     display: none !important;
   }
 
-  /* Two-column scheme grid on desktop with generous breathing room */
+  /* Responsive scheme grid: 2 columns tablet, 3 columns desktop */
   .schemes-vertical-list {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .docs-vertical-list, .tips-vertical-list, .help-cards-list {
-    grid-template-columns: repeat(2, 1fr);
+  .docs-vertical-list,
+  .tips-vertical-list,
+  .help-cards-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .schemes-vertical-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

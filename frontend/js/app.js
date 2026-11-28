@@ -13,23 +13,78 @@ class KrishiMitraApp {
     this.activeFilter = "all";
     this.sortBy = "benefit_desc";
     this.searchQuery = "";
-    
+
     // Wizard state
     this.wizardStepIndex = 0;
     this.wizardAnswers = {};
     this.stagedVoiceAnswer = null; // Staged voice answer awaiting farmer confirmation
 
-    // Data cache
+    // Data cache & live backend telemetry
     this.profile = null;
     this.schemes = [];
     this.documentsGuide = [];
     this.tips = [];
     this.selectedScheme = null;
+    this.backendHealth = null;
+    this.isBackendOnline = true;
+    this.isGemmaHealthy = false;
+    this.catalogMode = false;
+    this.catalogOffset = 0;
+    this.catalogTotal = 0;
+    this._gemmaQueueRunning = false;
+    this._gemmaRunToken = 0;
+    this._searchDebounceTimer = null;
 
     // Ticker state
     this.tickerInterval = null;
     this.tickerIndex = 0;
     this.isTickerPaused = false;
+  }
+
+  _escapeHtml(val) {
+    return String(val ?? "").replace(/[&<>"']/g, m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m]));
+  }
+
+  _safeHttpUrl(raw) {
+    try {
+      const parsed = new URL(String(raw || "").trim());
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+        return parsed.href;
+      }
+    } catch (_) { }
+    return null;
+  }
+
+  _buildAiChatUrl() {
+    const params = new URLSearchParams();
+    const uid = this.profile?.farmer_unique_id || ApiService.getSession()?.farmer_unique_id;
+    const fid = this.profile?.farmer_id || ApiService.getSession()?.farmer_id;
+    if (uid) params.set("farmer", uid);
+    if (fid) params.set("farmer_id", String(fid));
+    const qs = params.toString();
+    return qs ? `ai_chat.html?${qs}` : "ai_chat.html";
+  }
+
+  syncAiChatLinks() {
+    const href = this._buildAiChatUrl();
+    [
+      "top-nav-krishi-ai",
+      "mobile-header-ai",
+      "btn-hero-krishi-ai",
+      "btn-engine-krishi-ai",
+      "docs-link-krishi-ai",
+      "bottom-nav-krishi-ai",
+      "drawer-link-krishi-ai"
+    ].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute("href", href);
+    });
   }
 
   async init() {
@@ -67,11 +122,36 @@ class KrishiMitraApp {
       this.showView("login");
     }
 
-    // Load initial data
+    // Check backend health before loading schemes so Stage 2 Gemma availability is known
+    await this.checkBackendHealth();
     await this.refreshData();
     this.bindGlobalEvents();
     this.renderAll();
     this.initTipsTicker();
+  }
+
+  async checkBackendHealth() {
+    const banner = document.getElementById("offline-alert-bar");
+    const bannerText = document.getElementById("offline-alert-text");
+
+    const health = await ApiService.getConsolidatedHealth();
+    this.backendHealth = health;
+    const pgOk = Boolean(health?.subsystems?.postgresql_pgvector?.healthy);
+    const gemmaOk = Boolean(health?.subsystems?.gemma_4_e4b_reasoning_server?.healthy);
+
+    this.isBackendOnline = pgOk;
+    this.isGemmaHealthy = gemmaOk;
+
+    if (!pgOk) {
+      if (banner) banner.style.display = "flex";
+      if (bannerText) {
+        bannerText.textContent = (typeof navigator !== "undefined" && navigator.onLine === false)
+          ? this.t("offlineTitle")
+          : "Backend PostgreSQL / FastAPI (:8000) offline — showing cached offline fallback";
+      }
+    } else {
+      if (banner) banner.style.display = "none";
+    }
   }
 
   // -------------------------------------------------------------
@@ -152,7 +232,7 @@ class KrishiMitraApp {
 
   setSchemeTab(tabName) {
     this.currentTab = tabName;
-    
+
     // Update subpage tabs
     document.querySelectorAll(".scheme-tab-btn").forEach(btn => {
       btn.classList.toggle("active", btn.dataset.tab === tabName);
@@ -172,16 +252,199 @@ class KrishiMitraApp {
   }
 
   // -------------------------------------------------------------
-  // Data Loading & Syncing
+  // Data Loading & Syncing (Two-Stage BGE-M3 + Gemma Wing 1)
   // -------------------------------------------------------------
-  async refreshData() {
+  async refreshData(options = {}) {
+    this._gemmaRunToken += 1;
+    this._gemmaQueueRunning = false;
+    this.catalogMode = Boolean(options.catalogMode);
+
     try {
       this.profile = await ApiService.getProfile();
-      this.schemes = await ApiService.getSchemes();
+      this.schemes = await ApiService.getSchemes({
+        search: options.search ?? this.searchQuery,
+        category: options.category ?? this.activeFilter
+      });
       this.documentsGuide = await ApiService.getDocumentsGuide();
       this.tips = await ApiService.getTips();
+
+      const loadMoreWrap = document.getElementById("schemes-pagination-wrap");
+      if (loadMoreWrap && !this.catalogMode) {
+        loadMoreWrap.style.display = "none";
+      }
+
+      // Auto-select tab cleanly on initial load if no cached ELIGIBLE schemes exist yet
+      if (this.currentView === "main" && !options.preserveTab) {
+        const hasEligible = this.schemes.some(s => s.eligible);
+        if (hasEligible) {
+          this.currentTab = "eligible";
+        } else if (this.schemes.some(s => !s.eligible && s.almost)) {
+          this.currentTab = "eligible";
+        }
+      }
+
+      this._updateEngineStatusBar();
+
+      // Launch background Stage 2 sequential evaluation for top 3 unevaluated schemes when Gemma is ready
+      if (this.currentView === "main" && !this.schemes._isOfflineFallback && this.profile?.farmer_id && this.isGemmaHealthy && !options.skipAutoEval) {
+        this.runGemmaEvaluationQueue(3);
+      }
     } catch (err) {
       console.error("Data refresh failed", err);
+    }
+  }
+
+  _updateEngineStatusBar(extraText = "") {
+    const bar = document.getElementById("schemes-engine-status");
+    const batchBtn = document.getElementById("btn-run-ai-batch");
+    if (!bar) return;
+
+    if (this.schemes._isOfflineFallback) {
+      bar.textContent = "Offline Cached Mode • Displaying local Karnataka baseline schemes";
+      if (batchBtn) batchBtn.disabled = true;
+      return;
+    }
+
+    const total = this.schemes.length;
+    const evalCount = this.schemes.filter(s => s.isEvaluated).length;
+    const eligibleCount = this.schemes.filter(s => s.eligible).length;
+    const ineligibleCount = this.schemes.filter(s => s.ineligible).length;
+    const prefix = this.catalogMode
+      ? `PostgreSQL Catalog: ${total} of ${this.catalogTotal || total} loaded`
+      : `Stage 1 (BGE-M3): ${total} matched schemes`;
+    const gemmaPart = this.isGemmaHealthy
+      ? `Stage 2 (Gemma 4): ${evalCount} audited (${eligibleCount} Eligible${ineligibleCount ? `, ${ineligibleCount} Ineligible` : ""})`
+      : "Gemma 4 (:8080) offline";
+
+    bar.textContent = extraText ? `${prefix} • ${extraText}` : `${prefix} • ${gemmaPart}`;
+    if (batchBtn) {
+      batchBtn.disabled = !this.profile?.farmer_id || !this.isGemmaHealthy || this._gemmaQueueRunning;
+    }
+  }
+
+  async loadCatalogPage(reset = false) {
+    this._gemmaRunToken += 1;
+    this._gemmaQueueRunning = false;
+    this.catalogMode = true;
+    if (reset) this.catalogOffset = 0;
+
+    const stateFilter = this.profile?.state || "";
+    const statusEl = document.getElementById("schemes-engine-status");
+    if (statusEl) statusEl.textContent = "Loading official schemes from PostgreSQL catalog...";
+
+    try {
+      const res = await ApiService.listSchemes({
+        search: this.searchQuery,
+        state: stateFilter,
+        limit: 20,
+        offset: this.catalogOffset
+      });
+      this.catalogTotal = res.total || 0;
+      const savedIds = ApiService.getSavedSchemeIds();
+      const appliedIds = ApiService.getAppliedSchemeIds();
+      const mapped = (res.schemes || []).map(s =>
+        ApiService.normalizeBackendScheme(s, { profile: this.profile, savedIds, appliedIds, source: "sql" })
+      );
+
+      if (reset) {
+        this.schemes = mapped;
+      } else {
+        const existingIds = new Set(this.schemes.map(x => String(x.id)));
+        mapped.forEach(item => {
+          if (!existingIds.has(String(item.id))) this.schemes.push(item);
+        });
+      }
+      this.catalogOffset += mapped.length;
+
+      const loadMoreWrap = document.getElementById("schemes-pagination-wrap");
+      const loadMoreBtn = document.getElementById("btn-load-more-schemes");
+      if (loadMoreWrap && loadMoreBtn) {
+        const hasMore = this.catalogOffset < this.catalogTotal;
+        loadMoreWrap.style.display = hasMore ? "flex" : "none";
+        loadMoreBtn.textContent = `Load Next 20 Schemes (${this.schemes.length} / ${this.catalogTotal})`;
+      }
+
+      if (!this.schemes.some(s => s.eligible)) {
+        this.setSchemeTab("almost");
+      } else {
+        this.renderBenefitBanner();
+        this.renderSchemeTabsBadges();
+        this.renderSchemesList();
+      }
+      this._updateEngineStatusBar();
+    } catch (err) {
+      this.showToast(err.message || "Failed to load schemes from PostgreSQL catalog.");
+      this._updateEngineStatusBar();
+    }
+  }
+
+  async evaluateSingleSchemeCard(scheme) {
+    const farmerId = this.profile?.farmer_id;
+    if (!farmerId) {
+      this.showToast("Sign in with a PostgreSQL Farmer Account to run Gemma AI eligibility verification.");
+      return null;
+    }
+    if (!this.isGemmaHealthy) {
+      await this.checkBackendHealth();
+      if (!this.isGemmaHealthy) {
+        this.showToast("Gemma 4 server (port 8080) is offline. Start start_gemma.bat to run AI evaluation.");
+        return null;
+      }
+    }
+
+    try {
+      this._updateEngineStatusBar(`Gemma 4 Auditing: ${scheme.name.en.slice(0, 32)}...`);
+      const res = await ApiService.evaluateEligibility(farmerId, scheme.id);
+      const updated = ApiService.applyGemmaVerdictToScheme(scheme, res);
+      Object.assign(scheme, updated);
+      this.renderBenefitBanner();
+      this.renderSchemeTabsBadges();
+      this.renderSchemesList();
+      this._updateEngineStatusBar();
+      return scheme;
+    } catch (err) {
+      this.showToast(err.message || "Gemma evaluation failed.");
+      this._updateEngineStatusBar();
+      return null;
+    }
+  }
+
+  async runGemmaEvaluationQueue(maxCount = 4) {
+    if (this._gemmaQueueRunning || !this.profile?.farmer_id || !this.isGemmaHealthy) return;
+    const candidates = this.schemes
+      .filter(s => !s.isEvaluated && !s.isOfflineMock && Number.isFinite(Number(s.id)))
+      .slice(0, maxCount);
+
+    if (!candidates.length) {
+      this._updateEngineStatusBar();
+      return;
+    }
+
+    const token = ++this._gemmaRunToken;
+    this._gemmaQueueRunning = true;
+    this._updateEngineStatusBar(`Stage 2 (Gemma 4): Auditing 1/${candidates.length}...`);
+
+    for (let i = 0; i < candidates.length; i++) {
+      if (token !== this._gemmaRunToken || this.currentView !== "main") break;
+      const item = candidates[i];
+      this._updateEngineStatusBar(`Stage 2 (Gemma 4): Checking ${i + 1}/${candidates.length} — ${item.name.en.slice(0, 28)}...`);
+      try {
+        const res = await ApiService.evaluateEligibility(this.profile.farmer_id, item.id);
+        if (token !== this._gemmaRunToken) break;
+        const updated = ApiService.applyGemmaVerdictToScheme(item, res);
+        Object.assign(item, updated);
+        this.renderBenefitBanner();
+        this.renderSchemeTabsBadges();
+        this.renderSchemesList();
+      } catch (err) {
+        console.warn("Sequential Gemma evaluate skipped scheme", item.id, err);
+        break;
+      }
+    }
+
+    if (token === this._gemmaRunToken) {
+      this._gemmaQueueRunning = false;
+      this._updateEngineStatusBar();
     }
   }
 
@@ -191,7 +454,8 @@ class KrishiMitraApp {
   renderAll() {
     this.updateStaticText();
     this.updateLanguageToggleButtons();
-    
+    this.syncAiChatLinks();
+
     if (this.currentView === "login") {
       this.renderLoginView();
     } else if (this.currentView === "wizard") {
@@ -224,6 +488,10 @@ class KrishiMitraApp {
       const key = el.getAttribute("data-i18n-title");
       el.setAttribute("title", this.t(key));
     });
+    const bannerText = document.getElementById("offline-alert-text");
+    if (bannerText && navigator.onLine && !this.isBackendOnline) {
+      bannerText.textContent = "Backend PostgreSQL / FastAPI (:8000) offline — showing cached offline fallback";
+    }
   }
 
   updateLanguageToggleButtons() {
@@ -283,8 +551,9 @@ class KrishiMitraApp {
         const session = await ApiService.loginWithCredentials(identifier, password);
         if (phoneError) phoneError.textContent = "";
         this.profile = await ApiService.getProfile();
-        await this.refreshData();
         this.showView("main");
+        await this.checkBackendHealth();
+        await this.refreshData();
         this.renderAll();
       } catch (err) {
         if (phoneError) phoneError.textContent = err.message || "Invalid User ID or Password.";
@@ -312,7 +581,7 @@ class KrishiMitraApp {
     if (otpContainer) otpContainer.style.display = "block";
     const otpSentPhone = document.getElementById("otp-sent-phone");
     if (otpSentPhone) otpSentPhone.textContent = `+91 ${phone}`;
-    
+
     const otpInput = document.getElementById("login-otp");
     if (otpInput) {
       otpInput.value = "";
@@ -330,8 +599,6 @@ class KrishiMitraApp {
     try {
       const session = await ApiService.login(phone, otp);
       if (otpError) otpError.textContent = "";
-      
-      await this.refreshData();
 
       // If user has not completed profile wizard, show wizard; else go to main
       const savedProfile = localStorage.getItem(ApiService.STORAGE_KEYS.PROFILE_DATA);
@@ -339,9 +606,13 @@ class KrishiMitraApp {
         this.wizardStepIndex = 0;
         this.wizardAnswers = { district: "mandya" };
         this.showView("wizard");
+        await this.checkBackendHealth();
+        await this.refreshData();
         this.renderWizardStep();
       } else {
         this.showView("main");
+        await this.checkBackendHealth();
+        await this.refreshData();
         this.renderAll();
       }
     } catch (err) {
@@ -375,6 +646,9 @@ class KrishiMitraApp {
     const qList = MOCK_DATA.questions;
     const currentQ = qList[this.wizardStepIndex];
     if (!currentQ) return;
+
+    const regPanel = document.getElementById("wizard-register-panel");
+    if (regPanel) regPanel.style.display = "none";
 
     // Update Progress
     const total = qList.length;
@@ -415,7 +689,7 @@ class KrishiMitraApp {
     if (currentQ.type === "select") {
       const selectWrapper = document.createElement("div");
       selectWrapper.className = "district-select-grid";
-      
+
       const selectEl = document.createElement("select");
       selectEl.className = "form-select-large";
       selectEl.id = `input-${currentQ.id}`;
@@ -469,7 +743,7 @@ class KrishiMitraApp {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = `option-card-btn ${currentValue === opt.id ? 'selected' : ''}`;
-        
+
         const iconHtml = this.getOptionIconSvg(opt.icon || currentQ.icon);
         btn.innerHTML = `
           <div class="opt-icon">${iconHtml}</div>
@@ -496,7 +770,7 @@ class KrishiMitraApp {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = `option-card-btn ${currentValue === opt.id ? 'selected' : ''}`;
-        
+
         btn.innerHTML = `
           <div class="opt-badge">${opt.value || opt.id}</div>
           <div class="opt-text">${opt[this.currentLang] || opt.en}</div>
@@ -517,7 +791,7 @@ class KrishiMitraApp {
       manualRow.innerHTML = `
         <label>${this.t("numericHint")}</label>
         <div class="input-with-unit">
-          <input type="number" id="manual-num-input" class="manual-input" step="0.5" min="0.5" max="100" placeholder="${currentQ.id === 'land_size' ? '2.0' : '35'}" value="${!['1','2','5','10','young','middle','senior'].includes(currentValue) ? currentValue : ''}">
+          <input type="number" id="manual-num-input" class="manual-input" step="0.5" min="0.5" max="100" placeholder="${currentQ.id === 'land_size' ? '2.0' : '35'}" value="${!['1', '2', '5', '10', 'young', 'middle', 'senior'].includes(currentValue) ? currentValue : ''}">
           <span class="unit-badge">${currentQ.unit ? (this.currentLang === 'kn' ? 'ಎಕರೆ' : 'Acres') : (this.currentLang === 'kn' ? 'ವರ್ಷ' : 'Years')}</span>
           <button type="button" class="btn-sm-apply" id="btn-apply-num">✔</button>
         </div>
@@ -630,7 +904,7 @@ class KrishiMitraApp {
 
     const matchedOpt = result.matchedOption;
     const displayVal = result.displayValue || (matchedOpt ? (matchedOpt[this.currentLang] || matchedOpt.en) : result.rawTranscript);
-    
+
     this.stagedVoiceAnswer = {
       questionId: currentQ.id,
       optionId: matchedOpt ? (matchedOpt.id || matchedOpt.value) : result.rawTranscript,
@@ -677,10 +951,132 @@ class KrishiMitraApp {
   }
 
   async completeWizard() {
-    await ApiService.saveProfile(this.wizardAnswers);
+    const payload = ApiService.mapWizardAnswersToProfilePayload(this.wizardAnswers, this.profile);
+    const session = ApiService.getSession();
+    const targetId = (this.profile && this.profile.farmer_unique_id) || (session && session.farmer_unique_id);
+
+    if (targetId && this.isBackendOnline) {
+      const nextBtn = document.getElementById("wizard-next-btn");
+      if (nextBtn) nextBtn.disabled = true;
+      try {
+        const res = await ApiService.updateFarmerProfile(targetId, payload);
+        this.profile = res.profile;
+        localStorage.removeItem(ApiService.STORAGE_KEYS.WIZARD_PROGRESS);
+        await this.refreshData();
+        this.showView("main");
+        this.renderAll();
+        this.showToast(res.response.message || "Wizard answers saved to PostgreSQL.");
+        return;
+      } catch (err) {
+        this.showToast(err.message || "Saved locally (could not sync wizard to backend).");
+      } finally {
+        if (nextBtn) nextBtn.disabled = false;
+      }
+    }
+
+    // Guest user with backend online -> show optional PostgreSQL account creation card inside wizard
+    const regPanel = document.getElementById("wizard-register-panel");
+    if (!targetId && this.isBackendOnline && regPanel && regPanel.style.display === "none") {
+      regPanel.style.display = "block";
+      this._bindWizardRegisterPanel(payload);
+      regPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+
+    await this._finishWizardLocally(payload);
+  }
+
+  async _finishWizardLocally(mappedPayload = null) {
+    const localNorm = mappedPayload
+      ? ApiService._normalizeBackendFarmerPayload({
+        farmer: mappedPayload,
+        landholdings: mappedPayload.landholdings,
+        unassigned_crops: mappedPayload.crops
+      })
+      : this.wizardAnswers;
+    await ApiService.saveProfile({ ...this.wizardAnswers, ...localNorm });
+    const regPanel = document.getElementById("wizard-register-panel");
+    if (regPanel) regPanel.style.display = "none";
     await this.refreshData();
     this.showView("main");
     this.renderAll();
+  }
+
+  _bindWizardRegisterPanel(mappedPayload) {
+    const uidInput = document.getElementById("wizard-reg-uid");
+    const passInput = document.getElementById("wizard-reg-pass");
+    const uidStatus = document.getElementById("wizard-reg-uid-status");
+    const errBox = document.getElementById("wizard-reg-error");
+    const submitBtn = document.getElementById("btn-wizard-register-submit");
+    const skipBtn = document.getElementById("btn-wizard-skip-reg");
+
+    if (errBox) errBox.style.display = "none";
+
+    if (uidInput && !uidInput._bound) {
+      uidInput._bound = true;
+      let timer = null;
+      uidInput.addEventListener("input", () => {
+        clearTimeout(timer);
+        const val = uidInput.value.trim();
+        if (!val) {
+          if (uidStatus) uidStatus.textContent = "";
+          return;
+        }
+        timer = setTimeout(async () => {
+          try {
+            const check = await ApiService.checkUniqueId(val);
+            if (uidStatus) {
+              uidStatus.textContent = check.message;
+              uidStatus.style.color = check.available ? "#4ade80" : "#fbbf24";
+            }
+          } catch (_) { }
+        }, 350);
+      });
+    }
+
+    if (submitBtn) {
+      submitBtn.onclick = async () => {
+        const uid = (uidInput?.value || "").trim();
+        const pw = (passInput?.value || "").trim();
+        if (!uid || !pw) {
+          if (errBox) {
+            errBox.textContent = "Please enter both a User ID and Password (or click Continue Locally Only).";
+            errBox.style.display = "block";
+          }
+          return;
+        }
+        submitBtn.disabled = true;
+        const orig = submitBtn.textContent;
+        submitBtn.textContent = "Saving to PostgreSQL...";
+        try {
+          if (errBox) errBox.style.display = "none";
+          const res = await ApiService.registerFarmer({
+            farmer_unique_id: uid,
+            password: pw,
+            ...mappedPayload
+          });
+          this.profile = res.profile;
+          localStorage.removeItem(ApiService.STORAGE_KEYS.WIZARD_PROGRESS);
+          document.getElementById("wizard-register-panel").style.display = "none";
+          await this.refreshData();
+          this.showView("main");
+          this.renderAll();
+          this.showToast(`Registered ${uid} in PostgreSQL!`);
+        } catch (err) {
+          if (errBox) {
+            errBox.textContent = err.message || "Could not register farmer in PostgreSQL.";
+            errBox.style.display = "block";
+          }
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = orig;
+        }
+      };
+    }
+
+    if (skipBtn) {
+      skipBtn.onclick = () => this._finishWizardLocally(mappedPayload);
+    }
   }
 
   // -------------------------------------------------------------
@@ -694,7 +1090,7 @@ class KrishiMitraApp {
       return sum + (s.isAnnualCash ? s.benefitAmount : 0);
     }, 0);
 
-    const formattedAmount = totalAnnualBenefit > 0 
+    const formattedAmount = totalAnnualBenefit > 0
       ? `₹${totalAnnualBenefit.toLocaleString("en-IN")}`
       : "₹೬,೦೦೦+";
 
@@ -742,31 +1138,38 @@ class KrishiMitraApp {
       list = this.schemes.filter(s => s.isSaved);
     }
 
-    // 2. Filter by Category
-    if (this.activeFilter !== "all") {
-      list = list.filter(s => s.type === this.activeFilter);
+    // 2. Filter by Category (strict filter only if list isn't already filtered by server query)
+    if (this.activeFilter !== "all" && !this.searchQuery) {
+      const catFiltered = list.filter(s => s.type === this.activeFilter);
+      if (catFiltered.length > 0 || this.schemes._isOfflineFallback) {
+        list = catFiltered;
+      }
     }
 
     // 3. Filter by Live Search Query
     if (this.searchQuery) {
       const q = this.searchQuery;
-      list = list.filter(s => {
+      const matched = list.filter(s => {
         const nameKn = (s.name.kn || "").toLowerCase();
         const nameEn = (s.name.en || "").toLowerCase();
         const deptKn = (s.department.kn || "").toLowerCase();
         const deptEn = (s.department.en || "").toLowerCase();
         const type = (s.type || "").toLowerCase();
-        return nameKn.includes(q) || nameEn.includes(q) || deptKn.includes(q) || deptEn.includes(q) || type.includes(q);
+        const tags = Array.isArray(s.tags) ? s.tags.join(" ").toLowerCase() : "";
+        return nameKn.includes(q) || nameEn.includes(q) || deptKn.includes(q) || deptEn.includes(q) || type.includes(q) || tags.includes(q);
       });
+      if (matched.length > 0 || this.schemes._isOfflineFallback) {
+        list = matched;
+      }
     }
 
     // 4. Sort
     if (this.sortBy === "benefit_desc") {
-      list.sort((a, b) => b.benefitAmount - a.benefitAmount);
+      list.sort((a, b) => (b.benefitAmount - a.benefitAmount) || ((b.relevanceScore || 0) - (a.relevanceScore || 0)));
     } else if (this.sortBy === "benefit_asc") {
       list.sort((a, b) => a.benefitAmount - b.benefitAmount);
     } else if (this.sortBy === "name") {
-      list.sort((a, b) => (a.name[this.currentLang] || "").localeCompare(b.name[this.currentLang] || ""));
+      list.sort((a, b) => (a.name[this.currentLang] || a.name.en || "").localeCompare(b.name[this.currentLang] || b.name.en || ""));
     }
 
     if (list.length === 0) {
@@ -774,9 +1177,29 @@ class KrishiMitraApp {
         emptyState.style.display = "block";
         const emptyTitle = emptyState.querySelector(".empty-title");
         const emptyDesc = emptyState.querySelector(".empty-desc");
+        const oldAction = emptyState.querySelector(".empty-action-wrap");
+        if (oldAction) oldAction.remove();
+
         if (this.currentTab === "saved") {
           if (emptyTitle) emptyTitle.textContent = this.t("emptySaved");
           if (emptyDesc) emptyDesc.textContent = this.t("emptySavedDesc");
+        } else if (this.currentTab === "eligible" && this.schemes.some(s => !s.eligible && s.almost)) {
+          const almostCnt = this.schemes.filter(s => !s.eligible && s.almost).length;
+          if (emptyTitle) {
+            emptyTitle.textContent = this._gemmaQueueRunning
+              ? "Gemma 4 AI is Auditing Your Matched Schemes..."
+              : "No Gemma-Verified Eligible Schemes on This View Yet";
+          }
+          if (emptyDesc) {
+            emptyDesc.textContent = `${almostCnt} schemes were matched by BGE-M3 and await Gemma 4 Wing 1 verification.`;
+          }
+          const actionWrap = document.createElement("div");
+          actionWrap.className = "empty-action-wrap";
+          actionWrap.style.marginTop = "14px";
+          actionWrap.innerHTML = `<button type="button" class="btn btn-primary" id="btn-switch-almost-candidates">View ${almostCnt} Matched Candidate Schemes ➔</button>`;
+          emptyState.appendChild(actionWrap);
+          const swBtn = document.getElementById("btn-switch-almost-candidates");
+          if (swBtn) swBtn.onclick = () => this.setSchemeTab("almost");
         } else {
           if (emptyTitle) emptyTitle.textContent = this.t("emptyEligible");
           if (emptyDesc) emptyDesc.textContent = this.t("emptyEligibleDesc");
@@ -799,22 +1222,36 @@ class KrishiMitraApp {
     card.className = `scheme-card ${scheme.eligible ? 'is-eligible' : 'is-almost'}`;
 
     const isEligible = scheme.eligible;
-    const badgeText = isEligible ? this.t("tagEligible") : this.t("tagAlmost");
-    const badgeClass = isEligible ? "badge-eligible" : "badge-almost";
+    let badgeText = isEligible ? this.t("tagEligible") : this.t("tagAlmost");
+    let badgeClass = isEligible ? "badge-eligible" : "badge-almost";
+    if (!scheme.isEvaluated && !scheme.isOfflineMock) {
+      badgeText = "BGE Match • Verify AI";
+      badgeClass = "badge-almost";
+    } else if (scheme.ineligible) {
+      badgeText = "Ineligible";
+      badgeClass = "badge-almost";
+    }
+
     const starIcon = scheme.isSaved ? "★" : "☆";
     const starClass = scheme.isSaved ? "star-saved" : "star-empty";
 
-    const nameText = scheme.name[this.currentLang] || scheme.name.en;
-    const deptText = scheme.department[this.currentLang] || scheme.department.en;
-    const benefitText = scheme.benefit[this.currentLang] || scheme.benefit.en;
-    const reasonText = scheme.matchReason ? (scheme.matchReason[this.currentLang] || scheme.matchReason.en) : "";
-    const missingText = scheme.missingReason ? (scheme.missingReason[this.currentLang] || scheme.missingReason.en) : "";
+    const rawBenefitText = scheme.benefit[this.currentLang] || scheme.benefit.en || "";
+    const isLongBenefit = rawBenefitText.trim().length > 28;
+    const nameText = this._escapeHtml(scheme.name[this.currentLang] || scheme.name.en);
+    const deptText = this._escapeHtml(scheme.department[this.currentLang] || scheme.department.en);
+    const benefitText = this._escapeHtml(rawBenefitText);
+    const reasonText = this._escapeHtml(scheme.matchReason ? (scheme.matchReason[this.currentLang] || scheme.matchReason.en) : "");
+    const missingText = this._escapeHtml(scheme.missingReason ? (scheme.missingReason[this.currentLang] || scheme.missingReason.en) : "");
+    const showVerifyBtn = !scheme.isEvaluated && !scheme.isOfflineMock && Boolean(this.profile?.farmer_id);
 
     card.innerHTML = `
       <div class="scheme-header">
         <div class="scheme-title-col">
-          <span class="badge ${badgeClass}">${badgeText}</span>
-          ${scheme.isApplied ? `<span class="badge badge-applied">${this.t("tagApplied")} ✔</span>` : ''}
+          <div class="scheme-badges-row">
+            <span class="badge ${badgeClass}">${badgeText}</span>
+            ${scheme.isApplied ? `<span class="badge badge-applied">${this.t("tagApplied")} ✔</span>` : ''}
+            ${scheme.priorityTier && scheme.isEvaluated ? `<span class="badge badge-applied">${this._escapeHtml(scheme.priorityTier)} Priority</span>` : ''}
+          </div>
           <h3 class="scheme-title">${nameText}</h3>
           <p class="scheme-dept">${deptText}</p>
         </div>
@@ -825,7 +1262,7 @@ class KrishiMitraApp {
 
       <div class="scheme-benefit-box">
         <span class="benefit-label">${this.t("schemeBenefitLabel")}</span>
-        <div class="benefit-amount-text">${benefitText}</div>
+        <div class="benefit-amount-text ${isLongBenefit ? 'is-long-benefit' : ''}">${benefitText}</div>
       </div>
 
       <div class="scheme-reasons-box">
@@ -845,6 +1282,7 @@ class KrishiMitraApp {
         <button type="button" class="btn-action-primary btn-open-detail">
           ${this.t("viewDetailsBtn")} ➔
         </button>
+        ${showVerifyBtn ? `<button type="button" class="rep-btn btn-verify-ai" title="Run Gemma 4 Eligibility Check">⚡ Verify AI</button>` : ''}
         <button type="button" class="btn-action-share" title="${this.t('shareBtn')}">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
@@ -863,6 +1301,16 @@ class KrishiMitraApp {
       this.renderSchemeTabsBadges();
       this.renderSchemesList();
     };
+
+    const verifyAiBtn = card.querySelector(".btn-verify-ai");
+    if (verifyAiBtn) {
+      verifyAiBtn.onclick = async (e) => {
+        e.stopPropagation();
+        verifyAiBtn.disabled = true;
+        verifyAiBtn.textContent = "Checking...";
+        await this.evaluateSingleSchemeCard(scheme);
+      };
+    }
 
     const shareBtn = card.querySelector(".btn-action-share");
     shareBtn.onclick = (e) => {
@@ -951,74 +1399,171 @@ class KrishiMitraApp {
   }
 
   // -------------------------------------------------------------
-  // SCHEME DETAIL: "What You Need" Modal
+  // SCHEME DETAIL: "What You Need" Modal (Live 17-Col Dossier + Gemma + FAQs)
   // -------------------------------------------------------------
-  openSchemeDetailModal(scheme) {
+  _parseDossierDocuments(rawDocs) {
+    if (!rawDocs) return [];
+    return String(rawDocs)
+      .split(/\n|•/)
+      .map(s => s.replace(/^[\-\*\d.\s]+/, "").trim())
+      .filter(s => s.length > 2);
+  }
+
+  _parseDossierSteps(rawProcess) {
+    if (!rawProcess) return [];
+    const normalized = String(rawProcess)
+      .replace(/Mode:\s*[^\n]+/i, m => m + "\n")
+      .replace(/(Step\s*0?\d+\s*:)/gi, "\n$1");
+    return normalized
+      .split(/\n+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 2);
+  }
+
+  _renderModalVerdictBox(scheme) {
+    const verdictBody = document.getElementById("modal-ai-verdict-body");
+    const verifyBtn = document.getElementById("modal-btn-verify-gemma");
+    const tagEl = document.getElementById("modal-scheme-status-tag");
+    if (tagEl) {
+      if (scheme.isEvaluated) {
+        tagEl.textContent = scheme.eligible
+          ? this.t("tagEligible")
+          : (scheme.ineligible ? "Ineligible" : this.t("tagAlmost"));
+        tagEl.className = `badge ${scheme.eligible ? "badge-eligible" : "badge-almost"}`;
+      } else {
+        tagEl.textContent = scheme.isOfflineMock ? (scheme.eligible ? this.t("tagEligible") : this.t("tagAlmost")) : "BGE Match";
+        tagEl.className = `badge ${scheme.eligible ? "badge-eligible" : "badge-almost"}`;
+      }
+    }
+
+    if (!verdictBody) return;
+    if (scheme.isOfflineMock) {
+      verdictBody.innerHTML = `<span style="color:#94a3b8;">Offline baseline rule match: ${this._escapeHtml(scheme.matchReason?.en || "")}</span>`;
+      if (verifyBtn) verifyBtn.style.display = "none";
+      return;
+    }
+
+    if (verifyBtn) {
+      verifyBtn.style.display = this.profile?.farmer_id ? "inline-flex" : "none";
+      verifyBtn.disabled = false;
+      verifyBtn.textContent = scheme.isEvaluated ? "Re-run Gemma AI Audit" : "Verify Eligibility Now";
+    }
+
+    if (!this.profile?.farmer_id) {
+      verdictBody.innerHTML = `<span style="color:#fde68a;">Sign in with a registered PostgreSQL Farmer ID to run personalized Gemma 4 statutory eligibility audit.</span>`;
+      return;
+    }
+
+    if (!scheme.isEvaluated) {
+      verdictBody.innerHTML = `<span style="color:#cbd5e1;">Not audited for Farmer #${this._escapeHtml(this.profile.farmer_id)} yet. Running/click <strong>Verify Eligibility Now</strong> to evaluate against the 17-column official record.</span>`;
+      return;
+    }
+
+    const conf = typeof scheme.confidenceScore === "number" ? `${Math.round(scheme.confidenceScore * 100)}%` : "N/A";
+    const disq = Array.isArray(scheme.disqualifyingFactors) && scheme.disqualifyingFactors.length > 0
+      ? `<ul style="margin:6px 0 0;padding-left:18px;color:#fde68a;">${scheme.disqualifyingFactors.map(d => `<li>${this._escapeHtml(d)}</li>`).join("")}</ul>`
+      : `<div style="margin-top:4px;color:#86efac;">No statutory disqualifying factors detected.</div>`;
+
+    verdictBody.innerHTML = `
+      <div>
+        <strong>Verdict:</strong> <span style="color:${scheme.eligible ? "#4ade80" : "#fbbf24"};">${this._escapeHtml(scheme.verdictStatus)}</span>
+        &nbsp;•&nbsp; <strong>Confidence:</strong> ${conf}
+        &nbsp;•&nbsp; <strong>Priority Tier:</strong> ${this._escapeHtml(scheme.priorityTier || "NORMAL")}
+        ${scheme.targetQuota ? `&nbsp;•&nbsp; <strong>Quota:</strong> ${this._escapeHtml(scheme.targetQuota)}` : ""}
+      </div>
+      ${disq}
+    `;
+  }
+
+  async openSchemeDetailModal(scheme) {
     this.selectedScheme = scheme;
     const modal = document.getElementById("scheme-detail-modal");
     if (!modal) return;
 
-    document.getElementById("modal-scheme-title").textContent = scheme.name[this.currentLang] || scheme.name.en;
+    const schemeName = scheme.name[this.currentLang] || scheme.name.en;
+    document.getElementById("modal-scheme-title").textContent = schemeName;
     document.getElementById("modal-scheme-dept").textContent = scheme.department[this.currentLang] || scheme.department.en;
     document.getElementById("modal-scheme-benefit").textContent = scheme.benefit[this.currentLang] || scheme.benefit.en;
 
-    const tagEl = document.getElementById("modal-scheme-status-tag");
-    if (tagEl) {
-      tagEl.textContent = scheme.eligible ? this.t("tagEligible") : this.t("tagAlmost");
-      tagEl.className = `badge ${scheme.eligible ? 'badge-eligible' : 'badge-almost'}`;
-    }
+    const criteriaBox = document.getElementById("modal-criteria-box");
+    const criteriaBody = document.getElementById("modal-criteria-body");
+    const faqBox = document.getElementById("modal-faq-box");
+    const faqBody = document.getElementById("modal-faq-body");
+    if (criteriaBox) criteriaBox.style.display = "none";
+    if (faqBox) faqBox.style.display = "none";
 
-    const checklistContainer = document.getElementById("modal-doc-checklist");
-    checklistContainer.innerHTML = "";
-    const checkedDocIds = ApiService.getDocumentChecklist(scheme.id);
+    this._renderModalVerdictBox(scheme);
 
-    scheme.documents.forEach(docId => {
-      const docDef = this.documentsGuide.find(d => d.id === docId);
-      if (!docDef) return;
+    const renderChecklistFromArray = (docEntries) => {
+      const checklistContainer = document.getElementById("modal-doc-checklist");
+      checklistContainer.innerHTML = "";
+      const checkedDocIds = ApiService.getDocumentChecklist(scheme.id);
 
-      const isChecked = checkedDocIds.includes(docId);
-      const row = document.createElement("div");
-      row.className = `doc-check-row ${isChecked ? 'is-checked' : ''}`;
-      
-      row.innerHTML = `
-        <label class="doc-check-label">
-          <input type="checkbox" class="doc-checkbox" ${isChecked ? 'checked' : ''}>
-          <div class="doc-info">
-            <span class="doc-name">${docDef.name[this.currentLang] || docDef.name.en}</span>
-            <span class="doc-desc">${docDef.description[this.currentLang] || docDef.description.en}</span>
-            <div class="doc-where-box">
-              <strong>📍 ${this.t("whereToGetDoc")}</strong>
-              <span>${docDef.whereToGet[this.currentLang] || docDef.whereToGet.en}</span>
+      docEntries.forEach((docEntry, idx) => {
+        const docId = docEntry.id || `doc_${idx}`;
+        const isChecked = checkedDocIds.includes(docId);
+        const row = document.createElement("div");
+        row.className = `doc-check-row ${isChecked ? "is-checked" : ""}`;
+        row.innerHTML = `
+          <label class="doc-check-label">
+            <input type="checkbox" class="doc-checkbox" ${isChecked ? "checked" : ""}>
+            <div class="doc-info">
+              <span class="doc-name">${this._escapeHtml(docEntry.name)}</span>
+              ${docEntry.description ? `<span class="doc-desc">${this._escapeHtml(docEntry.description)}</span>` : ""}
+              ${docEntry.whereToGet ? `
+                <div class="doc-where-box">
+                  <strong>📍 ${this.t("whereToGetDoc")}</strong>
+                  <span>${this._escapeHtml(docEntry.whereToGet)}</span>
+                </div>` : ""}
             </div>
-          </div>
-        </label>
-      `;
+          </label>
+        `;
+        const checkbox = row.querySelector(".doc-checkbox");
+        checkbox.onchange = () => {
+          const checked = ApiService.toggleDocumentCheck(scheme.id, docId);
+          row.classList.toggle("is-checked", checked);
+        };
+        checklistContainer.appendChild(row);
+      });
+    };
 
-      const checkbox = row.querySelector(".doc-checkbox");
-      checkbox.onchange = () => {
-        const checked = ApiService.toggleDocumentCheck(scheme.id, docId);
-        row.classList.toggle("is-checked", checked);
-      };
+    const renderStepsArray = (stepsList) => {
+      const stepsContainer = document.getElementById("modal-steps-list");
+      stepsContainer.innerHTML = "";
+      stepsList.forEach((stepText, idx) => {
+        const li = document.createElement("li");
+        li.className = "step-item";
+        li.innerHTML = `<span class="step-num">${idx + 1}</span> <span class="step-text">${this._escapeHtml(stepText)}</span>`;
+        stepsContainer.appendChild(li);
+      });
+    };
 
-      checklistContainer.appendChild(row);
-    });
-
-    const stepsContainer = document.getElementById("modal-steps-list");
-    stepsContainer.innerHTML = "";
-    const steps = scheme.steps_to_apply[this.currentLang] || scheme.steps_to_apply.en || [];
-    steps.forEach((stepText, idx) => {
-      const li = document.createElement("li");
-      li.className = "step-item";
-      li.innerHTML = `<span class="step-num">${idx + 1}</span> <span class="step-text">${stepText}</span>`;
-      stepsContainer.appendChild(li);
-    });
+    // Immediate initial render (offline mock items or temporary loading placeholders)
+    if (Array.isArray(scheme.documents) && scheme.documents.length > 0 && typeof scheme.documents[0] === "string" && scheme.isOfflineMock) {
+      const mappedMockDocs = scheme.documents
+        .map(did => this.documentsGuide.find(d => d.id === did))
+        .filter(Boolean)
+        .map(d => ({
+          id: d.id,
+          name: d.name[this.currentLang] || d.name.en,
+          description: d.description[this.currentLang] || d.description.en,
+          whereToGet: d.whereToGet[this.currentLang] || d.whereToGet.en
+        }));
+      renderChecklistFromArray(mappedMockDocs);
+      renderStepsArray(scheme.steps_to_apply?.[this.currentLang] || scheme.steps_to_apply?.en || []);
+    } else {
+      document.getElementById("modal-doc-checklist").innerHTML = `<div class="db-empty">Loading official document requirements from PostgreSQL...</div>`;
+      document.getElementById("modal-steps-list").innerHTML = `<li class="step-item"><span class="step-num">1</span><span class="step-text">Loading official application workflow...</span></li>`;
+    }
 
     const goSiteBtn = document.getElementById("modal-btn-go-site");
-    if (goSiteBtn) {
-      goSiteBtn.onclick = () => {
-        window.open(scheme.apply_link, "_blank", "noopener,noreferrer");
-      };
-    }
+    const setPortalUrl = (urlCandidate) => {
+      const safeUrl = this._safeHttpUrl(urlCandidate) || "https://www.myscheme.gov.in/";
+      if (goSiteBtn) {
+        goSiteBtn.onclick = () => window.open(safeUrl, "_blank", "noopener,noreferrer");
+      }
+    };
+    setPortalUrl(scheme.apply_link);
 
     const markAppliedBtn = document.getElementById("modal-btn-mark-applied");
     if (markAppliedBtn) {
@@ -1039,7 +1584,88 @@ class KrishiMitraApp {
       };
     }
 
+    const askAiBtn = document.getElementById("modal-btn-ask-ai");
+    if (askAiBtn) {
+      askAiBtn.onclick = () => {
+        const promptQ = `Check my eligibility, exact subsidy benefits, and required documents for "${scheme.name.en}".`;
+        const fidParam = this.profile?.farmer_id ? `&farmer_id=${encodeURIComponent(this.profile.farmer_id)}` : "";
+        window.location.href = `ai_chat.html?q=${encodeURIComponent(promptQ)}${fidParam}`;
+      };
+    }
+
+    const verifyGemmaBtn = document.getElementById("modal-btn-verify-gemma");
+    if (verifyGemmaBtn) {
+      verifyGemmaBtn.onclick = async () => {
+        verifyGemmaBtn.disabled = true;
+        verifyGemmaBtn.textContent = "Auditing with Gemma 4...";
+        await this.evaluateSingleSchemeCard(scheme);
+        if (this.selectedScheme && String(this.selectedScheme.id) === String(scheme.id)) {
+          this._renderModalVerdictBox(scheme);
+        }
+      };
+    }
+
     modal.classList.add("open");
+
+    // Fetch live 17-column dossier + BGE FAQ precedents when online backend scheme
+    if (!scheme.isOfflineMock && Number.isFinite(Number(scheme.id))) {
+      ApiService.getSchemeDossier(scheme.id)
+        .then(res => {
+          if (!this.selectedScheme || String(this.selectedScheme.id) !== String(scheme.id)) return;
+          const d = res.dossier || {};
+          if (d.benefits) {
+            document.getElementById("modal-scheme-benefit").textContent = String(d.benefits).trim();
+          }
+          if (d.eligibility_criteria || d.exclusions_ineligibility) {
+            if (criteriaBox && criteriaBody) {
+              criteriaBox.style.display = "block";
+              criteriaBody.innerHTML = `
+                ${d.eligibility_criteria ? `<p style="margin:0 0 8px;"><strong style="color:#86efac;">Eligibility:</strong> ${this._escapeHtml(d.eligibility_criteria)}</p>` : ""}
+                ${d.exclusions_ineligibility ? `<p style="margin:0;"><strong style="color:#fde68a;">Exclusions:</strong> ${this._escapeHtml(d.exclusions_ineligibility)}</p>` : ""}
+              `;
+            }
+          }
+          const docs = this._parseDossierDocuments(d.documents_required);
+          renderChecklistFromArray(
+            docs.length > 0
+              ? docs.map((txt, idx) => ({ id: `req_${idx}`, name: txt }))
+              : [{ id: "req_default", name: "Aadhaar Card, Land Record (RTC), Bank Passbook (see Official Portal for scheme-specific annexures)" }]
+          );
+          const steps = this._parseDossierSteps(d.application_process);
+          renderStepsArray(
+            steps.length > 0
+              ? steps
+              : ["Visit the official portal link below and submit your Citizen Registration & Land Records."]
+          );
+          setPortalUrl(d.official_link || d.myscheme_url || scheme.apply_link);
+        })
+        .catch(err => console.warn("Failed to hydrate full dossier:", err));
+
+      ApiService.searchFaqsBGE(scheme.name.en, 3)
+        .then(faqRes => {
+          if (!this.selectedScheme || String(this.selectedScheme.id) !== String(scheme.id)) return;
+          const faqs = faqRes?.faqs || [];
+          if (faqs.length > 0 && faqBox && faqBody) {
+            faqBox.style.display = "block";
+            faqBody.innerHTML = faqs.map(f => `
+              <div style="padding:8px 10px;border-radius:8px;background:rgba(4,16,9,0.75);border:1px solid rgba(34,197,94,0.2);margin-bottom:6px;">
+                <div style="font-size:0.75rem;color:#86efac;font-weight:700;">${this._escapeHtml(f.scheme)} (${Math.round((f.relevance_score || 0) * 100)}%)</div>
+                <div style="margin-top:3px;white-space:pre-line;">${this._escapeHtml(f.faq_text)}</div>
+              </div>
+            `).join("");
+          }
+        })
+        .catch(() => { });
+
+      // Lazy Wing 1 evaluation on open if not already evaluated
+      if (!scheme.isEvaluated && this.profile?.farmer_id && this.isGemmaHealthy && !this._gemmaQueueRunning) {
+        this.evaluateSingleSchemeCard(scheme).then(() => {
+          if (this.selectedScheme && String(this.selectedScheme.id) === String(scheme.id)) {
+            this._renderModalVerdictBox(scheme);
+          }
+        });
+      }
+    }
   }
 
   closeSchemeDetailModal() {
@@ -1051,6 +1677,32 @@ class KrishiMitraApp {
   // -------------------------------------------------------------
   // OTHER FEATURES: Documents, Tips, Help Pages
   // -------------------------------------------------------------
+  async searchDocsFaqs() {
+    const input = document.getElementById("docs-faq-input");
+    const container = document.getElementById("docs-faq-results");
+    if (!input || !container) return;
+    const issue = input.value.trim();
+    if (!issue) return;
+
+    container.innerHTML = `<div class="db-empty">Searching 20,110 official FAQs with BGE-M3...</div>`;
+    try {
+      const res = await ApiService.searchFaqsBGE(issue, 5);
+      const faqs = res?.faqs || [];
+      if (!faqs.length) {
+        container.innerHTML = `<div class="db-empty">No FAQ entries matched "${this._escapeHtml(issue)}".</div>`;
+        return;
+      }
+      container.innerHTML = faqs.map(f => `
+        <div style="padding:10px 12px;border-radius:10px;background:rgba(4,16,9,0.85);border:1px solid rgba(34,197,94,0.28);margin-bottom:8px;">
+          <div style="font-size:0.78rem;color:#86efac;font-weight:700;margin-bottom:4px;">${this._escapeHtml(f.scheme)}${f.ministry ? ` • ${this._escapeHtml(f.ministry)}` : ""} (${Math.round((f.relevance_score || 0) * 100)}%)</div>
+          <div style="font-size:0.86rem;color:#e2e8f0;white-space:pre-line;line-height:1.5;">${this._escapeHtml(f.faq_text)}</div>
+        </div>
+      `).join("");
+    } catch (err) {
+      container.innerHTML = `<div class="db-empty" style="color:#fecaca;">${this._escapeHtml(err.message || "FAQ search failed.")}</div>`;
+    }
+  }
+
   renderDocumentsPage() {
     const container = document.getElementById("docs-list-container");
     if (!container) return;
@@ -1060,7 +1712,7 @@ class KrishiMitraApp {
       const card = document.createElement("div");
       card.className = "doc-guide-card";
 
-      const neededSchemes = this.schemes.filter(s => s.documents.includes(doc.id));
+      const neededSchemes = this.schemes.filter(s => Array.isArray(s.documents) && s.documents.includes(doc.id));
       const schemeNames = neededSchemes.map(s => s.name[this.currentLang] || s.name.en).join(", ");
 
       card.innerHTML = `
@@ -1323,6 +1975,8 @@ class KrishiMitraApp {
   async handleDeleteMyData() {
     const confirmed = window.confirm(this.t("deleteDataConfirm"));
     if (confirmed) {
+      this._gemmaRunToken += 1;
+      this._gemmaQueueRunning = false;
       await ApiService.deleteUserData();
       this.closeProfileDrawer();
       this.profile = null;
@@ -1335,8 +1989,12 @@ class KrishiMitraApp {
   }
 
   async handleLogout() {
+    this._gemmaRunToken += 1;
+    this._gemmaQueueRunning = false;
     await ApiService.logout();
     this.closeProfileDrawer();
+    this.profile = null;
+    this.schemes = [];
     this.resetLoginStep();
     this.showView("login");
     this.renderAll();
@@ -1348,8 +2006,9 @@ class KrishiMitraApp {
   shareSchemeWhatsApp(scheme) {
     const name = scheme.name[this.currentLang] || scheme.name.en;
     const benefit = scheme.benefit[this.currentLang] || scheme.benefit.en;
+    const link = this._safeHttpUrl(scheme.apply_link) || "https://www.myscheme.gov.in/";
     const msg = this.t("shareSchemeText", { name: name, benefit: benefit });
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg + "\n" + scheme.apply_link)}`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg + "\n" + link)}`;
     window.open(url, "_blank");
   }
 
@@ -1447,31 +2106,98 @@ class KrishiMitraApp {
     }
 
     // Live Search & Category Filtering
+    const executeLiveSearch = async (scroll = false) => {
+      const val = searchInput ? searchInput.value.trim() : "";
+      this.searchQuery = val.toLowerCase();
+      if (this.isBackendOnline && val.length >= 2) {
+        await this.refreshData({ search: val, category: this.activeFilter, preserveTab: true, skipAutoEval: true });
+        if (!this.schemes.some(s => s.eligible) && this.schemes.some(s => s.almost)) {
+          this.setSchemeTab("almost");
+        } else {
+          this.renderAll();
+        }
+      } else if (!val && this.catalogMode) {
+        await this.refreshData({ search: "", category: this.activeFilter });
+        this.renderAll();
+      } else {
+        this.renderSchemesList();
+      }
+      if (scroll) {
+        const anchor = document.getElementById("schemes-main-anchor");
+        if (anchor) anchor.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
     const searchInput = document.getElementById("scheme-search-input");
     if (searchInput) {
       searchInput.oninput = (e) => {
         this.searchQuery = e.target.value.toLowerCase().trim();
         this.renderSchemesList();
+        clearTimeout(this._searchDebounceTimer);
+        this._searchDebounceTimer = setTimeout(() => {
+          if (this.isBackendOnline && (this.searchQuery.length >= 3 || this.searchQuery.length === 0)) {
+            executeLiveSearch(false);
+          }
+        }, 450);
       };
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          clearTimeout(this._searchDebounceTimer);
+          executeLiveSearch(true);
+        }
+      });
     }
 
     const catSelect = document.getElementById("scheme-category-select");
     if (catSelect) {
-      catSelect.onchange = (e) => {
+      catSelect.onchange = async (e) => {
         this.activeFilter = e.target.value;
         document.querySelectorAll(".filter-chip").forEach(c => {
           c.classList.toggle("active", c.dataset.filter === this.activeFilter);
         });
-        this.renderSchemesList();
+        if (this.isBackendOnline && this.activeFilter !== "all" && !this.schemes.some(s => s.type === this.activeFilter)) {
+          await this.refreshData({ category: this.activeFilter, preserveTab: true });
+          this.renderAll();
+        } else {
+          this.renderSchemesList();
+        }
       };
     }
 
     const discoverBtn = document.getElementById("btn-discover-search");
     if (discoverBtn) {
       discoverBtn.onclick = () => {
-        const anchor = document.getElementById("schemes-main-anchor");
-        if (anchor) anchor.scrollIntoView({ behavior: "smooth" });
+        clearTimeout(this._searchDebounceTimer);
+        executeLiveSearch(true);
       };
+    }
+
+    const runBatchBtn = document.getElementById("btn-run-ai-batch");
+    if (runBatchBtn) {
+      runBatchBtn.onclick = () => this.runGemmaEvaluationQueue(5);
+    }
+
+    const browseCatBtn = document.getElementById("btn-browse-catalog");
+    if (browseCatBtn) {
+      browseCatBtn.onclick = () => this.loadCatalogPage(true);
+    }
+
+    const loadMoreBtn = document.getElementById("btn-load-more-schemes");
+    if (loadMoreBtn) {
+      loadMoreBtn.onclick = () => this.loadCatalogPage(false);
+    }
+
+    const docsFaqBtn = document.getElementById("btn-docs-faq-search");
+    const docsFaqInput = document.getElementById("docs-faq-input");
+    if (docsFaqBtn) docsFaqBtn.onclick = () => this.searchDocsFaqs();
+    if (docsFaqInput) {
+      docsFaqInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          this.searchDocsFaqs();
+        }
+      });
     }
 
     // Login Events
@@ -1532,16 +2258,21 @@ class KrishiMitraApp {
 
     // Scheme Filter Chips
     document.querySelectorAll(".filter-chip").forEach(chip => {
-      chip.onclick = () => {
+      chip.onclick = async () => {
         document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
         chip.classList.add("active");
         this.activeFilter = chip.dataset.filter;
-        
+
         // sync dropdown
         const catSelect = document.getElementById("scheme-category-select");
         if (catSelect) catSelect.value = this.activeFilter;
-        
-        this.renderSchemesList();
+
+        if (this.isBackendOnline && this.activeFilter !== "all" && !this.schemes.some(s => s.type === this.activeFilter)) {
+          await this.refreshData({ category: this.activeFilter, preserveTab: true });
+          this.renderAll();
+        } else {
+          this.renderSchemesList();
+        }
       };
     });
 
@@ -1595,14 +2326,12 @@ class KrishiMitraApp {
     const modalOverlay = document.getElementById("modal-overlay-bg");
     if (modalOverlay) modalOverlay.onclick = () => this.closeSchemeDetailModal();
 
-    // Online/Offline detection
+    // Online/Offline detection + Backend /health sync (keeps local airgapped 127.0.0.1 working)
     window.addEventListener("online", () => {
-      const banner = document.getElementById("offline-alert-bar");
-      if (banner) banner.style.display = "none";
+      this.checkBackendHealth();
     });
     window.addEventListener("offline", () => {
-      const banner = document.getElementById("offline-alert-bar");
-      if (banner) banner.style.display = "flex";
+      this.checkBackendHealth();
     });
   }
 }

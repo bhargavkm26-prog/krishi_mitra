@@ -30,7 +30,9 @@ const KrishiAPI = {
         } else {
             localStorage.setItem('krishi_farmer_profile', JSON.stringify(profile));
             const id = profile.farmer ? profile.farmer.farmer_id : profile.farmer_id;
-            localStorage.setItem('krishi_farmer_id', id);
+            if (id !== undefined && id !== null && id !== '') {
+                localStorage.setItem('krishi_farmer_id', String(id));
+            }
         }
     },
 
@@ -164,23 +166,41 @@ const KrishiAPI = {
     },
 
     // 3. Dense Neural Search (BGE-M3 RAG)
-    async searchSchemesBGE(query, topK = 5) {
+    async searchSchemesBGE(query, limitOrOpts = 5) {
+        const opts = (typeof limitOrOpts === 'object' && limitOrOpts !== null)
+            ? limitOrOpts
+            : { limit: limitOrOpts };
+        const limit = Math.min(20, Math.max(1, parseInt(opts.limit, 10) || 5));
+        const body = { query: String(query || '').trim(), limit };
+        if (opts.state) body.state = opts.state;
+        if (opts.ministry) body.ministry = opts.ministry;
+
         const resp = await fetch(`${API_BASE}/api/v1/bge/search/schemes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query, top_k: topK })
+            body: JSON.stringify(body)
         });
-        if (!resp.ok) throw new Error(`BGE search failed: ${resp.statusText}`);
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+            throw new Error(err.detail || `BGE search failed: ${resp.statusText}`);
+        }
         return await resp.json();
     },
 
-    async searchFaqsBGE(query, topK = 5) {
+    async searchFaqsBGE(issue, limit = 3) {
+        const clampedLimit = Math.min(10, Math.max(1, parseInt(limit, 10) || 3));
         const resp = await fetch(`${API_BASE}/api/v1/bge/search/faqs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query, top_k: topK })
+            body: JSON.stringify({
+                issue: String(issue || '').trim(),
+                limit: clampedLimit
+            })
         });
-        if (!resp.ok) throw new Error(`BGE FAQ search failed: ${resp.statusText}`);
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+            throw new Error(err.detail || `BGE FAQ search failed: ${resp.statusText}`);
+        }
         return await resp.json();
     },
 
@@ -189,7 +209,7 @@ const KrishiAPI = {
         const resp = await fetch(`${API_BASE}/api/v1/gemma/evaluate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ farmer_id: parseInt(farmerId), scheme_id: parseInt(schemeId) })
+            body: JSON.stringify({ farmer_id: parseInt(farmerId, 10), scheme_id: parseInt(schemeId, 10) })
         });
         if (!resp.ok) {
             const err = await resp.json().catch(() => ({ detail: resp.statusText }));
@@ -198,9 +218,11 @@ const KrishiAPI = {
         return await resp.json();
     },
 
-    async consultChiefSecretary(inquiry, farmerId = null, maxTurns = 5) {
-        const payload = { inquiry, max_turns: maxTurns };
-        if (farmerId) payload.farmer_id = parseInt(farmerId);
+    async consultChiefSecretary(inquiry, farmerId = null, maxTurns = 3) {
+        const payload = { inquiry, max_turns: Math.min(5, Math.max(1, parseInt(maxTurns, 10) || 3)) };
+        if (farmerId !== null && farmerId !== undefined && !isNaN(parseInt(farmerId, 10))) {
+            payload.farmer_id = parseInt(farmerId, 10);
+        }
 
         const resp = await fetch(`${API_BASE}/api/v1/gemma/consult`, {
             method: 'POST',
@@ -214,27 +236,61 @@ const KrishiAPI = {
         return await resp.json();
     },
 
-    // Streaming consultation via SSE
-    streamChiefSecretary(inquiry, farmerId = null, { onEvent, onError, onComplete }) {
+    // Streaming consultation via named SSE events (`start`, `thought`, `deliberation`, `final_directive`, `complete`)
+    streamChiefSecretary(inquiry, farmerId = null, { onEvent, onStart, onThought, onDeliberation, onDirective, onError, onComplete } = {}) {
         let url = `${API_BASE}/api/v1/gemma/consult-stream?inquiry=${encodeURIComponent(inquiry)}`;
-        if (farmerId) url += `&farmer_id=${parseInt(farmerId)}`;
+        if (farmerId !== null && farmerId !== undefined && !isNaN(parseInt(farmerId, 10))) {
+            url += `&farmer_id=${parseInt(farmerId, 10)}`;
+        }
 
         const eventSource = new EventSource(url);
+        let completed = false;
+        let lastDirective = null;
+        let lastDeliberation = '';
 
-        eventSource.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                if (onEvent) onEvent(data);
-                if (data.type === 'complete') {
-                    eventSource.close();
-                    if (onComplete) onComplete(data);
-                }
-            } catch (err) {
-                if (onError) onError(err);
-            }
+        const parseData = (e) => {
+            try { return JSON.parse(e.data); } catch (_) { return { raw: e.data }; }
         };
 
+        eventSource.addEventListener('start', (e) => {
+            const data = parseData(e);
+            if (onStart) onStart(data);
+            if (onEvent) onEvent({ event: 'start', type: 'step', content: `Initiated consultation for "${data.inquiry || inquiry}"`, ...data });
+        });
+
+        eventSource.addEventListener('thought', (e) => {
+            const data = parseData(e);
+            if (onThought) onThought(data);
+            if (onEvent) onEvent({ event: 'thought', type: 'step', content: data.message || '', ...data });
+        });
+
+        eventSource.addEventListener('deliberation', (e) => {
+            const data = parseData(e);
+            lastDeliberation = data.scratchpad || '';
+            if (onDeliberation) onDeliberation(data);
+            if (onEvent) onEvent({ event: 'deliberation', type: 'step', content: lastDeliberation, ...data });
+        });
+
+        eventSource.addEventListener('final_directive', (e) => {
+            const data = parseData(e);
+            lastDirective = data.directive || data;
+            if (onDirective) onDirective(lastDirective, data);
+            if (onEvent) onEvent({ event: 'final_directive', directive: lastDirective, deliberation: lastDeliberation, ...data });
+        });
+
+        eventSource.addEventListener('complete', (e) => {
+            completed = true;
+            const data = parseData(e);
+            eventSource.close();
+            if (onEvent) onEvent({ event: 'complete', type: 'complete', directive: lastDirective, deliberation: lastDeliberation, ...data });
+            if (onComplete) onComplete({ directive: lastDirective, deliberation: lastDeliberation, ...data });
+        });
+
         eventSource.onerror = (err) => {
+            if (completed) {
+                eventSource.close();
+                return;
+            }
             eventSource.close();
             if (onError) onError(err);
         };
